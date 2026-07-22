@@ -1,170 +1,109 @@
-.app-shell {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 32px 0 56px;
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(244, 247, 251, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
 }
 
-.topbar {
+.topnav-inner {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 14px 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  margin-right: auto;
 }
 
 .brand-mark {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
   display: grid;
   place-items: center;
   color: white;
   font-weight: 800;
   background: linear-gradient(135deg, var(--primary), #8c6ff7);
-  box-shadow: 0 10px 24px rgba(91, 91, 214, 0.28);
+  box-shadow: 0 8px 18px rgba(91, 91, 214, 0.28);
 }
 
-h1 {
-  font-size: clamp(1.45rem, 2vw, 2rem);
-  margin-bottom: 4px;
+.brand-name {
+  font-weight: 800;
+  font-size: 1.05rem;
 }
 
-h2 {
-  font-size: 1.1rem;
-  margin-bottom: 16px;
-}
-
-.subtitle {
-  color: var(--muted);
-  margin: 0;
-}
-
-.toolbar {
+.nav-links {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  gap: 4px;
 }
 
-.btn {
-  border: 0;
-  border-radius: 11px;
-  padding: 10px 14px;
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
   font-weight: 700;
-  transition: 0.2s ease;
+  font-size: 0.92rem;
+  padding: 8px 12px;
+  border-radius: 9px;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-}
-
-.btn-secondary {
-  background: var(--surface);
+.nav-links a:hover {
   color: var(--text);
+  background: var(--surface-soft);
+}
+
+.nav-links a.active {
+  color: var(--primary);
+  background: #f5f4ff;
+}
+
+.sync-indicator {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--surface-soft);
   border: 1px solid var(--border);
+  white-space: nowrap;
 }
 
-.btn-danger {
-  background: #fff1f1;
+.sync-indicator:hover {
+  color: var(--text);
+}
+
+.sync-indicator.error {
   color: var(--danger);
+  border-color: #f3c9c9;
+  background: #fff1f1;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
-  gap: 20px;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(228, 232, 240, 0.9);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 22px;
-}
-
-.empty-state {
-  padding: 36px 16px;
-  text-align: center;
-  color: var(--muted);
-  border: 1px dashed var(--border);
-  border-radius: 14px;
-}
-
-.side-stack {
-  display: grid;
-  gap: 20px;
-  align-content: start;
-}
-
-.tip {
-  background: #fffaf0;
-  border-color: #f3dfb6;
-}
-
-.tip p {
-  color: #735d31;
-  line-height: 1.55;
-  margin-bottom: 0;
-}
-
-.footer-note {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.82rem;
-  margin-top: 22px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.add-goal-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-}
-
-.action-stack {
-  display: grid;
-  gap: 8px;
-}
-
-.action-stack .btn {
-  width: 100%;
-}
-
-@media (max-width: 880px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+.page-container {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 56px;
 }
 
 @media (max-width: 620px) {
-  .app-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 20px;
+  .topnav-inner {
+    padding: 12px 0;
   }
-  .topbar {
-    align-items: flex-start;
-    flex-direction: column;
+  .nav-links {
+    order: 3;
+    width: 100%;
   }
-  .toolbar {
-    justify-content: flex-start;
+  .sync-indicator {
+    order: 2;
   }
 }

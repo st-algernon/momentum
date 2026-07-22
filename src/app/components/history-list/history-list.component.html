@@ -7,7 +7,7 @@
       @for (log of logs(); track log.id) {
         <div class="history-item">
           <div class="history-date">{{ formatDate(log.date) }}</div>
-          <div class="history-amount">{{ formatAmount(log.amount, unit()) }}</div>
+          <div class="history-amount">{{ formatAmount(log.amount, goal().unit) }}</div>
           <div class="history-note">{{ log.note || 'Progress logged' }}</div>
           <button class="icon-btn" type="button" (click)="removeLog(log)">Delete</button>
         </div>

@@ -1,5 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
-import { GoalsService, formatAmount, todayISO } from '../../services/goals.service';
+import { Component, computed, input } from '@angular/core';
+import { Goal } from '../../models/goal.model';
+import { formatAmount, todayISO } from '../../services/goals.service';
 
 interface DayBar {
   date: string;
@@ -15,14 +16,11 @@ interface DayBar {
   styleUrl: './week-chart.component.css'
 })
 export class WeekChartComponent {
-  private readonly goalsService = inject(GoalsService);
-
-  protected readonly unit = computed(() => this.goalsService.activeGoal()?.unit ?? 'hours');
+  readonly goal = input.required<Goal>();
 
   protected readonly days = computed<DayBar[]>(() => {
-    const goal = this.goalsService.activeGoal();
     const totals: Record<string, number> = {};
-    goal?.logs.forEach(log => {
+    this.goal().logs.forEach(log => {
       totals[log.date] = (totals[log.date] || 0) + Number(log.amount);
     });
 
@@ -45,11 +43,11 @@ export class WeekChartComponent {
   protected readonly weekSummary = computed<string>(() => {
     const weekTotal = this.days().reduce((sum, day) => sum + day.amount, 0);
     return weekTotal
-      ? `${formatAmount(weekTotal, this.unit())} logged during the last 7 days.`
+      ? `${formatAmount(weekTotal, this.goal().unit)} logged during the last 7 days.`
       : 'No progress logged in the last 7 days.';
   });
 
   protected barTitle(day: DayBar): string {
-    return `${day.date}: ${formatAmount(day.amount, this.unit())}`;
+    return `${day.date}: ${formatAmount(day.amount, this.goal().unit)}`;
   }
 }

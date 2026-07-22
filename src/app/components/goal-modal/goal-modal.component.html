@@ -1,6 +1,6 @@
 <div class="modal-inner">
   <div class="modal-head">
-    <h2 class="modal-title">Add a sub-goal to "{{ group()?.name }}"</h2>
+    <h2 class="modal-title">{{ isEdit ? 'Edit goal' : 'Add a goal' }}</h2>
     <button class="close-btn" type="button" aria-label="Close" (click)="close()">&times;</button>
   </div>
   <form (ngSubmit)="submit()">
@@ -28,6 +28,22 @@
       </label>
     </div>
     <label>
+      Group <span class="optional-hint">(optional)</span>
+      <select name="goalGroup" [(ngModel)]="groupSelection">
+        <option value="">No group</option>
+        @for (group of groups(); track group.id) {
+          <option [value]="group.id">{{ group.name }}</option>
+        }
+        <option [value]="newGroupSentinel">+ Create new group…</option>
+      </select>
+    </label>
+    @if (groupSelection === newGroupSentinel) {
+      <label>
+        New group name
+        <input type="text" name="newGroupName" [(ngModel)]="newGroupName" placeholder="Ramp-up Hard Skills" maxlength="80" required />
+      </label>
+    }
+    <label>
       Deadline <span class="optional-hint">(optional)</span>
       <div class="date-input-wrap">
         <input
@@ -43,6 +59,6 @@
         <mat-datepicker #deadlinePicker></mat-datepicker>
       </div>
     </label>
-    <button class="btn btn-primary" type="submit">Create goal</button>
+    <button class="btn btn-primary" type="submit">{{ isEdit ? 'Save changes' : 'Create goal' }}</button>
   </form>
 </div>

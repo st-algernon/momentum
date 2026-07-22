@@ -1,6 +1,6 @@
 <div class="modal-inner">
   <div class="modal-head">
-    <h2 class="modal-title">Create a general goal</h2>
+    <h2 class="modal-title">{{ isEdit ? 'Rename group' : 'New group' }}</h2>
     <button class="close-btn" type="button" aria-label="Close" (click)="close()">&times;</button>
   </div>
   <form (ngSubmit)="submit()">
@@ -8,7 +8,9 @@
       Group name
       <input type="text" name="groupName" [(ngModel)]="name" placeholder="Ramp-up Hard Skills" maxlength="80" required />
     </label>
-    <p class="hint">Add sub-goals to it afterwards — each with its own target and unit (hours, interviews, applications…).</p>
-    <button class="btn btn-primary" type="submit">Create group</button>
+    @if (!isEdit) {
+      <p class="hint">A group is just a way to organize related goals — you can also assign a goal to a group (or none) when you create it.</p>
+    }
+    <button class="btn btn-primary" type="submit">{{ isEdit ? 'Save' : 'Create group' }}</button>
   </form>
 </div>

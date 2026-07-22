@@ -1,0 +1,31 @@
+<div class="goal-card">
+  <a class="goal-card-link" [routerLink]="interactive() ? ['/goal', goal().id] : null">
+    <div class="goal-card-head">
+      <strong>{{ goal().name }}</strong>
+      <span class="goal-card-percent">{{ percent() | number: '1.0-0' }}%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="percent()"></div>
+    </div>
+    <div class="goal-card-caption">
+      {{ formatAmount(completed(), goal().unit) }} of {{ formatAmount(goal().targetAmount, goal().unit) }}
+    </div>
+  </a>
+
+  @if (interactive()) {
+    <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Goal actions">⋮</button>
+  }
+</div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="editGoal()">Edit</button>
+  <button mat-menu-item [matMenuTriggerFor]="moveMenu">Move to group</button>
+  <button mat-menu-item class="danger-item" (click)="deleteGoal()">Delete</button>
+</mat-menu>
+
+<mat-menu #moveMenu="matMenu">
+  <button mat-menu-item (click)="moveTo(null)">No group</button>
+  @for (group of groups(); track group.id) {
+    <button mat-menu-item (click)="moveTo(group.id)">{{ group.name }}</button>
+  }
+</mat-menu>

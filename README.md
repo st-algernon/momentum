@@ -1,26 +1,31 @@
-# SkillTrack
+# Momentum
 
 A lightweight progress tracker, built with Angular. Not just for studying — track anything with a
-target and a unit: hours, interviews, applications, whatever.
+target and a unit: hours, interviews, applications, whatever you're working toward.
 
 ## Features
 
-- Organize work into **groups** (a general goal, e.g. "Find a new job") each containing **sub-goals**
-  (e.g. "Interviews counter", "Applications counter") with their own target and unit
-- See progress per sub-goal, and an overall rolled-up progress bar for the whole group
-- Log dated entries with notes against any sub-goal
-- View completion percentage, remaining amount, streak, and daily average
-- See a simple seven-day activity chart
-- Export/import a local JSON backup, or back up to a private GitHub Gist
+- Create **goals** with a target and a unit (hours, interviews, applications, anything) —
+  optionally organized into **groups** (e.g. "Find a new job" containing "Interviews",
+  "Applications", "Offers")
+- **Dashboard** — every goal at a glance, grouped or not, with a rolled-up progress bar per group
+- **Goal page** — log dated entries with notes, see completion %, remaining amount, streak, daily
+  average, and a 7-day activity chart
+- **Statistics page** — a clean, read-only summary of everything, designed to screenshot and share
+- **Settings page** — configure backups
+- Edit or delete any goal/group from its context menu (⋮)
+- Export/import a local JSON backup, or back up to a private GitHub Gist — with optional automatic
+  background sync
 - Saves data locally in your browser using `localStorage`
 
 ## Backing up to a GitHub Gist
 
-Click **Backup to gist** in the toolbar, then:
+Open **Settings**, then:
 
 1. Create a [personal access token](https://github.com/settings/tokens/new?scopes=gist) with the `gist` scope.
 2. Paste it in. The first backup creates a new private gist; later backups update the same one.
-3. Use **Restore from gist** on another device/browser to pull the latest backup down.
+3. Turn on **Automatically sync** to have it back up ~4 seconds after you log progress, or use
+   **Backup now** / **Restore from gist** manually.
 
 The token is stored only in this browser's `localStorage` and is sent only to `api.github.com` — never
 to any other server. Anyone with access to this browser profile can read it, so use a token scoped to
@@ -53,4 +58,5 @@ To enable it on a new repo: **Settings → Pages → Source → GitHub Actions**
 
 ## Important
 
-Your data is stored only in the current browser. Use **Export data** or **Backup to gist** to create backups.
+Your data is stored only in the current browser. Use **Export data** or gist sync (both in
+**Settings**) to create backups.

@@ -1,8 +1,9 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
+import { Injectable, effect, signal } from '@angular/core';
 import { AppState, Goal, GoalGroup, LogEntry } from '../models/goal.model';
 
-const STORAGE_KEY = 'skilltrack-data-v2';
-const LEGACY_STORAGE_KEY = 'skilltrack-data-v1';
+const STORAGE_KEY = 'momentum-data-v3';
+const V2_STORAGE_KEY = 'skilltrack-data-v2';
+const V1_STORAGE_KEY = 'skilltrack-data-v1';
 
 function uid(): string {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -22,7 +23,21 @@ export function formatAmount(value: number, unit: string): string {
   return unit === 'hours' ? `${rounded}h` : `${rounded} ${unit}`;
 }
 
-interface LegacyGoal {
+interface V2Goal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  unit: string;
+  deadline: string | null;
+  logs: LogEntry[];
+  createdAt: number;
+}
+
+interface V2State {
+  groups: { id: string; name: string; goals: V2Goal[]; createdAt: number }[];
+}
+
+interface V1Goal {
   id: string;
   name: string;
   targetHours: number;
@@ -31,14 +46,29 @@ interface LegacyGoal {
   createdAt: number;
 }
 
-interface LegacyState {
-  goals: LegacyGoal[];
-  activeGoalId: string | null;
+interface V1State {
+  goals: V1Goal[];
 }
 
-function migrateLegacyState(legacy: LegacyState): AppState {
+function flattenV2(state: V2State): AppState {
+  const groups: GoalGroup[] = state.groups.map(group => ({
+    id: group.id,
+    name: group.name,
+    createdAt: group.createdAt
+  }));
+  const goals: Goal[] = state.groups.flatMap(group =>
+    group.goals.map(goal => ({ ...goal, groupId: group.id }))
+  );
+  return { groups, goals };
+}
+
+function migrateV1(legacy: V1State): AppState {
+  if (!legacy.goals.length) return { groups: [], goals: [] };
+
+  const group: GoalGroup = { id: uid(), name: 'My Goals', createdAt: Date.now() };
   const goals: Goal[] = legacy.goals.map(goal => ({
     id: goal.id,
+    groupId: group.id,
     name: goal.name,
     targetAmount: goal.targetHours,
     unit: 'hours',
@@ -53,28 +83,32 @@ function migrateLegacyState(legacy: LegacyState): AppState {
     }))
   }));
 
-  if (!goals.length) return { groups: [], activeGroupId: null, activeGoalId: null };
-
-  const group: GoalGroup = { id: uid(), name: 'My Goals', goals, createdAt: Date.now() };
-  return { groups: [group], activeGroupId: group.id, activeGoalId: legacy.activeGoalId };
+  return { groups: [group], goals };
 }
 
 function loadState(): AppState {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
-    if (saved && Array.isArray(saved.groups)) return saved;
+    if (saved && Array.isArray(saved.groups) && Array.isArray(saved.goals)) return saved;
   } catch (error) {
     console.warn('Could not read saved data.', error);
   }
 
   try {
-    const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) ?? 'null');
-    if (legacy && Array.isArray(legacy.goals)) return migrateLegacyState(legacy);
+    const v2 = JSON.parse(localStorage.getItem(V2_STORAGE_KEY) ?? 'null');
+    if (v2 && Array.isArray(v2.groups)) return flattenV2(v2);
+  } catch (error) {
+    console.warn('Could not read v2 data.', error);
+  }
+
+  try {
+    const v1 = JSON.parse(localStorage.getItem(V1_STORAGE_KEY) ?? 'null');
+    if (v1 && Array.isArray(v1.goals)) return migrateV1(v1);
   } catch (error) {
     console.warn('Could not read legacy data.', error);
   }
 
-  return { groups: [], activeGroupId: null, activeGoalId: null };
+  return { groups: [], goals: [] };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -82,71 +116,52 @@ export class GoalsService {
   private readonly initial = loadState();
 
   readonly groups = signal<GoalGroup[]>(this.initial.groups);
-  readonly activeGroupId = signal<string | null>(this.initial.activeGroupId);
-  readonly activeGoalId = signal<string | null>(this.initial.activeGoalId);
-
-  readonly activeGroup = computed<GoalGroup | null>(() => {
-    const groups = this.groups();
-    return groups.find(group => group.id === this.activeGroupId()) ?? groups[0] ?? null;
-  });
-
-  readonly activeGoal = computed<Goal | null>(() => {
-    const group = this.activeGroup();
-    if (!group) return null;
-    return group.goals.find(goal => goal.id === this.activeGoalId()) ?? group.goals[0] ?? null;
-  });
+  readonly goals = signal<Goal[]>(this.initial.goals);
 
   constructor() {
     effect(() => {
-      const state: AppState = {
-        groups: this.groups(),
-        activeGroupId: this.activeGroupId(),
-        activeGoalId: this.activeGoalId()
-      };
+      const state: AppState = { groups: this.groups(), goals: this.goals() };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     });
-
-    effect(() => {
-      const groups = this.groups();
-      const activeId = this.activeGroupId();
-      if (groups.length && !groups.some(group => group.id === activeId)) {
-        this.activeGroupId.set(groups[0].id);
-      }
-    });
-
-    effect(() => {
-      const group = this.activeGroup();
-      const activeGoalId = this.activeGoalId();
-      if (group?.goals.length && !group.goals.some(goal => goal.id === activeGoalId)) {
-        this.activeGoalId.set(group.goals[0].id);
-      }
-    });
   }
 
-  selectGroup(id: string): void {
-    this.activeGroupId.set(id);
+  goalById(id: string | null | undefined): Goal | undefined {
+    if (!id) return undefined;
+    return this.goals().find(goal => goal.id === id);
   }
 
-  selectGoal(id: string): void {
-    this.activeGoalId.set(id);
+  groupById(id: string | null | undefined): GoalGroup | undefined {
+    if (!id) return undefined;
+    return this.groups().find(group => group.id === id);
   }
 
-  createGroup(name: string): void {
-    const group: GoalGroup = { id: uid(), name, goals: [], createdAt: Date.now() };
+  ungroupedGoals(): Goal[] {
+    return this.goals().filter(goal => !goal.groupId);
+  }
+
+  goalsInGroup(groupId: string): Goal[] {
+    return this.goals().filter(goal => goal.groupId === groupId);
+  }
+
+  createGroup(name: string): GoalGroup {
+    const group: GoalGroup = { id: uid(), name, createdAt: Date.now() };
     this.groups.update(groups => [group, ...groups]);
-    this.activeGroupId.set(group.id);
+    return group;
+  }
+
+  renameGroup(id: string, name: string): void {
+    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, name } : group)));
   }
 
   deleteGroup(id: string): void {
     this.groups.update(groups => groups.filter(group => group.id !== id));
-    if (this.activeGroupId() === id) {
-      this.activeGroupId.set(this.groups()[0]?.id ?? null);
-    }
+    this.goals.update(goals => goals.filter(goal => goal.groupId !== id));
   }
 
-  createGoal(groupId: string, name: string, targetAmount: number, unit: string, deadline: string | null): void {
+  createGoal(name: string, targetAmount: number, unit: string, deadline: string | null, groupId: string | null): Goal {
     const goal: Goal = {
       id: uid(),
+      groupId,
       name,
       targetAmount,
       unit: unit.trim().toLowerCase() || 'hours',
@@ -154,63 +169,53 @@ export class GoalsService {
       logs: [],
       createdAt: Date.now()
     };
-    this.groups.update(groups =>
-      groups.map(group => (group.id === groupId ? { ...group, goals: [goal, ...group.goals] } : group))
-    );
-    this.activeGoalId.set(goal.id);
+    this.goals.update(goals => [goal, ...goals]);
+    return goal;
   }
 
-  deleteGoal(groupId: string, goalId: string): void {
-    this.groups.update(groups =>
-      groups.map(group =>
-        group.id === groupId ? { ...group, goals: group.goals.filter(goal => goal.id !== goalId) } : group
+  updateGoal(
+    id: string,
+    patch: Partial<Pick<Goal, 'name' | 'targetAmount' | 'unit' | 'deadline' | 'groupId'>>
+  ): void {
+    this.goals.update(goals =>
+      goals.map(goal =>
+        goal.id === id
+          ? { ...goal, ...patch, unit: (patch.unit ?? goal.unit).trim().toLowerCase() || 'hours' }
+          : goal
       )
     );
-    if (this.activeGoalId() === goalId) {
-      const group = this.groups().find(g => g.id === groupId);
-      this.activeGoalId.set(group?.goals[0]?.id ?? null);
-    }
   }
 
-  addLog(groupId: string, goalId: string, date: string, amount: number, note: string): void {
+  moveGoalToGroup(id: string, groupId: string | null): void {
+    this.goals.update(goals => goals.map(goal => (goal.id === id ? { ...goal, groupId } : goal)));
+  }
+
+  deleteGoal(id: string): void {
+    this.goals.update(goals => goals.filter(goal => goal.id !== id));
+  }
+
+  addLog(goalId: string, date: string, amount: number, note: string): void {
     const entry: LogEntry = { id: uid(), date, amount, note: note.trim(), createdAt: Date.now() };
-    this.groups.update(groups =>
-      groups.map(group =>
-        group.id === groupId
-          ? {
-              ...group,
-              goals: group.goals.map(goal =>
-                goal.id === goalId ? { ...goal, logs: [...goal.logs, entry] } : goal
-              )
-            }
-          : group
-      )
+    this.goals.update(goals =>
+      goals.map(goal => (goal.id === goalId ? { ...goal, logs: [...goal.logs, entry] } : goal))
     );
   }
 
-  deleteLog(groupId: string, goalId: string, logId: string): void {
-    this.groups.update(groups =>
-      groups.map(group =>
-        group.id === groupId
-          ? {
-              ...group,
-              goals: group.goals.map(goal =>
-                goal.id === goalId ? { ...goal, logs: goal.logs.filter(log => log.id !== logId) } : goal
-              )
-            }
-          : group
+  deleteLog(goalId: string, logId: string): void {
+    this.goals.update(goals =>
+      goals.map(goal =>
+        goal.id === goalId ? { ...goal, logs: goal.logs.filter(log => log.id !== logId) } : goal
       )
     );
   }
 
   importState(state: AppState): void {
     this.groups.set(state.groups);
-    this.activeGroupId.set(state.activeGroupId ?? state.groups[0]?.id ?? null);
-    this.activeGoalId.set(state.activeGoalId ?? state.groups[0]?.goals[0]?.id ?? null);
+    this.goals.set(state.goals);
   }
 
   exportState(): AppState {
-    return { groups: this.groups(), activeGroupId: this.activeGroupId(), activeGoalId: this.activeGoalId() };
+    return { groups: this.groups(), goals: this.goals() };
   }
 
   static totalAmount(goal: Goal): number {
@@ -222,10 +227,10 @@ export class GoalsService {
     return Math.min(100, (GoalsService.totalAmount(goal) / goal.targetAmount) * 100);
   }
 
-  static groupPercent(group: GoalGroup): number {
-    if (!group.goals.length) return 0;
-    const total = group.goals.reduce((sum, goal) => sum + GoalsService.goalPercent(goal), 0);
-    return total / group.goals.length;
+  static groupPercent(goals: Goal[]): number {
+    if (!goals.length) return 0;
+    const total = goals.reduce((sum, goal) => sum + GoalsService.goalPercent(goal), 0);
+    return total / goals.length;
   }
 
   static currentStreak(goal: Goal): number {

@@ -1,14 +1,23 @@
 import { Injectable, signal } from '@angular/core';
 import { AppState } from '../models/goal.model';
 
-const TOKEN_KEY = 'skilltrack-gist-token';
-const GIST_ID_KEY = 'skilltrack-gist-id';
-const GIST_FILENAME = 'skilltrack-backup.json';
+const TOKEN_KEY = 'momentum-gist-token';
+const GIST_ID_KEY = 'momentum-gist-id';
+const LEGACY_TOKEN_KEY = 'skilltrack-gist-token';
+const LEGACY_GIST_ID_KEY = 'skilltrack-gist-id';
+const GIST_FILENAME = 'momentum-backup.json';
+const LEGACY_GIST_FILENAME = 'skilltrack-backup.json';
+
+function readWithLegacyFallback(key: string, legacyKey: string): string {
+  const value = localStorage.getItem(key);
+  if (value) return value;
+  return localStorage.getItem(legacyKey) ?? '';
+}
 
 @Injectable({ providedIn: 'root' })
 export class GistService {
-  readonly token = signal<string>(localStorage.getItem(TOKEN_KEY) ?? '');
-  readonly gistId = signal<string>(localStorage.getItem(GIST_ID_KEY) ?? '');
+  readonly token = signal<string>(readWithLegacyFallback(TOKEN_KEY, LEGACY_TOKEN_KEY));
+  readonly gistId = signal<string>(readWithLegacyFallback(GIST_ID_KEY, LEGACY_GIST_ID_KEY));
 
   setCredentials(token: string, gistId: string): void {
     this.token.set(token);
@@ -29,7 +38,7 @@ export class GistService {
     if (!token) throw new Error('Add a GitHub token first.');
 
     const body = {
-      description: 'SkillTrack backup',
+      description: 'Momentum backup',
       public: false,
       files: { [GIST_FILENAME]: { content: JSON.stringify(state, null, 2) } }
     };
@@ -75,12 +84,14 @@ export class GistService {
     }
 
     const json = await response.json();
-    const file = json.files?.[GIST_FILENAME];
+    const file = json.files?.[GIST_FILENAME] ?? json.files?.[LEGACY_GIST_FILENAME];
     if (!file) throw new Error(`Gist has no "${GIST_FILENAME}" file.`);
 
     const content = file.truncated ? await (await fetch(file.raw_url)).text() : file.content;
     const parsed = JSON.parse(content);
-    if (!parsed || !Array.isArray(parsed.groups)) throw new Error('Backup file in the gist is not valid.');
+    if (!parsed || !Array.isArray(parsed.groups) || !Array.isArray(parsed.goals)) {
+      throw new Error('Backup file in the gist is not valid.');
+    }
     return parsed as AppState;
   }
 }

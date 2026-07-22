@@ -20,7 +20,7 @@
         </div>
       </label>
       <label class="unit-label">
-        {{ goal()?.unit || 'Amount' }}
+        {{ goal().unit }}
         <input type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
       </label>
     </div>

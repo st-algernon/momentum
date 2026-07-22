@@ -8,6 +8,7 @@ export interface LogEntry {
 
 export interface Goal {
   id: string;
+  groupId: string | null;
   name: string;
   targetAmount: number;
   unit: string;
@@ -19,12 +20,10 @@ export interface Goal {
 export interface GoalGroup {
   id: string;
   name: string;
-  goals: Goal[];
   createdAt: number;
 }
 
 export interface AppState {
   groups: GoalGroup[];
-  activeGroupId: string | null;
-  activeGoalId: string | null;
+  goals: Goal[];
 }

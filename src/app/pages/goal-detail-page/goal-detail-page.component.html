@@ -1,0 +1,75 @@
+@if (goal(); as g) {
+  <div class="breadcrumb">
+    <a routerLink="/">Dashboard</a>
+    <span class="crumb-sep">/</span>
+    <span>{{ group()?.name ?? 'Ungrouped' }}</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ g.name }}</span>
+  </div>
+
+  <div class="detail-grid">
+    <div class="card main-col">
+      <div class="detail-head">
+        <h1>{{ g.name }}</h1>
+        <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Goal actions">⋮</button>
+      </div>
+
+      <section class="hero">
+        <div class="progress-track" aria-label="Goal progress">
+          <div class="progress-fill" [style.width.%]="percent()"></div>
+        </div>
+        <div class="progress-caption">
+          <span>{{ formatAmount(completed(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
+          <span>{{ percent() | number: '1.0-0' }}%</span>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div class="stat">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value">{{ formatAmount(completed(), g.unit) }}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Remaining</div>
+          <div class="stat-value">{{ formatAmount(remaining(), g.unit) }}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Current streak</div>
+          <div class="stat-value">{{ streak() }} day{{ streak() === 1 ? '' : 's' }}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Daily average</div>
+          <div class="stat-value">{{ formatAmount(average(), g.unit) }}</div>
+        </div>
+      </section>
+
+      <app-log-form [goal]="g"></app-log-form>
+    </div>
+
+    <aside class="side-stack">
+      <section class="card">
+        <app-week-chart [goal]="g"></app-week-chart>
+      </section>
+
+      <section class="card">
+        <app-history-list [goal]="g"></app-history-list>
+      </section>
+
+      <section class="card tip">
+        <h2>Keep momentum</h2>
+        <p>Set a small daily minimum. Even one small logged entry keeps your streak alive and makes a big target feel manageable.</p>
+      </section>
+    </aside>
+  </div>
+} @else {
+  <div class="empty-state">
+    <h2>Goal not found</h2>
+    <p>It may have been deleted.</p>
+    <a class="btn btn-primary" routerLink="/">Back to Dashboard</a>
+  </div>
+}
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="editGoal()">Edit</button>
+  <button mat-menu-item class="danger-item" (click)="deleteGoal()">Delete</button>
+</mat-menu>

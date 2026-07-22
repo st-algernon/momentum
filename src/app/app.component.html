@@ -1,79 +1,34 @@
-<main class="app-shell">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">ST</div>
-      <div>
-        <h1>SkillTrack</h1>
-        <p class="subtitle">Turn progress into visible momentum.</p>
-      </div>
-    </div>
-    <div class="toolbar">
-      <button class="btn btn-secondary" type="button" (click)="exportData()">Export data</button>
-      <button class="btn btn-secondary" type="button" (click)="triggerImport()">Import data</button>
-      <button class="btn btn-secondary" type="button" (click)="openGistBackupModal()">Backup to gist</button>
-      <button class="btn btn-primary" type="button" (click)="openGroupModal()">+ New group</button>
-      <input #importFile type="file" accept="application/json" class="hidden" (change)="onImportFile($event)" />
-    </div>
-  </header>
+<header class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" routerLink="/">
+      <div class="brand-mark">M</div>
+      <span class="brand-name">Momentum</span>
+    </a>
 
-  <section class="grid">
-    <div class="card">
-      <app-group-list></app-group-list>
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+      <a routerLink="/stats" routerLinkActive="active">Statistics</a>
+      <a routerLink="/settings" routerLinkActive="active">Settings</a>
+    </nav>
 
-      @if (!goalsService.groups().length) {
-        <div class="empty-state">
-          <h2>No groups yet</h2>
-          <p>Create a general goal such as "Find a new job" or "Ramp-up Hard Skills", then add sub-goals to it.</p>
-          <button class="btn btn-primary" type="button" (click)="openGroupModal()">Create your first group</button>
-        </div>
-      } @else {
-        <app-group-summary></app-group-summary>
-        <app-goal-list></app-goal-list>
-
-        @if (goalsService.activeGroup(); as group) {
-          @if (!group.goals.length) {
-            <div class="empty-state">
-              <h2>No sub-goals yet</h2>
-              <p>Add sub-goals like ".NET", "Angular" or "Interviews counter" to start tracking progress.</p>
-              <button class="btn btn-primary" type="button" (click)="openGoalModal()">Add your first sub-goal</button>
-            </div>
+    <a class="sync-indicator" routerLink="/settings" [class.error]="autoSync.status() === 'error'">
+      @switch (autoSync.status()) {
+        @case ('syncing') { Syncing… }
+        @case ('error') { Sync failed }
+        @default {
+          @if (autoSync.enabled()) {
+            Synced
           } @else {
-            <div class="add-goal-row">
-              <button class="btn btn-secondary" type="button" (click)="openGoalModal()">+ New sub-goal</button>
-            </div>
-            <app-dashboard></app-dashboard>
+            Sync off
           }
         }
       }
-    </div>
+    </a>
+  </div>
+</header>
 
-    <aside class="side-stack">
-      @if (goalsService.activeGoal(); as activeGoal) {
-        <section class="card">
-          <app-week-chart></app-week-chart>
-        </section>
-      }
-
-      <section class="card tip">
-        <h2>Keep momentum</h2>
-        <p>Set a small daily minimum. Even one small logged entry keeps your streak alive and makes a big target feel manageable.</p>
-      </section>
-
-      @if (goalsService.activeGroup(); as activeGroup) {
-        <section class="card">
-          <h2>Actions</h2>
-          <div class="action-stack">
-            @if (goalsService.activeGoal(); as activeGoal) {
-              <button class="btn btn-danger" type="button" (click)="deleteActiveGoal()">Delete active sub-goal</button>
-            }
-            <button class="btn btn-danger" type="button" (click)="deleteActiveGroup()">Delete active group</button>
-          </div>
-        </section>
-      }
-    </aside>
-  </section>
-
-  <p class="footer-note">Your data is saved locally in this browser. Export it or back it up to a gist occasionally.</p>
+<main class="page-container">
+  <router-outlet></router-outlet>
 </main>
 
 <app-toast></app-toast>

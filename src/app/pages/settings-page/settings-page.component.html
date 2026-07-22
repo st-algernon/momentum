@@ -1,0 +1,62 @@
+<h1>Settings</h1>
+<p class="subtitle">Configure sync and manage your data.</p>
+
+<section class="card settings-section">
+  <h2>GitHub Gist sync</h2>
+  <p class="hint">
+    Create a <a href="https://github.com/settings/tokens/new?scopes=gist&description=Momentum" target="_blank" rel="noopener">personal access token</a>
+    with the <strong>gist</strong> scope. It's stored only in this browser's local storage, never sent anywhere except
+    directly to api.github.com.
+  </p>
+
+  <div class="form-grid">
+    <label>
+      GitHub token
+      <input type="password" name="gistToken" [(ngModel)]="token" placeholder="ghp_…" autocomplete="off" />
+    </label>
+    <label>
+      Gist ID <span class="optional-hint">(filled in automatically)</span>
+      <input type="text" name="gistId" [(ngModel)]="gistId" placeholder="created on first backup" />
+    </label>
+  </div>
+
+  <label class="toggle-row">
+    <input type="checkbox" [checked]="autoSync.enabled()" (change)="toggleAutoSync($event)" />
+    Automatically sync to this gist whenever I log progress
+  </label>
+
+  <p class="sync-status">
+    @switch (autoSync.status()) {
+      @case ('syncing') { Syncing… }
+      @case ('error') { Sync failed: {{ autoSync.errorMessage() }} }
+      @default {
+        @if (autoSync.lastSyncedAt()) {
+          Last synced {{ autoSync.lastSyncedAt() | date: 'medium' }}
+        } @else {
+          Not synced yet
+        }
+      }
+    }
+  </p>
+
+  <div class="actions">
+    <button class="btn btn-secondary" type="button" (click)="forgetToken()">Forget saved token</button>
+    <button class="btn btn-secondary" type="button" [disabled]="busy()" (click)="restoreNow()">Restore from gist</button>
+    <button class="btn btn-primary" type="button" [disabled]="busy()" (click)="backupNow()">Backup now</button>
+  </div>
+</section>
+
+<section class="card settings-section">
+  <h2>Local backup</h2>
+  <p class="hint">Download a JSON snapshot of everything, or restore from one.</p>
+  <div class="actions">
+    <button class="btn btn-secondary" type="button" (click)="triggerImport()">Import data</button>
+    <button class="btn btn-primary" type="button" (click)="exportData()">Export data</button>
+    <input #importFile type="file" accept="application/json" class="hidden" (change)="onImportFile($event)" />
+  </div>
+</section>
+
+<section class="card settings-section">
+  <h2>About</h2>
+  <p class="hint">Momentum — a lightweight progress tracker for any goal with a target and a unit. Your data is stored only in this browser unless you back it up.</p>
+</section>

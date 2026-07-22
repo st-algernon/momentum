@@ -1,0 +1,47 @@
+import { Component, computed, inject, input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { Goal, GoalGroup } from '../../models/goal.model';
+import { GoalsService } from '../../services/goals.service';
+import { ToastService } from '../../services/toast.service';
+import { GoalCardComponent, DIALOG_WIDTH } from '../goal-card/goal-card.component';
+import { GoalModalComponent } from '../goal-modal/goal-modal.component';
+import { GroupModalComponent } from '../group-modal/group-modal.component';
+
+@Component({
+  selector: 'app-group-section',
+  standalone: true,
+  imports: [DecimalPipe, MatMenuModule, GoalCardComponent],
+  templateUrl: './group-section.component.html',
+  styleUrl: './group-section.component.css'
+})
+export class GroupSectionComponent {
+  private readonly goalsService = inject(GoalsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly toast = inject(ToastService);
+
+  readonly group = input.required<GoalGroup>();
+  readonly goals = input.required<Goal[]>();
+  readonly interactive = input(true);
+
+  protected readonly percent = computed(() => GoalsService.groupPercent(this.goals()));
+
+  protected renameGroup(): void {
+    this.dialog.open(GroupModalComponent, { width: DIALOG_WIDTH, data: { mode: 'edit', group: this.group() } });
+  }
+
+  protected addGoalHere(): void {
+    this.dialog.open(GoalModalComponent, { width: DIALOG_WIDTH, data: { mode: 'create', defaultGroupId: this.group().id } });
+  }
+
+  protected deleteGroup(): void {
+    const count = this.goals().length;
+    const suffix = count ? ` and its ${count} goal${count === 1 ? '' : 's'}` : '';
+    const confirmed = window.confirm(`Delete "${this.group().name}"${suffix}?`);
+    if (!confirmed) return;
+
+    this.goalsService.deleteGroup(this.group().id);
+    this.toast.show('Group deleted');
+  }
+}

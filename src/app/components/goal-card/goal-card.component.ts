@@ -1,0 +1,49 @@
+import { Component, computed, inject, input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { Goal } from '../../models/goal.model';
+import { GoalsService, formatAmount } from '../../services/goals.service';
+import { ToastService } from '../../services/toast.service';
+import { GoalModalComponent } from '../goal-modal/goal-modal.component';
+
+export const DIALOG_WIDTH = 'min(520px, calc(100vw - 28px))';
+
+@Component({
+  selector: 'app-goal-card',
+  standalone: true,
+  imports: [DecimalPipe, RouterLink, MatMenuModule],
+  templateUrl: './goal-card.component.html',
+  styleUrl: './goal-card.component.css'
+})
+export class GoalCardComponent {
+  private readonly goalsService = inject(GoalsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly toast = inject(ToastService);
+
+  readonly goal = input.required<Goal>();
+  readonly interactive = input(true);
+
+  protected readonly groups = this.goalsService.groups;
+  protected readonly percent = computed(() => GoalsService.goalPercent(this.goal()));
+  protected readonly completed = computed(() => GoalsService.totalAmount(this.goal()));
+
+  protected formatAmount = formatAmount;
+
+  protected editGoal(): void {
+    this.dialog.open(GoalModalComponent, { width: DIALOG_WIDTH, data: { mode: 'edit', goal: this.goal() } });
+  }
+
+  protected moveTo(groupId: string | null): void {
+    this.goalsService.moveGoalToGroup(this.goal().id, groupId);
+    this.toast.show('Goal moved');
+  }
+
+  protected deleteGoal(): void {
+    const confirmed = window.confirm(`Delete "${this.goal().name}" and all of its activity?`);
+    if (!confirmed) return;
+    this.goalsService.deleteGoal(this.goal().id);
+    this.toast.show('Goal deleted');
+  }
+}

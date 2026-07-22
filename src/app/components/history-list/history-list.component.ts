@@ -1,5 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
-import { LogEntry } from '../../models/goal.model';
+import { Component, computed, inject, input } from '@angular/core';
+import { Goal, LogEntry } from '../../models/goal.model';
 import { GoalsService, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -13,13 +13,11 @@ export class HistoryListComponent {
   private readonly goalsService = inject(GoalsService);
   private readonly toast = inject(ToastService);
 
-  protected readonly unit = computed(() => this.goalsService.activeGoal()?.unit ?? 'hours');
+  readonly goal = input.required<Goal>();
 
-  protected readonly logs = computed<LogEntry[]>(() => {
-    const goal = this.goalsService.activeGoal();
-    if (!goal) return [];
-    return [...goal.logs].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt).slice(0, 12);
-  });
+  protected readonly logs = computed<LogEntry[]>(() =>
+    [...this.goal().logs].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt).slice(0, 12)
+  );
 
   protected formatAmount = formatAmount;
 
@@ -28,10 +26,7 @@ export class HistoryListComponent {
   }
 
   protected removeLog(log: LogEntry): void {
-    const group = this.goalsService.activeGroup();
-    const goal = this.goalsService.activeGoal();
-    if (!group || !goal) return;
-    this.goalsService.deleteLog(group.id, goal.id, log.id);
+    this.goalsService.deleteLog(this.goal().id, log.id);
     this.toast.show('Entry deleted');
   }
 }

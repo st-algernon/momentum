@@ -1,0 +1,35 @@
+<section class="group-section">
+  <div class="group-section-head">
+    <div>
+      <h3>{{ group().name }}</h3>
+      <span class="group-section-meta">
+        {{ goals().length }} goal{{ goals().length === 1 ? '' : 's' }} · {{ percent() | number: '1.0-0' }}% overall
+      </span>
+    </div>
+    @if (interactive()) {
+      <div class="group-section-actions">
+        <button class="text-btn" type="button" (click)="addGoalHere()">+ Add goal</button>
+        <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Group actions">⋮</button>
+      </div>
+    }
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" [style.width.%]="percent()"></div>
+  </div>
+
+  @if (goals().length) {
+    <div class="goal-grid">
+      @for (goal of goals(); track goal.id) {
+        <app-goal-card [goal]="goal" [interactive]="interactive()"></app-goal-card>
+      }
+    </div>
+  } @else {
+    <p class="empty-hint">No goals in this group yet.</p>
+  }
+</section>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="renameGroup()">Rename</button>
+  <button mat-menu-item class="danger-item" (click)="deleteGroup()">Delete group</button>
+</mat-menu>

@@ -1,0 +1,49 @@
+<div class="stats-page">
+  <header class="stats-header">
+    <div class="stats-brand">
+      <div class="brand-mark">M</div>
+      <div>
+        <h1>Momentum — Progress Report</h1>
+        <p class="subtitle">Generated {{ generatedAt | date: 'medium' }}</p>
+      </div>
+    </div>
+    @if (hasAnything()) {
+      <div class="overall">
+        <div class="overall-percent">{{ overallPercent() | number: '1.0-0' }}%</div>
+        <div class="overall-label">overall progress</div>
+      </div>
+    }
+  </header>
+
+  @if (!hasAnything()) {
+    <div class="empty-state">
+      <h2>Nothing to show yet</h2>
+      <p>Once you've logged some progress, this page becomes a clean summary you can screenshot and share.</p>
+    </div>
+  } @else {
+    @if (ungroupedGoals().length) {
+      <section class="stats-section">
+        <h2 class="section-title">Ungrouped goals</h2>
+        <div class="goal-grid">
+          @for (goal of ungroupedGoals(); track goal.id) {
+            <app-goal-card [goal]="goal" [interactive]="false"></app-goal-card>
+          }
+        </div>
+      </section>
+    }
+
+    @for (group of groups(); track group.id) {
+      <section class="stats-section">
+        <div class="group-title-row">
+          <h2 class="section-title">{{ group.name }}</h2>
+          <span class="group-percent">{{ groupPercent(group.id) | number: '1.0-0' }}% overall</span>
+        </div>
+        <div class="goal-grid">
+          @for (goal of goalsByGroup().get(group.id) ?? []; track goal.id) {
+            <app-goal-card [goal]="goal" [interactive]="false"></app-goal-card>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

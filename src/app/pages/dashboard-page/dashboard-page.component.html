@@ -1,0 +1,35 @@
+<div class="page-head">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="subtitle">Every goal, grouped or not, at a glance.</p>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-secondary" type="button" (click)="openNewGroup()">+ New group</button>
+    <button class="btn btn-primary" type="button" (click)="openNewGoal()">+ New goal</button>
+  </div>
+</div>
+
+@if (!hasAnything()) {
+  <div class="empty-state">
+    <h2>Nothing tracked yet</h2>
+    <p>Create your first goal — anything with a target and a unit: hours, interviews, applications, whatever you're working toward.</p>
+    <button class="btn btn-primary" type="button" (click)="openNewGoal()">Create your first goal</button>
+  </div>
+} @else {
+  @if (ungroupedGoals().length) {
+    <section class="ungrouped-section">
+      @if (groups().length) {
+        <h3 class="section-label">Ungrouped</h3>
+      }
+      <div class="goal-grid">
+        @for (goal of ungroupedGoals(); track goal.id) {
+          <app-goal-card [goal]="goal"></app-goal-card>
+        }
+      </div>
+    </section>
+  }
+
+  @for (group of groups(); track group.id) {
+    <app-group-section [group]="group" [goals]="goalsByGroup().get(group.id) ?? []"></app-group-section>
+  }
+}
