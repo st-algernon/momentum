@@ -1,0 +1,56 @@
+<main class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">ST</div>
+      <div>
+        <h1>SkillTrack</h1>
+        <p class="subtitle">Turn learning hours into visible progress.</p>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-secondary" type="button" (click)="exportData()">Export data</button>
+      <button class="btn btn-secondary" type="button" (click)="triggerImport()">Import data</button>
+      <button class="btn btn-primary" type="button" (click)="openGoalModal()">+ New goal</button>
+      <input #importFile type="file" accept="application/json" class="hidden" (change)="onImportFile($event)" />
+    </div>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <app-goal-list></app-goal-list>
+
+      @if (!goalsService.goals().length) {
+        <div class="empty-state">
+          <h2>No goals yet</h2>
+          <p>Create a goal such as "Study system design for 100 hours."</p>
+          <button class="btn btn-primary" type="button" (click)="openGoalModal()">Create your first goal</button>
+        </div>
+      } @else {
+        <app-dashboard></app-dashboard>
+      }
+    </div>
+
+    <aside class="side-stack">
+      <section class="card">
+        <app-week-chart></app-week-chart>
+      </section>
+
+      <section class="card tip">
+        <h2>Keep momentum</h2>
+        <p>Set a small daily minimum. Even 30 focused minutes keeps your streak alive and makes a 100-hour target feel manageable.</p>
+      </section>
+
+      @if (goalsService.activeGoal(); as activeGoal) {
+        <section class="card">
+          <h2>Goal actions</h2>
+          <button class="btn btn-danger" type="button" style="width:100%" (click)="deleteActiveGoal()">Delete active goal</button>
+        </section>
+      }
+    </aside>
+  </section>
+
+  <p class="footer-note">Your data is saved locally in this browser. Export it occasionally as a backup.</p>
+</main>
+
+<app-goal-modal></app-goal-modal>
+<app-toast></app-toast>

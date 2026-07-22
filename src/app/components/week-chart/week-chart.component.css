@@ -1,0 +1,31 @@
+.subtitle {
+  color: var(--muted);
+  margin: 0;
+}
+
+.mini-bar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: end;
+  gap: 6px;
+  height: 110px;
+  margin-top: 12px;
+}
+
+.mini-day {
+  height: var(--height, 8%);
+  min-height: 6px;
+  background: linear-gradient(180deg, #8c6ff7, var(--primary));
+  border-radius: 7px 7px 3px 3px;
+  position: relative;
+}
+
+.mini-day::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 0.72rem;
+}

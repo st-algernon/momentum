@@ -1,0 +1,25 @@
+<dialog #dialog (click)="onBackdropClick($event)">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2 style="margin:0">Create a learning goal</h2>
+      <button class="close-btn" type="button" aria-label="Close" (click)="close()">&times;</button>
+    </div>
+    <form (ngSubmit)="submit()">
+      <label>
+        Goal name
+        <input #nameInput type="text" name="goalName" [(ngModel)]="name" placeholder="Study system design" maxlength="80" required />
+      </label>
+      <div class="form-grid">
+        <label>
+          Target hours
+          <input type="number" name="goalTarget" [(ngModel)]="targetHours" min="1" step="1" placeholder="100" required />
+        </label>
+        <label>
+          Deadline <span style="font-weight:400;color:var(--muted)">(optional)</span>
+          <input type="date" name="goalDeadline" [(ngModel)]="deadline" />
+        </label>
+      </div>
+      <button class="btn btn-primary" type="submit">Create goal</button>
+    </form>
+  </div>
+</dialog>

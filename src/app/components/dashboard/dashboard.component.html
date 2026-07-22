@@ -1,0 +1,35 @@
+@if (goal(); as activeGoal) {
+  <section class="hero">
+    <div class="hero-label">Active goal</div>
+    <h2>{{ activeGoal.name }}</h2>
+    <div class="progress-track" aria-label="Goal progress">
+      <div class="progress-fill" [style.width.%]="percent()"></div>
+    </div>
+    <div class="progress-caption">
+      <span>{{ formatHours(completed()) }} of {{ formatHours(activeGoal.targetHours) }}</span>
+      <span>{{ percent() | number: '1.0-0' }}%</span>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value">{{ formatHours(completed()) }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Remaining</div>
+      <div class="stat-value">{{ formatHours(remaining()) }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Current streak</div>
+      <div class="stat-value">{{ streak() }} day{{ streak() === 1 ? '' : 's' }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Daily average</div>
+      <div class="stat-value">{{ formatHours(average()) }}</div>
+    </div>
+  </section>
+
+  <app-log-form></app-log-form>
+  <app-history-list></app-history-list>
+}
