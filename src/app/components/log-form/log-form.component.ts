@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GoalsService, todayISO } from '../../services/goals.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { GoalsService, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-log-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatDatepickerModule, MatNativeDateModule],
   templateUrl: './log-form.component.html',
   styleUrl: './log-form.component.css'
 })
@@ -14,20 +16,27 @@ export class LogFormComponent {
   private readonly goalsService = inject(GoalsService);
   private readonly toast = inject(ToastService);
 
-  date = todayISO();
-  hours: number | null = null;
+  protected readonly goal = this.goalsService.activeGoal;
+
+  date: Date | null = new Date();
+  amount: number | null = null;
   note = '';
 
+  protected get amountStep(): number {
+    return this.goal()?.unit === 'hours' ? 0.1 : 1;
+  }
+
   submit(): void {
-    const goal = this.goalsService.activeGoal();
-    if (!goal) return;
+    const group = this.goalsService.activeGroup();
+    const goal = this.goal();
+    if (!group || !goal) return;
 
-    const hours = Number(this.hours);
-    if (!this.date || !hours || hours <= 0) return;
+    const amount = Number(this.amount);
+    if (!this.date || !amount || amount <= 0) return;
 
-    this.goalsService.addLog(goal.id, this.date, hours, this.note);
+    this.goalsService.addLog(group.id, goal.id, dateToISO(this.date), amount, this.note);
 
-    this.hours = null;
+    this.amount = null;
     this.note = '';
     this.toast.show('Progress added');
   }

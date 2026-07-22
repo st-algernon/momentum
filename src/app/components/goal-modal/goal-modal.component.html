@@ -1,25 +1,48 @@
-<dialog #dialog (click)="onBackdropClick($event)">
-  <div class="modal-inner">
-    <div class="modal-head">
-      <h2 style="margin:0">Create a learning goal</h2>
-      <button class="close-btn" type="button" aria-label="Close" (click)="close()">&times;</button>
-    </div>
-    <form (ngSubmit)="submit()">
-      <label>
-        Goal name
-        <input #nameInput type="text" name="goalName" [(ngModel)]="name" placeholder="Study system design" maxlength="80" required />
-      </label>
-      <div class="form-grid">
-        <label>
-          Target hours
-          <input type="number" name="goalTarget" [(ngModel)]="targetHours" min="1" step="1" placeholder="100" required />
-        </label>
-        <label>
-          Deadline <span style="font-weight:400;color:var(--muted)">(optional)</span>
-          <input type="date" name="goalDeadline" [(ngModel)]="deadline" />
-        </label>
-      </div>
-      <button class="btn btn-primary" type="submit">Create goal</button>
-    </form>
+<div class="modal-inner">
+  <div class="modal-head">
+    <h2 class="modal-title">Add a sub-goal to "{{ group()?.name }}"</h2>
+    <button class="close-btn" type="button" aria-label="Close" (click)="close()">&times;</button>
   </div>
-</dialog>
+  <form (ngSubmit)="submit()">
+    <label>
+      Goal name
+      <input type="text" name="goalName" [(ngModel)]="name" placeholder="Angular, Interviews counter…" maxlength="80" required />
+    </label>
+    <div class="form-grid">
+      <label>
+        Target amount
+        <input type="number" name="goalTarget" [(ngModel)]="targetAmount" min="1" step="1" placeholder="100" required />
+      </label>
+      <label>
+        Unit
+        <input type="text" name="goalUnit" [(ngModel)]="unit" list="unitSuggestions" placeholder="hours" maxlength="24" />
+        <datalist id="unitSuggestions">
+          <option value="hours"></option>
+          <option value="interviews"></option>
+          <option value="applications"></option>
+          <option value="offers"></option>
+          <option value="sessions"></option>
+          <option value="pages"></option>
+          <option value="projects"></option>
+        </datalist>
+      </label>
+    </div>
+    <label>
+      Deadline <span class="optional-hint">(optional)</span>
+      <div class="date-input-wrap">
+        <input
+          class="date-input"
+          type="text"
+          name="goalDeadline"
+          [matDatepicker]="deadlinePicker"
+          [(ngModel)]="deadline"
+          readonly
+          (click)="deadlinePicker.open()"
+        />
+        <mat-datepicker-toggle class="date-toggle" [for]="deadlinePicker"></mat-datepicker-toggle>
+        <mat-datepicker #deadlinePicker></mat-datepicker>
+      </div>
+    </label>
+    <button class="btn btn-primary" type="submit">Create goal</button>
+  </form>
+</div>

@@ -1,0 +1,19 @@
+@if (goalsService.groups().length) {
+  <div class="group-list">
+    @for (group of goalsService.groups(); track group.id) {
+      <button
+        type="button"
+        class="group-chip"
+        [class.active]="group.id === goalsService.activeGroup()?.id"
+        (click)="select(group)"
+      >
+        <strong>{{ group.name }}</strong>
+        <span>{{ group.goals.length }} sub-goal{{ group.goals.length === 1 ? '' : 's' }}</span>
+        <div class="chip-progress-track">
+          <div class="chip-progress-fill" [style.width.%]="percent(group)"></div>
+        </div>
+        <span class="chip-percent">{{ percent(group) | number: '1.0-0' }}% overall</span>
+      </button>
+    }
+  </div>
+}

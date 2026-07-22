@@ -1,12 +1,12 @@
 @if (goal(); as activeGoal) {
   <section class="hero">
-    <div class="hero-label">Active goal</div>
+    <div class="hero-label">Active sub-goal</div>
     <h2>{{ activeGoal.name }}</h2>
     <div class="progress-track" aria-label="Goal progress">
       <div class="progress-fill" [style.width.%]="percent()"></div>
     </div>
     <div class="progress-caption">
-      <span>{{ formatHours(completed()) }} of {{ formatHours(activeGoal.targetHours) }}</span>
+      <span>{{ formatAmount(completed(), activeGoal.unit) }} of {{ formatAmount(activeGoal.targetAmount, activeGoal.unit) }}</span>
       <span>{{ percent() | number: '1.0-0' }}%</span>
     </div>
   </section>
@@ -14,11 +14,11 @@
   <section class="stats">
     <div class="stat">
       <div class="stat-label">Completed</div>
-      <div class="stat-value">{{ formatHours(completed()) }}</div>
+      <div class="stat-value">{{ formatAmount(completed(), activeGoal.unit) }}</div>
     </div>
     <div class="stat">
       <div class="stat-label">Remaining</div>
-      <div class="stat-value">{{ formatHours(remaining()) }}</div>
+      <div class="stat-value">{{ formatAmount(remaining(), activeGoal.unit) }}</div>
     </div>
     <div class="stat">
       <div class="stat-label">Current streak</div>
@@ -26,7 +26,7 @@
     </div>
     <div class="stat">
       <div class="stat-label">Daily average</div>
-      <div class="stat-value">{{ formatHours(average()) }}</div>
+      <div class="stat-value">{{ formatAmount(average(), activeGoal.unit) }}</div>
     </div>
   </section>
 

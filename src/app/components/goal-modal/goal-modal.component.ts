@@ -1,59 +1,42 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GoalsService } from '../../services/goals.service';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { GoalsService, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-goal-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatDatepickerModule, MatNativeDateModule],
   templateUrl: './goal-modal.component.html',
   styleUrl: './goal-modal.component.css'
 })
 export class GoalModalComponent {
   private readonly goalsService = inject(GoalsService);
   private readonly toast = inject(ToastService);
+  private readonly dialogRef = inject(MatDialogRef<GoalModalComponent>);
 
-  @ViewChild('dialog') private dialogRef!: ElementRef<HTMLDialogElement>;
-  @ViewChild('nameInput') private nameInputRef?: ElementRef<HTMLInputElement>;
+  protected readonly group = this.goalsService.activeGroup;
 
   name = '';
-  targetHours: number | null = null;
-  deadline = '';
-
-  open(): void {
-    this.dialogRef.nativeElement.showModal();
-    setTimeout(() => this.nameInputRef?.nativeElement.focus(), 50);
-  }
+  targetAmount: number | null = null;
+  unit = 'hours';
+  deadline: Date | null = null;
 
   close(): void {
-    this.dialogRef.nativeElement.close();
-  }
-
-  onBackdropClick(event: MouseEvent): void {
-    const rect = this.dialogRef.nativeElement.getBoundingClientRect();
-    const inside =
-      event.clientX >= rect.left &&
-      event.clientX <= rect.right &&
-      event.clientY >= rect.top &&
-      event.clientY <= rect.bottom;
-    if (!inside) this.close();
+    this.dialogRef.close();
   }
 
   submit(): void {
+    const group = this.group();
     const name = this.name.trim();
-    const target = Number(this.targetHours);
-    if (!name || !target || target <= 0) return;
+    const target = Number(this.targetAmount);
+    if (!group || !name || !target || target <= 0) return;
 
-    this.goalsService.createGoal(name, target, this.deadline || null);
-    this.resetForm();
-    this.close();
+    this.goalsService.createGoal(group.id, name, target, this.unit, this.deadline ? dateToISO(this.deadline) : null);
     this.toast.show('Goal created');
-  }
-
-  private resetForm(): void {
-    this.name = '';
-    this.targetHours = null;
-    this.deadline = '';
+    this.dialogRef.close();
   }
 }

@@ -1,6 +1,6 @@
 <h2>Last 7 days</h2>
 <p class="subtitle">{{ weekSummary() }}</p>
-<div class="mini-bar" aria-label="Hours logged over the last seven days">
+<div class="mini-bar" aria-label="Progress logged over the last seven days">
   @for (day of days(); track day.date) {
     <div class="mini-day" [attr.data-label]="day.label" [title]="barTitle(day)" [style.--height.%]="day.heightPercent"></div>
   }

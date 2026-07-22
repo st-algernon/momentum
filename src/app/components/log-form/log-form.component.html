@@ -1,18 +1,31 @@
 <section>
-  <h2>Log today's learning</h2>
+  <h2>Log progress</h2>
   <form (ngSubmit)="submit()">
     <div class="form-grid">
       <label>
         Date
-        <input type="date" name="logDate" [(ngModel)]="date" required />
+        <div class="date-input-wrap">
+          <input
+            class="date-input"
+            type="text"
+            name="logDate"
+            [matDatepicker]="logDatePicker"
+            [(ngModel)]="date"
+            readonly
+            required
+            (click)="logDatePicker.open()"
+          />
+          <mat-datepicker-toggle class="date-toggle" [for]="logDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #logDatePicker></mat-datepicker>
+        </div>
       </label>
-      <label>
-        Hours
-        <input type="number" name="logHours" [(ngModel)]="hours" min="0.1" step="0.1" placeholder="1.5" required />
+      <label class="unit-label">
+        {{ goal()?.unit || 'Amount' }}
+        <input type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
       </label>
     </div>
     <label>
-      What did you study?
+      Notes <span class="optional-hint">(optional)</span>
       <textarea name="logNote" [(ngModel)]="note" placeholder="Example: SQL joins and query optimization"></textarea>
     </label>
     <button class="btn btn-primary" type="submit">Add progress</button>

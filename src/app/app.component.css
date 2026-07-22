@@ -134,6 +134,21 @@ h2 {
   display: none !important;
 }
 
+.add-goal-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.action-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.action-stack .btn {
+  width: 100%;
+}
+
 @media (max-width: 880px) {
   .grid {
     grid-template-columns: 1fr;

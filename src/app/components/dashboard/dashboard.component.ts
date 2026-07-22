@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { GoalsService, formatHours } from '../../services/goals.service';
+import { GoalsService, formatAmount } from '../../services/goals.service';
 import { LogFormComponent } from '../log-form/log-form.component';
 import { HistoryListComponent } from '../history-list/history-list.component';
 
@@ -18,17 +18,17 @@ export class DashboardComponent {
 
   protected readonly completed = computed(() => {
     const goal = this.goal();
-    return goal ? GoalsService.totalHours(goal) : 0;
+    return goal ? GoalsService.totalAmount(goal) : 0;
   });
 
   protected readonly remaining = computed(() => {
     const goal = this.goal();
-    return goal ? Math.max(0, goal.targetHours - this.completed()) : 0;
+    return goal ? Math.max(0, goal.targetAmount - this.completed()) : 0;
   });
 
   protected readonly percent = computed(() => {
     const goal = this.goal();
-    return goal ? Math.min(100, (this.completed() / goal.targetHours) * 100) : 0;
+    return goal ? GoalsService.goalPercent(goal) : 0;
   });
 
   protected readonly streak = computed(() => {
@@ -41,5 +41,5 @@ export class DashboardComponent {
     return goal ? GoalsService.dailyAverage(goal) : 0;
   });
 
-  protected formatHours = formatHours;
+  protected formatAmount = formatAmount;
 }

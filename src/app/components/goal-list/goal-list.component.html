@@ -1,15 +1,17 @@
-@if (goalsService.goals().length) {
-  <div class="goal-list">
-    @for (goal of goalsService.goals(); track goal.id) {
-      <button
-        type="button"
-        class="goal-chip"
-        [class.active]="goal.id === goalsService.activeGoal()?.id"
-        (click)="select(goal)"
-      >
-        <strong>{{ goal.name }}</strong>
-        <span>{{ progressLabel(goal) }}</span>
-      </button>
-    }
-  </div>
+@if (goalsService.activeGroup(); as group) {
+  @if (group.goals.length) {
+    <div class="goal-list">
+      @for (goal of group.goals; track goal.id) {
+        <button
+          type="button"
+          class="goal-chip"
+          [class.active]="goal.id === goalsService.activeGoal()?.id"
+          (click)="select(goal)"
+        >
+          <strong>{{ goal.name }}</strong>
+          <span>{{ progressLabel(goal) }}</span>
+        </button>
+      }
+    </div>
+  }
 }

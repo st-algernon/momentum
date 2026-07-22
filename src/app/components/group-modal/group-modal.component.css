@@ -10,15 +10,6 @@
   margin-bottom: 12px;
 }
 
-.modal-title {
-  margin: 0;
-}
-
-.optional-hint {
-  font-weight: 400;
-  color: var(--muted);
-}
-
 .close-btn {
   border: 0;
   background: transparent;
@@ -27,15 +18,13 @@
   cursor: pointer;
 }
 
+.modal-title {
+  margin: 0;
+}
+
 form {
   display: grid;
   gap: 13px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
 }
 
 label {
@@ -43,35 +32,6 @@ label {
   gap: 7px;
   font-size: 0.88rem;
   font-weight: 700;
-}
-
-.date-input-wrap {
-  position: relative;
-}
-
-.date-input {
-  padding-right: 40px;
-  cursor: pointer;
-}
-
-.date-toggle {
-  position: absolute;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%);
-  --mat-datepicker-toggle-icon-color: var(--muted);
-  --mat-datepicker-toggle-active-state-icon-color: var(--primary);
-}
-
-.date-toggle ::ng-deep .mat-mdc-icon-button {
-  width: 36px;
-  height: 36px;
-  padding: 6px;
-}
-
-.date-toggle ::ng-deep .mat-mdc-icon-button svg {
-  width: 20px;
-  height: 20px;
 }
 
 input {
@@ -90,6 +50,12 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.12);
 }
 
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: -4px 0 0;
+}
+
 .btn {
   border: 0;
   border-radius: 11px;
@@ -106,10 +72,4 @@ input:focus {
 
 .btn-primary:hover {
   background: var(--primary-dark);
-}
-
-@media (max-width: 620px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
 }

@@ -17,3 +17,7 @@
   transform: translateY(0);
   opacity: 1;
 }
+
+.toast.error {
+  background: #b3261e;
+}

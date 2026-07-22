@@ -1,7 +1,7 @@
 export interface LogEntry {
   id: string;
   date: string;
-  hours: number;
+  amount: number;
   note: string;
   createdAt: number;
 }
@@ -9,13 +9,22 @@ export interface LogEntry {
 export interface Goal {
   id: string;
   name: string;
-  targetHours: number;
+  targetAmount: number;
+  unit: string;
   deadline: string | null;
   logs: LogEntry[];
   createdAt: number;
 }
 
-export interface AppState {
+export interface GoalGroup {
+  id: string;
+  name: string;
   goals: Goal[];
+  createdAt: number;
+}
+
+export interface AppState {
+  groups: GoalGroup[];
+  activeGroupId: string | null;
   activeGoalId: string | null;
 }

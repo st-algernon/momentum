@@ -4,53 +4,76 @@
       <div class="brand-mark">ST</div>
       <div>
         <h1>SkillTrack</h1>
-        <p class="subtitle">Turn learning hours into visible progress.</p>
+        <p class="subtitle">Turn progress into visible momentum.</p>
       </div>
     </div>
     <div class="toolbar">
       <button class="btn btn-secondary" type="button" (click)="exportData()">Export data</button>
       <button class="btn btn-secondary" type="button" (click)="triggerImport()">Import data</button>
-      <button class="btn btn-primary" type="button" (click)="openGoalModal()">+ New goal</button>
+      <button class="btn btn-secondary" type="button" (click)="openGistBackupModal()">Backup to gist</button>
+      <button class="btn btn-primary" type="button" (click)="openGroupModal()">+ New group</button>
       <input #importFile type="file" accept="application/json" class="hidden" (change)="onImportFile($event)" />
     </div>
   </header>
 
   <section class="grid">
     <div class="card">
-      <app-goal-list></app-goal-list>
+      <app-group-list></app-group-list>
 
-      @if (!goalsService.goals().length) {
+      @if (!goalsService.groups().length) {
         <div class="empty-state">
-          <h2>No goals yet</h2>
-          <p>Create a goal such as "Study system design for 100 hours."</p>
-          <button class="btn btn-primary" type="button" (click)="openGoalModal()">Create your first goal</button>
+          <h2>No groups yet</h2>
+          <p>Create a general goal such as "Find a new job" or "Ramp-up Hard Skills", then add sub-goals to it.</p>
+          <button class="btn btn-primary" type="button" (click)="openGroupModal()">Create your first group</button>
         </div>
       } @else {
-        <app-dashboard></app-dashboard>
+        <app-group-summary></app-group-summary>
+        <app-goal-list></app-goal-list>
+
+        @if (goalsService.activeGroup(); as group) {
+          @if (!group.goals.length) {
+            <div class="empty-state">
+              <h2>No sub-goals yet</h2>
+              <p>Add sub-goals like ".NET", "Angular" or "Interviews counter" to start tracking progress.</p>
+              <button class="btn btn-primary" type="button" (click)="openGoalModal()">Add your first sub-goal</button>
+            </div>
+          } @else {
+            <div class="add-goal-row">
+              <button class="btn btn-secondary" type="button" (click)="openGoalModal()">+ New sub-goal</button>
+            </div>
+            <app-dashboard></app-dashboard>
+          }
+        }
       }
     </div>
 
     <aside class="side-stack">
-      <section class="card">
-        <app-week-chart></app-week-chart>
-      </section>
+      @if (goalsService.activeGoal(); as activeGoal) {
+        <section class="card">
+          <app-week-chart></app-week-chart>
+        </section>
+      }
 
       <section class="card tip">
         <h2>Keep momentum</h2>
-        <p>Set a small daily minimum. Even 30 focused minutes keeps your streak alive and makes a 100-hour target feel manageable.</p>
+        <p>Set a small daily minimum. Even one small logged entry keeps your streak alive and makes a big target feel manageable.</p>
       </section>
 
-      @if (goalsService.activeGoal(); as activeGoal) {
+      @if (goalsService.activeGroup(); as activeGroup) {
         <section class="card">
-          <h2>Goal actions</h2>
-          <button class="btn btn-danger" type="button" style="width:100%" (click)="deleteActiveGoal()">Delete active goal</button>
+          <h2>Actions</h2>
+          <div class="action-stack">
+            @if (goalsService.activeGoal(); as activeGoal) {
+              <button class="btn btn-danger" type="button" (click)="deleteActiveGoal()">Delete active sub-goal</button>
+            }
+            <button class="btn btn-danger" type="button" (click)="deleteActiveGroup()">Delete active group</button>
+          </div>
         </section>
       }
     </aside>
   </section>
 
-  <p class="footer-note">Your data is saved locally in this browser. Export it occasionally as a backup.</p>
+  <p class="footer-note">Your data is saved locally in this browser. Export it or back it up to a gist occasionally.</p>
 </main>
 
-<app-goal-modal></app-goal-modal>
 <app-toast></app-toast>

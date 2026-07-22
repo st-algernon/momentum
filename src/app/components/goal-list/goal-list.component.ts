@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, formatHours } from '../../services/goals.service';
+import { GoalsService, formatAmount } from '../../services/goals.service';
 
 @Component({
   selector: 'app-goal-list',
@@ -16,6 +16,6 @@ export class GoalListComponent {
   }
 
   protected progressLabel(goal: Goal): string {
-    return `${formatHours(GoalsService.totalHours(goal))} / ${formatHours(goal.targetHours)}`;
+    return `${formatAmount(GoalsService.totalAmount(goal), goal.unit)} / ${formatAmount(goal.targetAmount, goal.unit)}`;
   }
 }

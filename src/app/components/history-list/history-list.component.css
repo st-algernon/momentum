@@ -9,7 +9,7 @@
 
 .history-item {
   display: grid;
-  grid-template-columns: 110px 90px 1fr auto;
+  grid-template-columns: 110px minmax(70px, auto) 1fr auto;
   gap: 12px;
   align-items: center;
   border: 1px solid var(--border);
@@ -22,9 +22,10 @@
   font-weight: 700;
 }
 
-.history-hours {
+.history-amount {
   color: var(--success);
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .history-note {

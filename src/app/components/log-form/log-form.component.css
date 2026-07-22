@@ -16,6 +16,44 @@ label {
   font-weight: 700;
 }
 
+.unit-label {
+  text-transform: capitalize;
+}
+
+.optional-hint {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.date-input-wrap {
+  position: relative;
+}
+
+.date-input {
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.date-toggle {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  --mat-datepicker-toggle-icon-color: var(--muted);
+  --mat-datepicker-toggle-active-state-icon-color: var(--primary);
+}
+
+.date-toggle ::ng-deep .mat-mdc-icon-button {
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+}
+
+.date-toggle ::ng-deep .mat-mdc-icon-button svg {
+  width: 20px;
+  height: 20px;
+}
+
 input,
 textarea {
   width: 100%;
