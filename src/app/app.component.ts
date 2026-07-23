@@ -20,15 +20,30 @@ export class AppComponent {
   protected syncLabel(): string {
     switch (this.autoSync.indicator()) {
       case 'syncing':
-        return 'Syncing to gist…';
-      case 'synced':
-        return 'Synced to gist';
+        return 'Syncing…';
+      case 'synced': {
+        const lastSyncedAt = this.autoSync.lastSyncedAt();
+        return lastSyncedAt ? `Last sync - ${this.formatSyncTime(lastSyncedAt)}` : 'Synced';
+      }
       case 'error':
-        return 'Sync failed — open settings';
+        return `Sync failed: ${this.autoSync.errorMessage()}`;
       case 'pending':
-        return 'Not synced yet — click Backup now in settings';
+        return 'Click to sync for the first time';
       default:
-        return 'Gist sync off — open settings';
+        return 'Click to sync — add a token in Settings first';
     }
+  }
+
+  protected async triggerSync(): Promise<void> {
+    await this.autoSync.syncNow();
+  }
+
+  private formatSyncTime(timestamp: number): string {
+    return new Date(timestamp).toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
   }
 }

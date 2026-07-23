@@ -11,16 +11,18 @@
       <a routerLink="/settings" routerLinkActive="active">Settings</a>
     </nav>
 
-    <a
+    <button
+      type="button"
       class="sync-indicator"
       [class]="'sync-' + autoSync.indicator()"
-      routerLink="/settings"
+      [disabled]="autoSync.status() === 'syncing'"
+      (click)="triggerSync()"
       [attr.aria-label]="syncLabel()"
       [matTooltip]="syncLabel()"
       matTooltipPosition="below"
     >
       <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
-    </a>
+    </button>
   </div>
 </header>
 

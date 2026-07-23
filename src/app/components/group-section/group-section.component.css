@@ -2,6 +2,11 @@
 @import '../../../styles/_progress-bar.css';
 
 .group-section {
+  background-color: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
   margin-bottom: 24px;
 }
 

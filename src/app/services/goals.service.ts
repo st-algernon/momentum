@@ -243,6 +243,17 @@ export class GoalsService {
     return total / goals.length;
   }
 
+  /** Timestamp of the most recently added log across the given goals, or 0 if none. */
+  static lastActivityAt(goals: Goal[]): number {
+    let latest = 0;
+    for (const goal of goals) {
+      for (const log of goal.logs) {
+        if (log.createdAt > latest) latest = log.createdAt;
+      }
+    }
+    return latest;
+  }
+
   static currentStreak(goal: Goal): number {
     const loggedDates = new Set(goal.logs.filter(log => Number(log.amount) > 0).map(log => log.date));
     let streak = 0;
