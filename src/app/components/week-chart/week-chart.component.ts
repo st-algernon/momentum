@@ -1,4 +1,5 @@
 import { Component, computed, input } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Goal } from '../../models/goal.model';
 import { formatAmount, todayISO } from '../../services/goals.service';
 
@@ -12,6 +13,7 @@ interface DayBar {
 @Component({
   selector: 'app-week-chart',
   standalone: true,
+  imports: [MatTooltipModule],
   templateUrl: './week-chart.component.html',
   styleUrl: './week-chart.component.css'
 })

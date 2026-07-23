@@ -8,8 +8,8 @@
     </div>
     @if (interactive()) {
       <div class="group-section-actions">
-        <button class="text-btn" type="button" (click)="addGoalHere()">+ Add goal</button>
-        <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Group actions">
+        <button class="text-btn" type="button" (click)="addGoalHere()" matTooltip="Add a goal to this group">+ Add goal</button>
+        <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Group actions" matTooltip="Group actions">
           <fa-icon [icon]="faKebab"></fa-icon>
         </button>
       </div>

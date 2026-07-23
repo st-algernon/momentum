@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
@@ -18,7 +19,7 @@ export interface GoalModalData {
 @Component({
   selector: 'app-goal-modal',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule, FaIconComponent],
+  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule, MatTooltipModule, FaIconComponent],
   templateUrl: './goal-modal.component.html',
   styleUrl: './goal-modal.component.css'
 })

@@ -3,6 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
@@ -15,7 +16,7 @@ export const DIALOG_WIDTH = 'min(520px, calc(100vw - 28px))';
 @Component({
   selector: 'app-goal-card',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, MatMenuModule, FaIconComponent],
+  imports: [DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent],
   templateUrl: './goal-card.component.html',
   styleUrl: './goal-card.component.css'
 })

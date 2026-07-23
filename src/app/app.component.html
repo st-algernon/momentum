@@ -16,7 +16,8 @@
       [class]="'sync-' + autoSync.indicator()"
       routerLink="/settings"
       [attr.aria-label]="syncLabel()"
-      [attr.title]="syncLabel()"
+      [matTooltip]="syncLabel()"
+      matTooltipPosition="below"
     >
       <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
     </a>

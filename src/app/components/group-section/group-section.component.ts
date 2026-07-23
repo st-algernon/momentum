@@ -2,6 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal, GoalGroup } from '../../models/goal.model';
@@ -14,7 +15,7 @@ import { GroupModalComponent } from '../group-modal/group-modal.component';
 @Component({
   selector: 'app-group-section',
   standalone: true,
-  imports: [DecimalPipe, MatMenuModule, GoalCardComponent, FaIconComponent],
+  imports: [DecimalPipe, MatMenuModule, MatTooltipModule, GoalCardComponent, FaIconComponent],
   templateUrl: './group-section.component.html',
   styleUrl: './group-section.component.css'
 })

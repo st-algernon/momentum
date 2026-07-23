@@ -2,6 +2,6 @@
 <p class="subtitle">{{ weekSummary() }}</p>
 <div class="mini-bar" aria-label="Progress logged over the last seven days">
   @for (day of days(); track day.date) {
-    <div class="mini-day" [attr.data-label]="day.label" [title]="barTitle(day)" [style.--height.%]="day.heightPercent"></div>
+    <div class="mini-day" [attr.data-label]="day.label" [matTooltip]="barTitle(day)" [style.--height.%]="day.heightPercent"></div>
   }
 </div>

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { GoalGroup } from '../../models/goal.model';
@@ -15,7 +16,7 @@ export interface GroupModalData {
 @Component({
   selector: 'app-group-modal',
   standalone: true,
-  imports: [FormsModule, FaIconComponent],
+  imports: [FormsModule, MatTooltipModule, FaIconComponent],
   templateUrl: './group-modal.component.html',
   styleUrl: './group-modal.component.css'
 })
