@@ -89,7 +89,11 @@
 }
 
 .sync-off {
-  color: var(--muted);
+  color: var(--danger);
+}
+
+.sync-pending {
+  color: #b98900;
 }
 
 .sync-synced {

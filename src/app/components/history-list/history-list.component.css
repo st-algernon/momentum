@@ -8,18 +8,19 @@
 }
 
 .history-item {
-  display: grid;
-  grid-template-columns: 110px minmax(70px, auto) 1fr auto;
-  gap: 12px;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   border: 1px solid var(--border);
   border-radius: 13px;
   padding: 12px 14px;
-  background: white;
+  background: var(--surface-soft);
 }
 
 .history-date {
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .history-amount {
@@ -28,35 +29,21 @@
   white-space: nowrap;
 }
 
-.history-note {
-  color: var(--muted);
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
 .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   border: 0;
+  border-radius: 8px;
   background: transparent;
   color: var(--danger);
-  font-weight: 800;
-  padding: 5px 8px;
+  font-size: 0.9rem;
   cursor: pointer;
-  font: inherit;
+  flex-shrink: 0;
 }
 
-.empty-state {
-  padding: 36px 16px;
-  text-align: center;
-  color: var(--muted);
-  border: 1px dashed var(--border);
-  border-radius: 14px;
-}
-
-@media (max-width: 620px) {
-  .history-item {
-    grid-template-columns: 1fr auto;
-  }
-  .history-note {
-    grid-column: 1 / -1;
-  }
+.icon-btn:hover {
+  background: #fff1f1;
 }

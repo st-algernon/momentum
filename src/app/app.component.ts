@@ -25,6 +25,8 @@ export class AppComponent {
         return 'Synced to gist';
       case 'error':
         return 'Sync failed — open settings';
+      case 'pending':
+        return 'Not synced yet — click Backup now in settings';
       default:
         return 'Gist sync off — open settings';
     }

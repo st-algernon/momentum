@@ -32,20 +32,26 @@ export class SettingsPageComponent {
 
   readonly busy = signal(false);
 
+  protected saveCredentials(): void {
+    this.gistService.setCredentials(this.token.trim(), this.gistId.trim());
+  }
+
   protected async backupNow(): Promise<void> {
     if (!this.token.trim()) {
       this.toast.error('Add a GitHub personal access token with the "gist" scope first.');
       return;
     }
 
-    this.gistService.setCredentials(this.token.trim(), this.gistId.trim());
+    this.saveCredentials();
     this.busy.set(true);
     try {
-      const id = await this.gistService.backup(this.goalsService.exportState());
-      this.gistId = id;
-      this.toast.show('Backed up to gist');
-    } catch (error) {
-      this.toast.error(error instanceof Error ? error.message : 'Backup failed.');
+      await this.autoSync.syncNow();
+      this.gistId = this.gistService.gistId();
+      if (this.autoSync.status() === 'error') {
+        this.toast.error(this.autoSync.errorMessage());
+      } else {
+        this.toast.show('Backed up to gist');
+      }
     } finally {
       this.busy.set(false);
     }
@@ -60,24 +66,18 @@ export class SettingsPageComponent {
     const confirmed = window.confirm('This will replace all local data with the backup from the gist. Continue?');
     if (!confirmed) return;
 
-    this.gistService.setCredentials(this.token.trim(), this.gistId.trim());
+    this.saveCredentials();
     this.busy.set(true);
     try {
       const state = await this.gistService.restore();
       this.goalsService.importState(state);
       this.toast.show('Restored from gist');
+      await this.autoSync.syncNow();
     } catch (error) {
       this.toast.error(error instanceof Error ? error.message : 'Restore failed.');
     } finally {
       this.busy.set(false);
     }
-  }
-
-  protected forgetToken(): void {
-    this.gistService.forget();
-    this.token = '';
-    this.gistId = '';
-    this.toast.show('Forgot saved GitHub credentials');
   }
 
   protected exportData(): void {

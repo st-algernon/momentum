@@ -4,8 +4,9 @@ import { GistService } from './gist.service';
 
 export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error';
 
-/** What the nav sync icon should reflect — honest about whether sync is actually happening. */
-export type SyncIndicator = 'off' | 'syncing' | 'synced' | 'error';
+/** What the nav sync icon should reflect — honest about whether sync is actually happening.
+ * 'off' = no token configured at all. 'pending' = token set, but never synced yet. */
+export type SyncIndicator = 'off' | 'pending' | 'syncing' | 'synced' | 'error';
 
 const LAST_SYNCED_KEY = 'momentum-last-synced-at';
 const DEBOUNCE_MS = 4000;
@@ -25,7 +26,8 @@ export class AutoSyncService {
   readonly indicator = computed<SyncIndicator>(() => {
     if (this.status() === 'syncing') return 'syncing';
     if (this.status() === 'error') return 'error';
-    if (this.active() && (this.status() === 'synced' || this.lastSyncedAt() !== null)) return 'synced';
+    if (this.status() === 'synced' || this.lastSyncedAt() !== null) return 'synced';
+    if (this.active()) return 'pending';
     return 'off';
   });
 
