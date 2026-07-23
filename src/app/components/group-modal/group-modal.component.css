@@ -1,79 +1,8 @@
-.modal-inner {
-  padding: 22px;
-}
-
-.modal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.close-btn {
-  border: 0;
-  background: transparent;
-  font-size: 1.05rem;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  color: var(--text);
-}
-
-.modal-title {
-  margin: 0;
-}
-
-form {
-  display: grid;
-  gap: 13px;
-}
-
-label {
-  display: grid;
-  gap: 7px;
-  font-size: 0.88rem;
-  font-weight: 700;
-}
-
-input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  padding: 11px 12px;
-  color: var(--text);
-  background: white;
-  outline: none;
-  font: inherit;
-}
-
-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.12);
-}
+@import '../../../styles/_modal.css';
+@import '../../../styles/_form.css';
 
 .hint {
   color: var(--muted);
   font-size: 0.85rem;
   margin: -4px 0 0;
-}
-
-.btn {
-  border: 0;
-  border-radius: 11px;
-  padding: 10px 14px;
-  font-weight: 700;
-  transition: 0.2s ease;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
 }

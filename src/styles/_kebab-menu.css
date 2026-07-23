@@ -1,0 +1,24 @@
+/* Small "⋮" context-menu trigger (goal-card, group-section) and the shared
+   danger-colored mat-menu-item used by every kebab menu (also goal-detail-page,
+   which overrides .kebab-btn's size locally since its header button is bigger). */
+
+.kebab-btn {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.kebab-btn:hover {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+.danger-item {
+  color: var(--danger) !important;
+}

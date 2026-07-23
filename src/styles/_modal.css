@@ -1,0 +1,29 @@
+/* Shared chrome for MatDialog content panels (goal-modal, group-modal). */
+
+.modal-inner {
+  padding: 22px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.close-btn {
+  border: 0;
+  background: transparent;
+  font-size: 1.05rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--text);
+}
