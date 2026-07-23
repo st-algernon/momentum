@@ -19,6 +19,11 @@
   color: var(--muted);
 }
 
+.label-text {
+  display: block;
+  white-space: nowrap;
+}
+
 .close-btn {
   border: 0;
   background: transparent;
@@ -74,8 +79,7 @@ label {
   height: 20px;
 }
 
-input,
-select {
+input {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 11px;
@@ -86,8 +90,7 @@ select {
   font: inherit;
 }
 
-input:focus,
-select:focus {
+input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.12);
 }

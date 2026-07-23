@@ -6,7 +6,7 @@
   <form (ngSubmit)="submit()">
     <label>
       Goal name
-      <input type="text" name="goalName" [(ngModel)]="name" placeholder="Angular, Interviews counter…" maxlength="80" required />
+      <input type="text" name="goalName" [(ngModel)]="name" placeholder="Interviews, Applications, Workouts…" maxlength="80" required />
     </label>
     <div class="form-grid">
       <label>
@@ -28,21 +28,24 @@
       </label>
     </div>
     <label>
-      Group <span class="optional-hint">(optional)</span>
-      <select name="goalGroup" [(ngModel)]="groupSelection">
-        <option value="">No group</option>
-        @for (group of groups(); track group.id) {
-          <option [value]="group.id">{{ group.name }}</option>
+      <span class="label-text">Group <span class="optional-hint">(optional)</span></span>
+      <input
+        type="text"
+        name="goalGroup"
+        [(ngModel)]="groupName"
+        [matAutocomplete]="groupAuto"
+        placeholder="Pick a group or type a new one"
+        maxlength="80"
+      />
+      <mat-autocomplete #groupAuto="matAutocomplete">
+        @for (name of filteredGroupNames(); track name) {
+          <mat-option [value]="name">{{ name }}</mat-option>
         }
-        <option [value]="newGroupSentinel">+ Create new group…</option>
-      </select>
+        @if (groupName.trim() && filteredGroupNames().length === 0) {
+          <mat-option [value]="groupName.trim()">Create "{{ groupName.trim() }}"</mat-option>
+        }
+      </mat-autocomplete>
     </label>
-    @if (groupSelection === newGroupSentinel) {
-      <label>
-        New group name
-        <input type="text" name="newGroupName" [(ngModel)]="newGroupName" placeholder="Ramp-up Hard Skills" maxlength="80" required />
-      </label>
-    }
     <label>
       Deadline <span class="optional-hint">(optional)</span>
       <div class="date-input-wrap">

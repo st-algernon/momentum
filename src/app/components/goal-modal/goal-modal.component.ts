@@ -2,12 +2,10 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Goal } from '../../models/goal.model';
 import { GoalsService, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
-
-const NEW_GROUP_OPTION = '__new_group__';
 
 export interface GoalModalData {
   mode: 'create' | 'edit';
@@ -18,7 +16,7 @@ export interface GoalModalData {
 @Component({
   selector: 'app-goal-modal',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule],
   templateUrl: './goal-modal.component.html',
   styleUrl: './goal-modal.component.css'
 })
@@ -30,17 +28,24 @@ export class GoalModalComponent {
 
   protected readonly groups = this.goalsService.groups;
   protected readonly isEdit = this.data.mode === 'edit';
-  protected readonly newGroupSentinel = NEW_GROUP_OPTION;
+
+  private readonly initialGroupId = this.isEdit ? this.data.goal?.groupId ?? null : this.data.defaultGroupId ?? null;
 
   name = this.data.goal?.name ?? '';
   targetAmount: number | null = this.data.goal?.targetAmount ?? null;
   unit = this.data.goal?.unit ?? 'hours';
   deadline: Date | null = this.data.goal?.deadline ? new Date(`${this.data.goal.deadline}T12:00:00`) : null;
-  groupSelection: string = this.isEdit ? this.data.goal?.groupId ?? '' : this.data.defaultGroupId ?? '';
-  newGroupName = '';
+  groupName = this.groups().find(group => group.id === this.initialGroupId)?.name ?? '';
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  protected filteredGroupNames(): string[] {
+    const query = this.groupName.trim().toLowerCase();
+    const names = this.groups().map(group => group.name);
+    if (!query) return names;
+    return names.filter(name => name.toLowerCase().includes(query));
   }
 
   submit(): void {
@@ -48,11 +53,11 @@ export class GoalModalComponent {
     const target = Number(this.targetAmount);
     if (!name || !target || target <= 0) return;
 
-    let groupId: string | null = this.groupSelection || null;
-    if (this.groupSelection === NEW_GROUP_OPTION) {
-      const newName = this.newGroupName.trim();
-      if (!newName) return;
-      groupId = this.goalsService.createGroup(newName).id;
+    const groupNameTrimmed = this.groupName.trim();
+    let groupId: string | null = null;
+    if (groupNameTrimmed) {
+      const existing = this.groups().find(group => group.name.toLowerCase() === groupNameTrimmed.toLowerCase());
+      groupId = existing ? existing.id : this.goalsService.createGroup(groupNameTrimmed).id;
     }
 
     const deadline = this.deadline ? dateToISO(this.deadline) : null;

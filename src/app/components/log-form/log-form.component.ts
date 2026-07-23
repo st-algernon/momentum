@@ -1,7 +1,6 @@
 import { Component, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { Goal } from '../../models/goal.model';
 import { GoalsService, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
@@ -9,7 +8,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-log-form',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [FormsModule, MatDatepickerModule],
   templateUrl: './log-form.component.html',
   styleUrl: './log-form.component.css'
 })
