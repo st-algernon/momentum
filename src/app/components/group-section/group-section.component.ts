@@ -2,6 +2,8 @@ import { Component, computed, inject, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal, GoalGroup } from '../../models/goal.model';
 import { GoalsService } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
@@ -12,7 +14,7 @@ import { GroupModalComponent } from '../group-modal/group-modal.component';
 @Component({
   selector: 'app-group-section',
   standalone: true,
-  imports: [DecimalPipe, MatMenuModule, GoalCardComponent],
+  imports: [DecimalPipe, MatMenuModule, GoalCardComponent, FaIconComponent],
   templateUrl: './group-section.component.html',
   styleUrl: './group-section.component.css'
 })
@@ -26,6 +28,7 @@ export class GroupSectionComponent {
   readonly interactive = input(true);
 
   protected readonly percent = computed(() => GoalsService.groupPercent(this.goals()));
+  protected readonly faKebab = faEllipsisVertical;
 
   protected renameGroup(): void {
     this.dialog.open(GroupModalComponent, { width: DIALOG_WIDTH, data: { mode: 'edit', group: this.group() } });

@@ -1,7 +1,7 @@
 <div class="modal-inner">
   <div class="modal-head">
     <h2 class="modal-title">{{ isEdit ? 'Edit goal' : 'Add a goal' }}</h2>
-    <button class="close-btn" type="button" aria-label="Close" (click)="close()">&times;</button>
+    <button class="close-btn" type="button" aria-label="Close" (click)="close()"><fa-icon [icon]="faClose"></fa-icon></button>
   </div>
   <form (ngSubmit)="submit()">
     <label>
@@ -52,7 +52,7 @@
       </mat-autocomplete>
     </label>
     <label>
-      Deadline <span class="optional-hint">(optional)</span>
+      <span class="label-text">Deadline <span class="optional-hint">(optional)</span></span>
       <div class="date-input-wrap">
         <input
           class="date-input"

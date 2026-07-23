@@ -4,44 +4,47 @@
 <section class="card settings-section">
   <h2>GitHub Gist sync</h2>
   <p class="hint">
-    Create a <a href="https://github.com/settings/tokens/new?scopes=gist&description=Momentum" target="_blank" rel="noopener">personal access token</a>
-    with the <strong>gist</strong> scope. It's stored only in this browser's local storage, never sent anywhere except
-    directly to api.github.com.
+    Your token and gist ID are stored only in this browser and sent only to api.github.com — never anywhere else.
   </p>
 
   <div class="form-grid">
     <label>
-      GitHub token
-      <input type="password" name="gistToken" [(ngModel)]="token" placeholder="ghp_…" autocomplete="off" />
+      <span class="label-text">
+        GitHub token
+        <button type="button" class="info-icon" aria-label="How to get a token"
+          matTooltip="Create a token at github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token. Give it the 'Gists' permission with read/write access, then copy it."
+          matTooltipPosition="above" matTooltipClass="setup-tooltip"><fa-icon [icon]="faInfo"></fa-icon></button>
+      </span>
+      <input type="password" name="gistToken" [(ngModel)]="token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+        autocomplete="off" />
     </label>
     <label>
-      Gist ID <span class="optional-hint">(filled in automatically)</span>
-      <input type="text" name="gistId" [(ngModel)]="gistId" placeholder="created on first backup" />
+      <span class="label-text">
+        Gist ID <span class="optional-hint">(optional)</span>
+        <button type="button" class="info-icon" aria-label="How to get a gist ID"
+          matTooltip="Leave blank and the first backup creates a gist for you. Or create one at gist.github.com with any content (it gets replaced) and copy the ID from its URL: gist.github.com/username/THIS_IS_THE_ID"
+          matTooltipPosition="above" matTooltipClass="setup-tooltip"><fa-icon [icon]="faInfo"></fa-icon></button>
+      </span>
+      <input type="text" name="gistId" [(ngModel)]="gistId" placeholder="a1b2c3d4e5f6..." />
     </label>
   </div>
 
-  <label class="toggle-row">
-    <input type="checkbox" [checked]="autoSync.enabled()" (change)="toggleAutoSync($event)" />
-    Automatically sync to this gist whenever I log progress
-  </label>
-
   <p class="sync-status">
     @switch (autoSync.status()) {
-      @case ('syncing') { Syncing… }
-      @case ('error') { Sync failed: {{ autoSync.errorMessage() }} }
-      @default {
-        @if (autoSync.lastSyncedAt()) {
-          Last synced {{ autoSync.lastSyncedAt() | date: 'medium' }}
-        } @else {
-          Not synced yet
-        }
-      }
+    @case ('syncing') { Syncing… }
+    @case ('error') { Sync failed: {{ autoSync.errorMessage() }} }
+    @default {
+    @if (autoSync.lastSyncedAt()) {
+    Changes sync automatically — last synced {{ autoSync.lastSyncedAt() | date: 'medium' }}.
+    }
+    }
     }
   </p>
 
   <div class="actions">
     <button class="btn btn-secondary" type="button" (click)="forgetToken()">Forget saved token</button>
-    <button class="btn btn-secondary" type="button" [disabled]="busy()" (click)="restoreNow()">Restore from gist</button>
+    <button class="btn btn-secondary" type="button" [disabled]="busy()" (click)="restoreNow()">Restore from
+      gist</button>
     <button class="btn btn-primary" type="button" [disabled]="busy()" (click)="backupNow()">Backup now</button>
   </div>
 </section>
@@ -58,5 +61,6 @@
 
 <section class="card settings-section">
   <h2>About</h2>
-  <p class="hint">Momentum — a lightweight progress tracker for any goal with a target and a unit. Your data is stored only in this browser unless you back it up.</p>
+  <p class="hint">Momentum — a lightweight progress tracker for any goal with a target and a unit. Your data is stored
+    only in this browser unless you back it up.</p>
 </section>

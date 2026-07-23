@@ -14,22 +14,16 @@
   margin: 0;
 }
 
-.optional-hint {
-  font-weight: 400;
-  color: var(--muted);
-}
-
-.label-text {
-  display: block;
-  white-space: nowrap;
-}
-
 .close-btn {
   border: 0;
   background: transparent;
-  font-size: 1.4rem;
+  font-size: 1.05rem;
   color: var(--muted);
   cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--text);
 }
 
 form {

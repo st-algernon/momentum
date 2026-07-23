@@ -11,7 +11,9 @@
     <div class="card main-col">
       <div class="detail-head">
         <h1>{{ g.name }}</h1>
-        <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Goal actions">⋮</button>
+        <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Goal actions">
+          <fa-icon [icon]="faKebab"></fa-icon>
+        </button>
       </div>
 
       <section class="hero">

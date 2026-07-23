@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
 import { GoalsService, UNIT_OPTIONS, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
@@ -16,7 +18,7 @@ export interface GoalModalData {
 @Component({
   selector: 'app-goal-modal',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule],
+  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule, FaIconComponent],
   templateUrl: './goal-modal.component.html',
   styleUrl: './goal-modal.component.css'
 })
@@ -29,6 +31,7 @@ export class GoalModalComponent {
   protected readonly groups = this.goalsService.groups;
   protected readonly unitOptions = UNIT_OPTIONS;
   protected readonly isEdit = this.data.mode === 'edit';
+  protected readonly faClose = faXmark;
 
   private readonly initialGroupId = this.isEdit ? this.data.goal?.groupId ?? null : this.data.defaultGroupId ?? null;
 

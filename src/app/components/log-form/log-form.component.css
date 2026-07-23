@@ -20,11 +20,6 @@ label {
   text-transform: capitalize;
 }
 
-.optional-hint {
-  font-weight: 400;
-  color: var(--muted);
-}
-
 .date-input-wrap {
   position: relative;
 }

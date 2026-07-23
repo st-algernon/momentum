@@ -11,18 +11,14 @@
       <a routerLink="/settings" routerLinkActive="active">Settings</a>
     </nav>
 
-    <a class="sync-indicator" routerLink="/settings" [class.error]="autoSync.status() === 'error'">
-      @switch (autoSync.status()) {
-        @case ('syncing') { Syncing… }
-        @case ('error') { Sync failed }
-        @default {
-          @if (autoSync.enabled()) {
-            Synced
-          } @else {
-            Sync off
-          }
-        }
-      }
+    <a
+      class="sync-indicator"
+      [class]="'sync-' + autoSync.indicator()"
+      routerLink="/settings"
+      [attr.aria-label]="syncLabel()"
+      [attr.title]="syncLabel()"
+    >
+      <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
     </a>
   </div>
 </header>

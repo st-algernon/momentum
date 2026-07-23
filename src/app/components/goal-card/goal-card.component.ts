@@ -3,6 +3,8 @@ import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
 import { GoalsService, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
@@ -13,7 +15,7 @@ export const DIALOG_WIDTH = 'min(520px, calc(100vw - 28px))';
 @Component({
   selector: 'app-goal-card',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, MatMenuModule],
+  imports: [DecimalPipe, RouterLink, MatMenuModule, FaIconComponent],
   templateUrl: './goal-card.component.html',
   styleUrl: './goal-card.component.css'
 })
@@ -24,6 +26,8 @@ export class GoalCardComponent {
 
   readonly goal = input.required<Goal>();
   readonly interactive = input(true);
+
+  protected readonly faKebab = faEllipsisVertical;
 
   protected readonly groups = this.goalsService.groups;
   protected readonly percent = computed(() => GoalsService.goalPercent(this.goal()));

@@ -13,9 +13,13 @@
 .close-btn {
   border: 0;
   background: transparent;
-  font-size: 1.4rem;
+  font-size: 1.05rem;
   color: var(--muted);
   cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--text);
 }
 
 .modal-title {

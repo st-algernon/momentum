@@ -13,7 +13,9 @@
   </a>
 
   @if (interactive()) {
-    <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Goal actions">⋮</button>
+    <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Goal actions">
+      <fa-icon [icon]="faKebab"></fa-icon>
+    </button>
   }
 </div>
 

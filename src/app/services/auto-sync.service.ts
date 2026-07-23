@@ -1,10 +1,12 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { GoalsService } from './goals.service';
 import { GistService } from './gist.service';
 
 export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error';
 
-const ENABLED_KEY = 'momentum-autosync-enabled';
+/** What the nav sync icon should reflect — honest about whether sync is actually happening. */
+export type SyncIndicator = 'off' | 'syncing' | 'synced' | 'error';
+
 const LAST_SYNCED_KEY = 'momentum-last-synced-at';
 const DEBOUNCE_MS = 4000;
 
@@ -13,10 +15,19 @@ export class AutoSyncService {
   private readonly goalsService = inject(GoalsService);
   private readonly gistService = inject(GistService);
 
-  readonly enabled = signal<boolean>(localStorage.getItem(ENABLED_KEY) === 'true');
   readonly status = signal<SyncStatus>('idle');
   readonly lastSyncedAt = signal<number | null>(Number(localStorage.getItem(LAST_SYNCED_KEY)) || null);
   readonly errorMessage = signal<string>('');
+
+  /** Sync runs automatically whenever a token is configured. */
+  readonly active = computed(() => this.gistService.token().length > 0);
+
+  readonly indicator = computed<SyncIndicator>(() => {
+    if (this.status() === 'syncing') return 'syncing';
+    if (this.status() === 'error') return 'error';
+    if (this.active() && (this.status() === 'synced' || this.lastSyncedAt() !== null)) return 'synced';
+    return 'off';
+  });
 
   private timer?: ReturnType<typeof setTimeout>;
   private initialRun = true;
@@ -31,16 +42,11 @@ export class AutoSyncService {
         return;
       }
 
-      if (!this.enabled() || !this.gistService.token()) return;
+      if (!this.gistService.token()) return;
 
       clearTimeout(this.timer);
       this.timer = setTimeout(() => this.sync(), DEBOUNCE_MS);
     });
-  }
-
-  setEnabled(value: boolean): void {
-    this.enabled.set(value);
-    localStorage.setItem(ENABLED_KEY, String(value));
   }
 
   async syncNow(): Promise<void> {

@@ -1,6 +1,9 @@
 import { Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { AppState } from '../../models/goal.model';
 import { GoalsService, todayISO } from '../../services/goals.service';
 import { GistService } from '../../services/gist.service';
@@ -10,7 +13,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, MatTooltipModule, FaIconComponent],
   templateUrl: './settings-page.component.html',
   styleUrl: './settings-page.component.css'
 })
@@ -20,16 +23,14 @@ export class SettingsPageComponent {
   protected readonly autoSync = inject(AutoSyncService);
   private readonly toast = inject(ToastService);
 
+  protected readonly faInfo = faCircleInfo;
+
   @ViewChild('importFile') private importFileRef!: ElementRef<HTMLInputElement>;
 
   token = this.gistService.token();
   gistId = this.gistService.gistId();
 
   readonly busy = signal(false);
-
-  protected toggleAutoSync(event: Event): void {
-    this.autoSync.setEnabled((event.target as HTMLInputElement).checked);
-  }
 
   protected async backupNow(): Promise<void> {
     if (!this.token.trim()) {
@@ -76,7 +77,6 @@ export class SettingsPageComponent {
     this.gistService.forget();
     this.token = '';
     this.gistId = '';
-    this.autoSync.setEnabled(false);
     this.toast.show('Forgot saved GitHub credentials');
   }
 

@@ -3,6 +3,8 @@ import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { GoalsService, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { LogFormComponent } from '../../components/log-form/log-form.component';
@@ -14,7 +16,7 @@ import { DIALOG_WIDTH } from '../../components/goal-card/goal-card.component';
 @Component({
   selector: 'app-goal-detail-page',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, MatMenuModule, LogFormComponent, HistoryListComponent, WeekChartComponent],
+  imports: [DecimalPipe, RouterLink, MatMenuModule, FaIconComponent, LogFormComponent, HistoryListComponent, WeekChartComponent],
   templateUrl: './goal-detail-page.component.html',
   styleUrl: './goal-detail-page.component.css'
 })
@@ -25,6 +27,8 @@ export class GoalDetailPageComponent {
   private readonly router = inject(Router);
 
   readonly goalId = input.required<string>();
+
+  protected readonly faKebab = faEllipsisVertical;
 
   protected readonly goal = computed(() => this.goalsService.goalById(this.goalId()));
   protected readonly group = computed(() => this.goalsService.groupById(this.goal()?.groupId));

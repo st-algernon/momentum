@@ -113,3 +113,35 @@ a {
   color: var(--muted);
   margin: 0;
 }
+
+/* Form-label caption. Labels are display:grid, which would place a bare text node
+   and an inline hint span on separate rows; wrapping the caption in one block keeps
+   them together as a single grid item. */
+.label-text {
+  display: block;
+}
+
+.optional-hint {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* Widen the setup tooltips (portaled to <body>, so styled globally) — the default
+   Material tooltip is too narrow and centered for these multi-step instructions. */
+.setup-tooltip .mdc-tooltip__surface {
+  max-width: 280px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+/* Angular Material's overlay panels (autocomplete, datepicker, menus) render in a
+   CDK overlay portaled to <body>, so they can't be reached from component styles.
+   Material 3's default "surface-container" background reads as a faded grey-violet;
+   override it to clean white so these popups match the app's cards. */
+/* .mat-mdc-autocomplete-panel,
+.mat-mdc-menu-panel,
+.mat-datepicker-content {
+  background-color: #ffffff;
+  --mat-datepicker-calendar-container-background-color: #ffffff;
+} */
