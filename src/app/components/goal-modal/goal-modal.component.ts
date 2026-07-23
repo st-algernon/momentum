@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, dateToISO } from '../../services/goals.service';
+import { GoalsService, UNIT_OPTIONS, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
 export interface GoalModalData {
@@ -27,6 +27,7 @@ export class GoalModalComponent {
   private readonly data = inject<GoalModalData>(MAT_DIALOG_DATA, { optional: true }) ?? { mode: 'create' };
 
   protected readonly groups = this.goalsService.groups;
+  protected readonly unitOptions = UNIT_OPTIONS;
   protected readonly isEdit = this.data.mode === 'edit';
 
   private readonly initialGroupId = this.isEdit ? this.data.goal?.groupId ?? null : this.data.defaultGroupId ?? null;

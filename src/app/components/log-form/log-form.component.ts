@@ -2,7 +2,7 @@ import { Component, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, dateToISO } from '../../services/goals.service';
+import { GoalsService, amountStepFor, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class LogFormComponent {
   note = '';
 
   protected get amountStep(): number {
-    return this.goal().unit === 'hours' ? 0.1 : 1;
+    return amountStepFor(this.goal().unit);
   }
 
   submit(): void {

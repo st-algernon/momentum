@@ -15,16 +15,21 @@
       </label>
       <label>
         Unit
-        <input type="text" name="goalUnit" [(ngModel)]="unit" list="unitSuggestions" placeholder="hours" maxlength="24" />
-        <datalist id="unitSuggestions">
-          <option value="hours"></option>
-          <option value="interviews"></option>
-          <option value="applications"></option>
-          <option value="offers"></option>
-          <option value="sessions"></option>
-          <option value="pages"></option>
-          <option value="projects"></option>
-        </datalist>
+        <input
+          type="text"
+          name="goalUnit"
+          class="picker-input"
+          [(ngModel)]="unit"
+          [matAutocomplete]="unitAuto"
+          #unitTrigger="matAutocompleteTrigger"
+          (click)="unitTrigger.openPanel()"
+          readonly
+        />
+        <mat-autocomplete #unitAuto="matAutocomplete">
+          @for (option of unitOptions; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-autocomplete>
       </label>
     </div>
     <label>

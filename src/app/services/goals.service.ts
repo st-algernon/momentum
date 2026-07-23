@@ -23,6 +23,16 @@ export function formatAmount(value: number, unit: string): string {
   return unit === 'hours' ? `${rounded}h` : `${rounded} ${unit}`;
 }
 
+/** Units a goal can be measured in. Pick-only in the UI — no custom values. */
+export const UNIT_OPTIONS = ['hours', 'minutes', 'days', 'times', 'km'] as const;
+
+/** Units that accept fractional amounts; everything else logs whole numbers. */
+const DECIMAL_UNITS = new Set(['hours', 'km']);
+
+export function amountStepFor(unit: string): number {
+  return DECIMAL_UNITS.has(unit) ? 0.1 : 1;
+}
+
 interface V2Goal {
   id: string;
   name: string;
