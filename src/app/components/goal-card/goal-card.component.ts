@@ -32,7 +32,8 @@ export class GoalCardComponent {
 
   protected readonly groups = this.goalsService.groups;
   protected readonly percent = computed(() => GoalsService.goalPercent(this.goal()));
-  protected readonly completed = computed(() => GoalsService.totalAmount(this.goal()));
+  protected readonly completedAmount = computed(() => GoalsService.totalAmount(this.goal()));
+  protected readonly isComplete = computed(() => GoalsService.isGoalComplete(this.goal()));
 
   protected formatAmount = formatAmount;
 

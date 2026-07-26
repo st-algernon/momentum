@@ -21,7 +21,7 @@
 
       <section class="hero">
         <div class="progress-track" aria-label="Goal progress">
-          <div class="progress-fill" [style.width.%]="percent()"></div>
+          <div class="progress-fill" [class.is-complete]="isComplete()" [style.width.%]="percent()"></div>
         </div>
         <div class="progress-caption">
           <span>{{ formatAmount(completed(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
@@ -31,16 +31,26 @@
 
       <section class="stats">
         <div class="stat">
-          <div class="stat-label">Completed</div>
+          <div class="stat-label">{{ isBestType() ? 'Current best' : 'Completed' }}</div>
           <div class="stat-value">{{ formatAmount(completed(), g.unit) }}</div>
         </div>
         <div class="stat">
-          <div class="stat-label">Remaining</div>
-          <div class="stat-value">{{ formatAmount(remaining(), g.unit) }}</div>
+          @if (isComplete()) {
+            <div class="stat-label">Achieved</div>
+            <div class="stat-value">{{ completedOn() ? (completedOn() | date: 'MMM d') : 'Today' }}</div>
+          } @else {
+            <div class="stat-label">Remaining</div>
+            <div class="stat-value">{{ formatAmount(remaining(), g.unit) }}</div>
+          }
         </div>
         <div class="stat">
-          <div class="stat-label">Best session</div>
-          <div class="stat-value">{{ formatAmount(highest(), g.unit) }}</div>
+          @if (isBestType()) {
+            <div class="stat-label">Attempts</div>
+            <div class="stat-value">{{ attempts() }}</div>
+          } @else {
+            <div class="stat-label">Best session</div>
+            <div class="stat-value">{{ formatAmount(highest(), g.unit) }}</div>
+          }
         </div>
         <div class="stat">
           <div class="stat-label">Daily average</div>

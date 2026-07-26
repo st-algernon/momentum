@@ -1,33 +1,51 @@
 <section>
   <h2>Log progress</h2>
-  <form (ngSubmit)="submit()">
-    <div class="form-grid">
-      <label>
-        Date
-        <div class="date-input-wrap">
-          <input
-            class="date-input"
-            type="text"
-            name="logDate"
-            [matDatepicker]="logDatePicker"
-            [(ngModel)]="date"
-            readonly
-            required
-            (click)="logDatePicker.open()"
-          />
-          <mat-datepicker-toggle class="date-toggle" [for]="logDatePicker"></mat-datepicker-toggle>
-          <mat-datepicker #logDatePicker></mat-datepicker>
-        </div>
-      </label>
-      <label class="unit-label">
-        {{ goal().unit }}
-        <input type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
-      </label>
+
+  @if (isComplete() && !showFormAnyway()) {
+    <div class="completed-banner">
+      <fa-icon class="banner-icon" [icon]="faComplete"></fa-icon>
+      <div class="completed-banner-text">
+        <strong>Goal achieved</strong>
+        @if (completedOn()) {
+          <span>Achieved on {{ completedOn() | date: 'MMM d, y' }}</span>
+        }
+      </div>
     </div>
-    <label>
-      <span class="label-text">Notes <span class="optional-hint">(optional)</span></span>
-      <textarea name="logNote" [(ngModel)]="note" placeholder="Any details worth remembering"></textarea>
-    </label>
-    <button class="btn btn-primary" type="submit">Add progress</button>
-  </form>
+    @if (isBestType()) {
+      <button class="btn btn-secondary" type="button" (click)="showFormAnyway.set(true)">Log a new best</button>
+    } @else {
+      <button class="text-btn" type="button" (click)="showFormAnyway.set(true)">Log more anyway</button>
+    }
+  } @else {
+    <form (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label>
+          Date
+          <div class="date-input-wrap">
+            <input
+              class="date-input"
+              type="text"
+              name="logDate"
+              [matDatepicker]="logDatePicker"
+              [(ngModel)]="date"
+              readonly
+              required
+              (click)="logDatePicker.open()"
+            />
+            <mat-datepicker-toggle class="date-toggle" [for]="logDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #logDatePicker></mat-datepicker>
+          </div>
+        </label>
+        <label class="unit-label">
+          {{ goal().unit }}
+          <input type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
+        </label>
+      </div>
+      <label>
+        <span class="label-text">Notes <span class="optional-hint">(optional)</span></span>
+        <textarea name="logNote" [(ngModel)]="note" placeholder="Any details worth remembering"></textarea>
+      </label>
+      <button class="btn btn-primary" type="submit">Add progress</button>
+    </form>
+  }
 </section>

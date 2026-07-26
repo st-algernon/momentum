@@ -1,4 +1,5 @@
 @import '../../../styles/_kebab-menu.css';
+@import '../../../styles/_completed.css';
 
 .breadcrumb {
   display: flex;

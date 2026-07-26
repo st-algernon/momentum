@@ -27,8 +27,12 @@ export class GroupSectionComponent {
   readonly group = input.required<GoalGroup>();
   readonly goals = input.required<Goal[]>();
   readonly interactive = input(true);
+  readonly archived = input(false);
 
   protected readonly percent = computed(() => GoalsService.groupPercent(this.goals()));
+  protected readonly achievedCount = computed(() => GoalsService.completedCount(this.goals()));
+  protected readonly allComplete = computed(() => GoalsService.allComplete(this.goals()));
+  protected readonly sortedGoals = computed(() => GoalsService.sortForDisplay(this.goals()));
   protected readonly faKebab = faEllipsisVertical;
 
   protected editGroup(): void {
@@ -37,6 +41,17 @@ export class GroupSectionComponent {
 
   protected addGoalHere(): void {
     this.dialog.open(GoalModalComponent, { width: DIALOG_WIDTH, data: { mode: 'create', defaultGroupId: this.group().id } });
+  }
+
+  protected archiveGroup(): void {
+    if (!this.allComplete()) return;
+    this.goalsService.archiveGroup(this.group().id);
+    this.toast.show(`${this.group().name} archived`);
+  }
+
+  protected unarchiveGroup(): void {
+    this.goalsService.unarchiveGroup(this.group().id);
+    this.toast.show(`${this.group().name} unarchived`);
   }
 
   protected deleteGroup(): void {

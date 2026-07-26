@@ -6,7 +6,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Goal } from '../../models/goal.model';
+import { Goal, GoalType } from '../../models/goal.model';
 import { GoalsService, UNIT_OPTIONS, dateToISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -40,11 +40,16 @@ export class GoalModalComponent {
   description = this.data.goal?.description ?? '';
   targetAmount: number | null = this.data.goal?.targetAmount ?? null;
   unit = this.data.goal?.unit ?? 'hours';
+  goalType: GoalType = this.data.goal?.goalType ?? 'cumulative';
   deadline: Date | null = this.data.goal?.deadline ? new Date(`${this.data.goal.deadline}T12:00:00`) : null;
   groupName = this.groups().find(group => group.id === this.initialGroupId)?.name ?? '';
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  protected get canSubmit(): boolean {
+    return this.name.trim().length > 0 && Number(this.targetAmount) > 0;
   }
 
   protected filteredGroupNames(): string[] {
@@ -75,12 +80,13 @@ export class GoalModalComponent {
         description,
         targetAmount: target,
         unit: this.unit,
+        goalType: this.goalType,
         deadline,
         groupId
       });
       this.toast.show('Goal updated');
     } else {
-      this.goalsService.createGoal(name, target, this.unit, deadline, groupId, description);
+      this.goalsService.createGoal(name, target, this.unit, this.goalType, deadline, groupId, description);
       this.toast.show('Goal created');
     }
 

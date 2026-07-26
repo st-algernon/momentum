@@ -1,0 +1,120 @@
+@import '../../../styles/_modal.css';
+
+.complete-dialog {
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 0;
+  left: calc(var(--i) * 7%);
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--primary);
+  opacity: 0;
+}
+
+.confetti-piece:nth-child(4n + 2) {
+  background: #8c6ff7;
+}
+
+.confetti-piece:nth-child(4n + 3) {
+  background: var(--success);
+}
+
+.confetti-piece:nth-child(4n + 4) {
+  background: #f5b544;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .confetti-piece {
+    animation: confetti-fall 1.4s ease-out forwards;
+    animation-delay: calc(var(--i) * 40ms);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(90px) rotate(220deg);
+  }
+}
+
+.modal-eyebrow {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.trophy-wrap {
+  margin: 4px 0 8px;
+}
+
+.trophy-icon {
+  font-size: 2.2rem;
+  color: #f5b544;
+}
+
+.complete-goal-name {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.achievement-line {
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.deadline-line {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.dialog-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.dialog-stat {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.dialog-stat-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.dialog-stat-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}

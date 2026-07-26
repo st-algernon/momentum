@@ -17,7 +17,8 @@ export class ScopePickerComponent {
   readonly scope = input.required<ReportScope>();
   readonly scopeChange = output<ReportScope>();
 
-  protected readonly groups = this.goalsService.groups;
+  protected readonly activeGroups = computed(() => this.goalsService.activeGroups());
+  protected readonly archivedGroups = computed(() => this.goalsService.archivedGroups());
   protected readonly ungroupedGoals = computed(() => this.goalsService.ungroupedGoals());
 
   protected goalsInGroup(groupId: string) {

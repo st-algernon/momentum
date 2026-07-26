@@ -1,17 +1,26 @@
-<section class="group-section">
+<section class="group-section" [class.is-archived]="archived()">
   <div class="group-section-head">
     <div>
       <h3>{{ group().name }}</h3>
       <span class="group-section-meta">
-        {{ goals().length }} goal{{ goals().length === 1 ? '' : 's' }} · {{ percent() | number: '1.0-0' }}% overall
+        {{ goals().length }} goal{{ goals().length === 1 ? '' : 's' }} · {{ achievedCount() }} achieved ·
+        {{ percent() | number: '1.0-0' }}% overall
       </span>
       @if (group().description) {
         <p class="group-section-description">{{ group().description }}</p>
       }
+      @if (allComplete() && !archived()) {
+        <p class="all-complete-nudge">
+          All goals achieved.
+          <button class="text-btn" type="button" (click)="archiveGroup()">Archive this group</button>
+        </p>
+      }
     </div>
     @if (interactive()) {
       <div class="group-section-actions">
-        <button class="text-btn" type="button" (click)="addGoalHere()" matTooltip="Add a goal to this group">+ Add goal</button>
+        @if (!archived()) {
+          <button class="text-btn" type="button" (click)="addGoalHere()" matTooltip="Add a goal to this group">+ Add goal</button>
+        }
         <button class="kebab-btn" type="button" [matMenuTriggerFor]="menu" aria-label="Group actions" matTooltip="Group actions">
           <fa-icon [icon]="faKebab"></fa-icon>
         </button>
@@ -20,12 +29,12 @@
   </div>
 
   <div class="progress-track">
-    <div class="progress-fill" [style.width.%]="percent()"></div>
+    <div class="progress-fill" [class.is-complete]="allComplete()" [style.width.%]="percent()"></div>
   </div>
 
   @if (goals().length) {
     <div class="goal-grid">
-      @for (goal of goals(); track goal.id) {
+      @for (goal of sortedGoals(); track goal.id) {
         <app-goal-card [goal]="goal" [interactive]="interactive()"></app-goal-card>
       }
     </div>
@@ -36,5 +45,12 @@
 
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="editGroup()">Edit</button>
+  @if (archived()) {
+    <button mat-menu-item (click)="unarchiveGroup()">Unarchive</button>
+  } @else {
+    <button mat-menu-item [disabled]="!allComplete()" (click)="archiveGroup()">
+      <span [matTooltip]="allComplete() ? '' : 'Archive once every goal here is achieved'">Archive</span>
+    </button>
+  }
   <button mat-menu-item class="danger-item" (click)="deleteGroup()">Delete</button>
 </mat-menu>

@@ -12,9 +12,33 @@
       <span class="label-text">Description <span class="optional-hint">(optional)</span></span>
       <textarea name="goalDescription" [(ngModel)]="description" placeholder="What is this goal about?" rows="2"></textarea>
     </label>
+    <div class="goal-type-toggle" role="radiogroup" aria-label="How progress is tracked">
+      <button
+        type="button"
+        class="type-option"
+        role="radio"
+        [attr.aria-checked]="goalType === 'cumulative'"
+        [class.active]="goalType === 'cumulative'"
+        (click)="goalType = 'cumulative'"
+      >
+        <strong>Add up totals</strong>
+        <span>Every log adds up, e.g. hours studied</span>
+      </button>
+      <button
+        type="button"
+        class="type-option"
+        role="radio"
+        [attr.aria-checked]="goalType === 'best'"
+        [class.active]="goalType === 'best'"
+        (click)="goalType = 'best'"
+      >
+        <strong>Best result</strong>
+        <span>Only your top log counts, e.g. reps in a row</span>
+      </button>
+    </div>
     <div class="form-grid">
       <label>
-        Target amount
+        {{ goalType === 'best' ? 'Target to reach' : 'Target amount' }}
         <input type="number" name="goalTarget" [(ngModel)]="targetAmount" min="1" step="1" placeholder="100" required />
       </label>
       <label>
@@ -71,6 +95,6 @@
         <mat-datepicker #deadlinePicker></mat-datepicker>
       </div>
     </label>
-    <button class="btn btn-primary" type="submit">{{ isEdit ? 'Save changes' : 'Create goal' }}</button>
+    <button class="btn btn-primary" type="submit" [disabled]="!canSubmit">{{ isEdit ? 'Save changes' : 'Create goal' }}</button>
   </form>
 </div>

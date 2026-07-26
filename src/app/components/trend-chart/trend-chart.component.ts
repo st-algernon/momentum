@@ -66,10 +66,8 @@ export class TrendChartComponent {
   });
 
   private readonly rawPoints = computed<{ key: string; label: string; amount: number }[]>(() => {
-    const totals: Record<string, number> = {};
-    this.goal().logs.forEach(log => {
-      totals[log.date] = (totals[log.date] || 0) + Number(log.amount);
-    });
+    const goal = this.goal();
+    const perDay = GoalsService.perDayAmounts(goal);
 
     const bucketDays = this.bucketDays();
     const useWeekdayLabels = this.chartMode() === 'bar';
@@ -80,11 +78,12 @@ export class TrendChartComponent {
 
     while (cursor <= today) {
       const bucketStart = new Date(cursor);
-      let sum = 0;
+      const bucketValues: number[] = [];
       for (let i = 0; i < bucketDays && cursor <= today; i++) {
-        sum += totals[dateToISO(cursor)] || 0;
+        bucketValues.push(perDay[dateToISO(cursor)] || 0);
         cursor.setDate(cursor.getDate() + 1);
       }
+      const amount = GoalsService.aggregateAmounts(goal.goalType, bucketValues);
 
       let label: string;
       if (useWeekdayLabels) {
@@ -95,7 +94,7 @@ export class TrendChartComponent {
         label = bucketStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       }
 
-      points.push({ key: dateToISO(bucketStart), label, amount: sum });
+      points.push({ key: dateToISO(bucketStart), label, amount });
     }
     return points;
   });
@@ -137,11 +136,13 @@ export class TrendChartComponent {
     }));
   });
 
-  /** Says what one plotted point represents, e.g. "hours per day". */
+  /** Says what one plotted point represents, e.g. "hours per day" or, for 'best' goals,
+   *  "best times per day" since each point is the top attempt rather than a total. */
   protected readonly yAxisCaption = computed(() => {
-    const unit = this.goal().unit;
+    const goal = this.goal();
     const per = this.bucketDays() === 30 ? 'month' : this.bucketDays() === 7 ? 'week' : 'day';
-    return `${unit} per ${per}`;
+    const prefix = goal.goalType === 'best' ? 'best ' : '';
+    return `${prefix}${goal.unit} per ${per}`;
   });
 
   private formatTick(value: number): string {

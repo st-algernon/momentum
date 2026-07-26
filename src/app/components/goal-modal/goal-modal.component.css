@@ -7,6 +7,50 @@
   text-transform: capitalize;
 }
 
+.goal-type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 620px) {
+  .goal-type-toggle {
+    grid-template-columns: 1fr;
+  }
+}
+
+.type-option {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 10px 12px;
+  background: white;
+  cursor: pointer;
+}
+
+.type-option strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.type-option span {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.type-option.active {
+  border-color: var(--primary);
+  background: rgba(91, 91, 214, 0.06);
+}
+
+.type-option.active strong {
+  color: var(--primary);
+}
+
 textarea {
   resize: vertical;
   min-height: 56px;

@@ -16,9 +16,13 @@
     <button class="btn btn-primary" type="button" (click)="openNewGoal()">Create your first goal</button>
   </div>
 } @else {
+  @if (!hasActiveContent() && archivedGroups().length) {
+    <p class="all-archived-hint">All caught up — everything's archived.</p>
+  }
+
   @if (ungroupedGoals().length) {
     <section class="ungrouped-section">
-      @if (groups().length) {
+      @if (activeGroups().length || archivedGroups().length) {
         <h3 class="section-label">Ungrouped</h3>
       }
       <div class="goal-grid">
@@ -29,7 +33,34 @@
     </section>
   }
 
-  @for (group of groups(); track group.id) {
+  @for (group of activeGroups(); track group.id) {
     <app-group-section [group]="group" [goals]="goalsByGroup().get(group.id) ?? []"></app-group-section>
+  }
+
+  @if (archivedGroups().length) {
+    <div class="archived-disclosure">
+      <button
+        class="archived-toggle"
+        type="button"
+        [attr.aria-expanded]="archivedExpanded()"
+        aria-controls="archived-groups"
+        (click)="toggleArchived()"
+      >
+        <fa-icon class="archived-chevron" [class.expanded]="archivedExpanded()" [icon]="faChevron"></fa-icon>
+        <span>Archived · {{ archivedGroups().length }} group{{ archivedGroups().length === 1 ? '' : 's' }}</span>
+      </button>
+
+      @if (archivedExpanded()) {
+        <div id="archived-groups" class="archived-groups">
+          @for (group of archivedGroups(); track group.id) {
+            <app-group-section
+              [group]="group"
+              [goals]="goalsByGroup().get(group.id) ?? []"
+              [archived]="true"
+            ></app-group-section>
+          }
+        </div>
+      }
+    </div>
   }
 }

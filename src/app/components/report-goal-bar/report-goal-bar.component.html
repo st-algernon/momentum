@@ -12,7 +12,7 @@
       }
     </div>
     @if (!labelInside()) {
-      <span class="report-bar-percent outside" [style.left]="'calc(' + percent() + '% + 8px)'">
+      <span class="report-bar-percent outside" [style.left]="'calc(max(26px, ' + percent() + '%) + 8px)'">
         {{ percent() | number: '1.0-0' }}%
       </span>
     }

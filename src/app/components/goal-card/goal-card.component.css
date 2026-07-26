@@ -1,5 +1,6 @@
 @import '../../../styles/_kebab-menu.css';
 @import '../../../styles/_progress-bar.css';
+@import '../../../styles/_completed.css';
 
 .goal-card {
   position: relative;
@@ -12,6 +13,16 @@
 .goal-card:hover {
   border-color: var(--primary);
   box-shadow: 0 8px 22px rgba(91, 91, 214, 0.12);
+}
+
+.goal-card.is-complete {
+  border-color: var(--gold-border);
+  background: var(--gold-soft);
+}
+
+.goal-card.is-complete:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 22px rgba(184, 134, 11, 0.14);
 }
 
 .goal-card-link {
@@ -40,6 +51,10 @@
   font-weight: 800;
   color: var(--primary);
   white-space: nowrap;
+}
+
+.goal-card.is-complete .goal-card-percent {
+  color: var(--gold);
 }
 
 .goal-card-caption {

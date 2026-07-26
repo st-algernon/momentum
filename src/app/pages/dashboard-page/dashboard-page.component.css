@@ -31,6 +31,45 @@
   gap: 12px;
 }
 
+.all-archived-hint {
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+
+.archived-disclosure {
+  margin-top: 8px;
+}
+
+.archived-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 8px 4px;
+  cursor: pointer;
+}
+
+.archived-toggle:hover {
+  color: var(--text);
+}
+
+.archived-chevron {
+  font-size: 0.75rem;
+  transition: transform 0.18s ease;
+}
+
+.archived-chevron.expanded {
+  transform: rotate(90deg);
+}
+
+.archived-groups {
+  margin-top: 8px;
+}
+
 @media (max-width: 620px) {
   .page-head {
     flex-direction: column;

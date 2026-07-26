@@ -1,5 +1,5 @@
 import { Injectable, effect, signal } from '@angular/core';
-import { AppState, Goal, GoalGroup, LogEntry } from '../models/goal.model';
+import { AppState, Goal, GoalGroup, GoalType, LogEntry } from '../models/goal.model';
 
 const STORAGE_KEY = 'momentum-data-v3';
 const V2_STORAGE_KEY = 'skilltrack-data-v2';
@@ -65,10 +65,11 @@ function flattenV2(state: V2State): AppState {
     id: group.id,
     name: group.name,
     description: '',
+    archivedAt: null,
     createdAt: group.createdAt
   }));
   const goals: Goal[] = state.groups.flatMap(group =>
-    group.goals.map(goal => ({ ...goal, description: '', groupId: group.id }))
+    group.goals.map(goal => ({ ...goal, description: '', groupId: group.id, goalType: 'cumulative' as const }))
   );
   return { groups, goals };
 }
@@ -76,7 +77,7 @@ function flattenV2(state: V2State): AppState {
 function migrateV1(legacy: V1State): AppState {
   if (!legacy.goals.length) return { groups: [], goals: [] };
 
-  const group: GoalGroup = { id: uid(), name: 'My Goals', description: '', createdAt: Date.now() };
+  const group: GoalGroup = { id: uid(), name: 'My Goals', description: '', archivedAt: null, createdAt: Date.now() };
   const goals: Goal[] = legacy.goals.map(goal => ({
     id: goal.id,
     groupId: group.id,
@@ -84,6 +85,7 @@ function migrateV1(legacy: V1State): AppState {
     description: '',
     targetAmount: goal.targetHours,
     unit: 'hours',
+    goalType: 'cumulative',
     deadline: goal.deadline,
     createdAt: goal.createdAt,
     logs: goal.logs.map(log => ({
@@ -98,24 +100,33 @@ function migrateV1(legacy: V1State): AppState {
   return { groups: [group], goals };
 }
 
+/** Backfills fields added after data may already exist in storage (goalType, archivedAt),
+ *  so older saved states and Gist restores keep working without a storage-key bump. */
+function normalizeState(state: AppState): AppState {
+  return {
+    groups: state.groups.map(group => ({ ...group, archivedAt: group.archivedAt ?? null })),
+    goals: state.goals.map(goal => ({ ...goal, goalType: goal.goalType ?? 'cumulative' }))
+  };
+}
+
 function loadState(): AppState {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
-    if (saved && Array.isArray(saved.groups) && Array.isArray(saved.goals)) return saved;
+    if (saved && Array.isArray(saved.groups) && Array.isArray(saved.goals)) return normalizeState(saved);
   } catch (error) {
     console.warn('Could not read saved data.', error);
   }
 
   try {
     const v2 = JSON.parse(localStorage.getItem(V2_STORAGE_KEY) ?? 'null');
-    if (v2 && Array.isArray(v2.groups)) return flattenV2(v2);
+    if (v2 && Array.isArray(v2.groups)) return normalizeState(flattenV2(v2));
   } catch (error) {
     console.warn('Could not read v2 data.', error);
   }
 
   try {
     const v1 = JSON.parse(localStorage.getItem(V1_STORAGE_KEY) ?? 'null');
-    if (v1 && Array.isArray(v1.goals)) return migrateV1(v1);
+    if (v1 && Array.isArray(v1.goals)) return normalizeState(migrateV1(v1));
   } catch (error) {
     console.warn('Could not read legacy data.', error);
   }
@@ -156,7 +167,7 @@ export class GoalsService {
   }
 
   createGroup(name: string, description = ''): GoalGroup {
-    const group: GoalGroup = { id: uid(), name, description, createdAt: Date.now() };
+    const group: GoalGroup = { id: uid(), name, description, archivedAt: null, createdAt: Date.now() };
     this.groups.update(groups => [group, ...groups]);
     return group;
   }
@@ -170,10 +181,29 @@ export class GoalsService {
     this.goals.update(goals => goals.filter(goal => goal.groupId !== id));
   }
 
+  archiveGroup(id: string): void {
+    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, archivedAt: Date.now() } : group)));
+  }
+
+  unarchiveGroup(id: string): void {
+    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, archivedAt: null } : group)));
+  }
+
+  activeGroups(): GoalGroup[] {
+    return this.groups().filter(group => !group.archivedAt);
+  }
+
+  archivedGroups(): GoalGroup[] {
+    return this.groups()
+      .filter(group => group.archivedAt)
+      .sort((a, b) => (b.archivedAt ?? 0) - (a.archivedAt ?? 0));
+  }
+
   createGoal(
     name: string,
     targetAmount: number,
     unit: string,
+    goalType: GoalType,
     deadline: string | null,
     groupId: string | null,
     description = ''
@@ -185,6 +215,7 @@ export class GoalsService {
       description,
       targetAmount,
       unit: unit.trim().toLowerCase() || 'hours',
+      goalType,
       deadline,
       logs: [],
       createdAt: Date.now()
@@ -195,7 +226,7 @@ export class GoalsService {
 
   updateGoal(
     id: string,
-    patch: Partial<Pick<Goal, 'name' | 'description' | 'targetAmount' | 'unit' | 'deadline' | 'groupId'>>
+    patch: Partial<Pick<Goal, 'name' | 'description' | 'targetAmount' | 'unit' | 'goalType' | 'deadline' | 'groupId'>>
   ): void {
     this.goals.update(goals =>
       goals.map(goal =>
@@ -214,11 +245,24 @@ export class GoalsService {
     this.goals.update(goals => goals.filter(goal => goal.id !== id));
   }
 
-  addLog(goalId: string, date: string, amount: number, note: string): void {
+  /** Returns whether this specific log is what pushed the goal from not-complete to complete,
+   *  so the caller can celebrate exactly once, right when it's earned. */
+  addLog(goalId: string, date: string, amount: number, note: string): { justCompleted: boolean } {
+    const goal = this.goalById(goalId);
+    const wasComplete = goal ? GoalsService.isGoalComplete(goal) : false;
+
     const entry: LogEntry = { id: uid(), date, amount, note: note.trim(), createdAt: Date.now() };
+    let updated: Goal | undefined;
     this.goals.update(goals =>
-      goals.map(goal => (goal.id === goalId ? { ...goal, logs: [...goal.logs, entry] } : goal))
+      goals.map(g => {
+        if (g.id !== goalId) return g;
+        updated = { ...g, logs: [...g.logs, entry] };
+        return updated;
+      })
     );
+
+    const isComplete = updated ? GoalsService.isGoalComplete(updated) : false;
+    return { justCompleted: !wasComplete && isComplete };
   }
 
   deleteLog(goalId: string, logId: string): void {
@@ -230,16 +274,66 @@ export class GoalsService {
   }
 
   importState(state: AppState): void {
-    this.groups.set(state.groups);
-    this.goals.set(state.goals);
+    const normalized = normalizeState(state);
+    this.groups.set(normalized.groups);
+    this.goals.set(normalized.goals);
   }
 
   exportState(): AppState {
     return { groups: this.groups(), goals: this.goals() };
   }
 
+  /** Reduces a set of amounts the way the goal's type dictates: summed for 'cumulative'
+   *  goals, or just the largest single one for 'best' goals (e.g. "15 pull-ups in a row"
+   *  is reached the moment one attempt hits 15 — earlier attempts don't add up). */
+  static aggregateAmounts(goalType: GoalType | undefined, amounts: number[]): number {
+    if (!amounts.length) return 0;
+    return goalType === 'best' ? Math.max(...amounts) : amounts.reduce((sum, amount) => sum + amount, 0);
+  }
+
+  static amountForLogs(goalType: GoalType | undefined, logs: LogEntry[]): number {
+    return GoalsService.aggregateAmounts(goalType, logs.map(log => Number(log.amount)));
+  }
+
   static totalAmount(goal: Goal): number {
-    return goal.logs.reduce((sum, log) => sum + Number(log.amount), 0);
+    return GoalsService.amountForLogs(goal.goalType, goal.logs);
+  }
+
+  static isGoalComplete(goal: Goal): boolean {
+    return goal.targetAmount > 0 && GoalsService.totalAmount(goal) >= goal.targetAmount;
+  }
+
+  /** The date the goal actually crossed its target — the running total for 'cumulative' goals,
+   *  or the first attempt that hit the target on its own for 'best' goals. Null if not complete. */
+  static completedOn(goal: Goal): string | null {
+    if (!GoalsService.isGoalComplete(goal)) return null;
+
+    const sorted = [...goal.logs].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    if (goal.goalType === 'best') {
+      const hit = sorted.find(log => Number(log.amount) >= goal.targetAmount);
+      return hit?.date ?? null;
+    }
+
+    let running = 0;
+    for (const log of sorted) {
+      running += Number(log.amount);
+      if (running >= goal.targetAmount) return log.date;
+    }
+    return null;
+  }
+
+  /** Per-calendar-date amounts, aggregated per the goal's type — the shared basis for daily
+   *  averages and the trend chart, so multiple same-day logs behave consistently everywhere. */
+  static perDayAmounts(goal: Goal): Record<string, number> {
+    const byDate: Record<string, number[]> = {};
+    for (const log of goal.logs) {
+      (byDate[log.date] ??= []).push(Number(log.amount));
+    }
+    const result: Record<string, number> = {};
+    for (const [date, amounts] of Object.entries(byDate)) {
+      result[date] = GoalsService.aggregateAmounts(goal.goalType, amounts);
+    }
+    return result;
   }
 
   static goalPercent(goal: Goal): number {
@@ -251,6 +345,22 @@ export class GoalsService {
     if (!goals.length) return 0;
     const total = goals.reduce((sum, goal) => sum + GoalsService.goalPercent(goal), 0);
     return total / goals.length;
+  }
+
+  static completedCount(goals: Goal[]): number {
+    return goals.filter(goal => GoalsService.isGoalComplete(goal)).length;
+  }
+
+  static allComplete(goals: Goal[]): boolean {
+    return goals.length > 0 && goals.every(goal => GoalsService.isGoalComplete(goal));
+  }
+
+  /** Incomplete goals first, then complete ones — stable within each bucket, so unrelated
+   *  ordering (e.g. newest-first) isn't disturbed by completion alone. */
+  static sortForDisplay(goals: Goal[]): Goal[] {
+    return [...goals].sort(
+      (a, b) => Number(GoalsService.isGoalComplete(a)) - Number(GoalsService.isGoalComplete(b))
+    );
   }
 
   /** Timestamp of the most recently added log across the given goals, or 0 if none. */
@@ -275,18 +385,13 @@ export class GoalsService {
    * averages 2h — it measures typical session size, not calendar-day consistency.
    */
   static dailyAverageOverDays(goal: Goal, days: number | 'all'): number {
-    let logs = goal.logs;
+    let perDay = GoalsService.perDayAmounts(goal);
 
     if (days !== 'all') {
       const cursor = new Date(`${todayISO()}T12:00:00`);
       cursor.setDate(cursor.getDate() - (days - 1));
       const startISO = dateToISO(cursor);
-      logs = logs.filter(log => log.date >= startISO);
-    }
-
-    const perDay: Record<string, number> = {};
-    for (const log of logs) {
-      perDay[log.date] = (perDay[log.date] || 0) + Number(log.amount);
+      perDay = Object.fromEntries(Object.entries(perDay).filter(([date]) => date >= startISO));
     }
 
     const dayTotals = Object.values(perDay).filter(amount => amount > 0);

@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -50,6 +51,7 @@ const PERIOD_OPTIONS = [7, 14, 30] as const;
 export class ReportsPageComponent {
   private readonly goalsService = inject(GoalsService);
   private readonly toast = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
 
   @ViewChild('reportCard') private reportCardRef!: ElementRef<HTMLElement>;
 
@@ -63,7 +65,7 @@ export class ReportsPageComponent {
   protected readonly periodOptions = PERIOD_OPTIONS;
   protected readonly periodDays = signal<ChartRange>('all');
 
-  protected readonly scope = signal<ReportScope>(this.defaultScope());
+  protected readonly scope = signal<ReportScope>(this.scopeFromQueryOrDefault());
 
   protected readonly singleGoal = computed<Goal | null>(() => {
     const scope = this.scope();
@@ -107,19 +109,33 @@ export class ReportsPageComponent {
     return goal ? GoalsService.highestLoggedAmount(goal) : 0;
   });
 
+  protected readonly isBestType = computed(() => this.singleGoal()?.goalType === 'best');
+  protected readonly attemptsForGoal = computed(() => this.singleGoal()?.logs.length ?? 0);
+
   protected readonly averageForGoal = computed(() => {
     const goal = this.singleGoal();
     return goal ? GoalsService.dailyAverageOverDays(goal, this.periodDays()) : 0;
   });
 
   /** Amount logged within the selected recent window, for the single-goal view. Meaningless for
-   *  "all time" (that's just everything), so the delta highlight/caption stay hidden for it. */
+   *  "all time" (that's just everything), so the delta highlight/caption stay hidden for it.
+   *  For 'best' goals this is the improvement over the pre-window best, not a sum of attempts —
+   *  summing reps from separate attempts wouldn't mean anything. */
   protected readonly periodAmountForGoal = computed(() => {
     const goal = this.singleGoal();
     const period = this.periodDays();
     if (!goal || period === 'all') return 0;
     const start = this.periodStartISO(period);
-    return goal.logs.filter(log => log.date >= start).reduce((sum, log) => sum + Number(log.amount), 0);
+    const recentLogs = goal.logs.filter(log => log.date >= start);
+
+    if (goal.goalType === 'best') {
+      const priorLogs = goal.logs.filter(log => log.date < start);
+      const recentBest = GoalsService.amountForLogs('best', recentLogs);
+      const priorBest = GoalsService.amountForLogs('best', priorLogs);
+      return Math.max(0, recentBest - priorBest);
+    }
+
+    return GoalsService.amountForLogs('cumulative', recentLogs);
   });
 
   /** Percent of target reached before the recent window started — the rest of the fill up to
@@ -191,11 +207,25 @@ export class ReportsPageComponent {
     return dateToISO(d);
   }
 
+  /** Seeded once from a ?goal= link (e.g. the completion dialog's "View report" action) —
+   *  not kept in sync with the URL afterward, this is one-way seeding only. */
+  private scopeFromQueryOrDefault(): ReportScope {
+    const goalId = this.route.snapshot.queryParamMap.get('goal');
+    if (goalId && this.goalsService.goalById(goalId)) {
+      return { type: 'goal', goalId };
+    }
+    return this.defaultScope();
+  }
+
+  /** Prefers an active group so opening Reports doesn't land on archived history by default;
+   *  falls back to archived content rather than a bare "all goals" view when that's all there is. */
   private defaultScope(): ReportScope {
-    const groups = this.goalsService.groups();
-    if (groups.length) return { type: 'group', groupId: groups[0].id };
+    const activeGroups = this.goalsService.activeGroups();
+    if (activeGroups.length) return { type: 'group', groupId: activeGroups[0].id };
     const ungrouped = this.goalsService.ungroupedGoals();
     if (ungrouped.length) return { type: 'goal', goalId: ungrouped[0].id };
+    const archivedGroups = this.goalsService.archivedGroups();
+    if (archivedGroups.length) return { type: 'group', groupId: archivedGroups[0].id };
     return { type: 'all' };
   }
 }

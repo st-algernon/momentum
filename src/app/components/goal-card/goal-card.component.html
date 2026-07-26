@@ -1,4 +1,4 @@
-<div class="goal-card">
+<div class="goal-card" [class.is-complete]="isComplete()">
   <a
     class="goal-card-link"
     [routerLink]="interactive() ? ['/goal', goal().id] : null"
@@ -10,10 +10,10 @@
       <span class="goal-card-percent">{{ percent() | number: '1.0-0' }}%</span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill" [style.width.%]="percent()"></div>
+      <div class="progress-fill" [class.is-complete]="isComplete()" [style.width.%]="percent()"></div>
     </div>
     <div class="goal-card-caption">
-      {{ formatAmount(completed(), goal().unit) }} of {{ formatAmount(goal().targetAmount, goal().unit) }}
+      {{ formatAmount(completedAmount(), goal().unit) }} of {{ formatAmount(goal().targetAmount, goal().unit) }}
     </div>
   </a>
 

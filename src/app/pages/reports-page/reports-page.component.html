@@ -44,7 +44,11 @@
         @if (periodAmountForGoal() > 0) {
           <p class="linear-delta">
             <span class="linear-delta-dot"></span>
-            +{{ formatAmount(periodAmountForGoal(), g.unit) }} in the last {{ periodDays() }} days
+            @if (isBestType()) {
+              +{{ formatAmount(periodAmountForGoal(), g.unit) }} better in the last {{ periodDays() }} days
+            } @else {
+              +{{ formatAmount(periodAmountForGoal(), g.unit) }} in the last {{ periodDays() }} days
+            }
           </p>
         }
       </div>
@@ -52,15 +56,20 @@
       <div class="report-stats">
         <div class="report-stat">
           <div class="report-stat-value">{{ formatAmount(completedForGoal(), g.unit) }}</div>
-          <div class="report-stat-label">Completed</div>
+          <div class="report-stat-label">{{ isBestType() ? 'Current best' : 'Completed' }}</div>
         </div>
         <div class="report-stat">
           <div class="report-stat-value">{{ formatAmount(remainingForGoal(), g.unit) }}</div>
           <div class="report-stat-label">Remaining</div>
         </div>
         <div class="report-stat">
-          <div class="report-stat-value">{{ formatAmount(highestForGoal(), g.unit) }}</div>
-          <div class="report-stat-label">Best session</div>
+          @if (isBestType()) {
+            <div class="report-stat-value">{{ attemptsForGoal() }}</div>
+            <div class="report-stat-label">Attempts</div>
+          } @else {
+            <div class="report-stat-value">{{ formatAmount(highestForGoal(), g.unit) }}</div>
+            <div class="report-stat-label">Best session</div>
+          }
         </div>
         <div class="report-stat">
           <div class="report-stat-value">{{ formatAmount(averageForGoal(), g.unit) }}</div>

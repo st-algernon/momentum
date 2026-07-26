@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { DIALOG_WIDTH } from '../../components/goal-card/goal-card.component';
 @Component({
   selector: 'app-goal-detail-page',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent, LogFormComponent, HistoryListComponent, TrendChartComponent],
+  imports: [DatePipe, DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent, LogFormComponent, HistoryListComponent, TrendChartComponent],
   templateUrl: './goal-detail-page.component.html',
   styleUrl: './goal-detail-page.component.css'
 })
@@ -49,10 +49,25 @@ export class GoalDetailPageComponent {
     return goal ? GoalsService.goalPercent(goal) : 0;
   });
 
+  protected readonly isComplete = computed(() => {
+    const goal = this.goal();
+    return goal ? GoalsService.isGoalComplete(goal) : false;
+  });
+
+  protected readonly completedOn = computed(() => {
+    const goal = this.goal();
+    return goal ? GoalsService.completedOn(goal) : null;
+  });
+
   protected readonly highest = computed(() => {
     const goal = this.goal();
     return goal ? GoalsService.highestLoggedAmount(goal) : 0;
   });
+
+  /** For 'best' goals the highest log *is* the completed total, so showing it twice is
+   *  redundant — the third tile shows the attempt count there instead. */
+  protected readonly isBestType = computed(() => this.goal()?.goalType === 'best');
+  protected readonly attempts = computed(() => this.goal()?.logs.length ?? 0);
 
   protected readonly average = computed(() => {
     const goal = this.goal();

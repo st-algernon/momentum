@@ -1,0 +1,40 @@
+/* Shared "goal achieved" treatment (goal-card, group-section, log-form).
+   Completion is a gold accent, never a dimmed/disabled look — it's a win, not an inert state. */
+
+.completed-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-border);
+  margin-bottom: 16px;
+}
+
+.completed-banner .banner-icon {
+  color: var(--gold);
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.completed-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.completed-banner-text strong {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.completed-banner-text span {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.progress-fill.is-complete {
+  background: linear-gradient(90deg, #f0c419, var(--gold));
+}

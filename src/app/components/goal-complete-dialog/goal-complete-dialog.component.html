@@ -1,0 +1,46 @@
+<div class="modal-inner complete-dialog">
+  <div class="confetti" aria-hidden="true">
+    @for (i of confettiPieces; track i) {
+      <span class="confetti-piece" [style.--i]="i"></span>
+    }
+  </div>
+
+  <div class="modal-head">
+    <span class="modal-eyebrow">Goal achieved!</span>
+    <button class="close-btn" type="button" aria-label="Close" (click)="close()"><fa-icon [icon]="faClose"></fa-icon></button>
+  </div>
+
+  <div class="trophy-wrap">
+    <fa-icon class="trophy-icon" [icon]="faTrophy"></fa-icon>
+  </div>
+
+  <h2 class="modal-title complete-goal-name">{{ goal.name }}</h2>
+
+  @if (goal.goalType === 'best') {
+    <p class="achievement-line">New personal best: <strong>{{ formatAmount(total, goal.unit) }}</strong></p>
+  } @else {
+    <p class="achievement-line">
+      You logged <strong>{{ formatAmount(total, goal.unit) }}</strong> of {{ formatAmount(goal.targetAmount, goal.unit) }}
+    </p>
+  }
+
+  @if (deadlineMessage) {
+    <p class="deadline-line">{{ deadlineMessage }}</p>
+  }
+
+  <div class="dialog-stats">
+    <div class="dialog-stat">
+      <div class="dialog-stat-value">{{ logCount }}</div>
+      <div class="dialog-stat-label">log{{ logCount === 1 ? '' : 's' }}</div>
+    </div>
+    <div class="dialog-stat">
+      <div class="dialog-stat-value">{{ daysElapsed }}</div>
+      <div class="dialog-stat-label">day{{ daysElapsed === 1 ? '' : 's' }} to get there</div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn btn-secondary" type="button" (click)="viewReport()">View report</button>
+    <button class="btn btn-primary" type="button" (click)="close()">Nice!</button>
+  </div>
+</div>
