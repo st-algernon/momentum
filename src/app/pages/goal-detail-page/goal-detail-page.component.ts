@@ -11,13 +11,14 @@ import { ToastService } from '../../services/toast.service';
 import { LogFormComponent } from '../../components/log-form/log-form.component';
 import { HistoryListComponent } from '../../components/history-list/history-list.component';
 import { TrendChartComponent } from '../../components/trend-chart/trend-chart.component';
+import { ActivityHeatmapComponent } from '../../components/activity-heatmap/activity-heatmap.component';
 import { GoalModalComponent } from '../../components/goal-modal/goal-modal.component';
 import { DIALOG_WIDTH } from '../../components/goal-card/goal-card.component';
 
 @Component({
   selector: 'app-goal-detail-page',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent, LogFormComponent, HistoryListComponent, TrendChartComponent],
+  imports: [DatePipe, DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent, LogFormComponent, HistoryListComponent, TrendChartComponent, ActivityHeatmapComponent],
   templateUrl: './goal-detail-page.component.html',
   styleUrl: './goal-detail-page.component.css'
 })

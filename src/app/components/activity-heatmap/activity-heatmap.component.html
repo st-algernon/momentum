@@ -1,0 +1,56 @@
+<h2>Activity</h2>
+
+<div class="heatmap">
+  <div class="heatmap-months" [style.--weeks]="weeks()">
+    @for (month of monthLabels(); track month.key) {
+      <span [style.grid-column]="month.column">{{ month.label }}</span>
+    }
+  </div>
+
+  <div class="heatmap-plot">
+    <div class="heatmap-weekdays" aria-hidden="true">
+      @for (label of weekdayLabels; track label) {
+        <span>{{ label }}</span>
+      }
+    </div>
+
+    <div
+      class="heatmap-grid"
+      [style.--weeks]="weeks()"
+      role="img"
+      [attr.aria-label]="activeDays() + ' days with logged activity over the last ' + weeks() + ' weeks'"
+    >
+      @for (cell of cells(); track cell.key) {
+        @if (cell.date) {
+          <span
+            class="heat-cell"
+            [class]="'heat-cell level-' + cell.level"
+            [class.is-completion]="cell.isCompletion"
+            [matTooltip]="cell.tooltip"
+            matTooltipPosition="above"
+          ></span>
+        } @else {
+          <span class="heat-cell is-blank"></span>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="heatmap-footer">
+    @if (activeDays()) {
+      <span class="heatmap-summary">
+        {{ activeDays() }} active day{{ activeDays() === 1 ? '' : 's' }} over {{ weeks() }} weeks
+      </span>
+    } @else {
+      <span class="heatmap-summary">No activity yet</span>
+    }
+
+    <div class="heatmap-legend" aria-hidden="true">
+      <span>Less</span>
+      @for (level of levelSwatches; track level) {
+        <i [class]="'heat-swatch level-' + level"></i>
+      }
+      <span>More</span>
+    </div>
+  </div>
+</div>

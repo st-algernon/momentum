@@ -1,0 +1,155 @@
+/* Violet ramp while a goal is in progress; the whole scale flips to gold once it's
+   achieved, matching the completed-state language used across the rest of the app. */
+:host {
+  --heat-gap: 2px;
+  --heat-weekday-col: 26px;
+  /* Upper bound on a single column's width. Shared by the grid and the month labels so
+     the two stay in lockstep — capping only the grid would let labels drift right. */
+  --heat-col-max: 20px;
+  --heat-0: var(--border);
+  --heat-1: rgba(91, 91, 214, 0.24);
+  --heat-2: rgba(91, 91, 214, 0.45);
+  --heat-3: rgba(91, 91, 214, 0.7);
+  --heat-4: var(--primary);
+  --heat-ring: var(--primary);
+}
+
+:host(.is-complete) {
+  --heat-1: rgba(184, 134, 11, 0.22);
+  --heat-2: rgba(184, 134, 11, 0.44);
+  --heat-3: rgba(184, 134, 11, 0.7);
+  --heat-4: var(--gold);
+  --heat-ring: var(--gold);
+}
+
+.heatmap {
+  margin-top: 14px;
+}
+
+.heatmap-months {
+  display: grid;
+  grid-template-columns: repeat(var(--weeks), minmax(0, 1fr));
+  gap: var(--heat-gap);
+  /* Clears the weekday gutter so labels sit over the columns they name. */
+  margin-left: calc(var(--heat-weekday-col) + 6px);
+  margin-bottom: 5px;
+  max-width: calc(var(--weeks) * var(--heat-col-max));
+  color: var(--muted);
+  font-size: 0.62rem;
+  line-height: 1;
+}
+
+.heatmap-months span {
+  white-space: nowrap;
+}
+
+.heatmap-plot {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.heatmap-weekdays {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: var(--heat-gap);
+  width: var(--heat-weekday-col);
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 0.58rem;
+  line-height: 1;
+}
+
+/* Rows run Sun→Sat, so Mon/Wed/Fri sit on rows 2/4/6 — not 1/3/5 as they would with a
+   Monday-first grid. Centering keeps each label on the midline of the cell beside it. */
+.heatmap-weekdays span {
+  align-self: center;
+}
+
+.heatmap-weekdays span:nth-child(1) {
+  grid-row: 2;
+}
+
+.heatmap-weekdays span:nth-child(2) {
+  grid-row: 4;
+}
+
+.heatmap-weekdays span:nth-child(3) {
+  grid-row: 6;
+}
+
+.heatmap-grid {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--heat-gap);
+  /* Cells stay square and fluid, but stop growing once a short window would blow
+     them up to chunky squares. */
+  max-width: calc(var(--weeks) * var(--heat-col-max));
+}
+
+.heat-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--heat-0);
+}
+
+.heat-cell.is-blank {
+  background: transparent;
+}
+
+.level-0 {
+  background: var(--heat-0);
+}
+
+.level-1 {
+  background: var(--heat-1);
+}
+
+.level-2 {
+  background: var(--heat-2);
+}
+
+.level-3 {
+  background: var(--heat-3);
+}
+
+.level-4 {
+  background: var(--heat-4);
+}
+
+/* outline rather than border/box-shadow so the ring can't nudge the grid's layout. */
+.heat-cell.is-completion {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--heat-ring);
+  outline-offset: 1px;
+}
+
+.heatmap-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* No background here on purpose — the .level-* rules above supply it, and an equal-
+   specificity declaration this far down the file would override all of them to grey. */
+.heat-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
