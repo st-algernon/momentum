@@ -136,6 +136,13 @@ a {
   text-align: left;
 }
 
+/* Makes the scope-picker's dropdown panel match its trigger button's fixed width
+   (portaled to <body>, so styled globally instead of via component CSS). */
+.scope-menu-panel.mat-mdc-menu-panel {
+  width: 240px;
+  max-width: 240px;
+}
+
 /* Angular Material's overlay panels (autocomplete, datepicker, menus) render in a
    CDK overlay portaled to <body>, so they can't be reached from component styles.
    Material 3's default "surface-container" background reads as a faded grey-violet;

@@ -1,0 +1,20 @@
+<div class="report-bar-row">
+  <div class="report-bar-head">
+    <span class="report-bar-name">{{ goal().name }}</span>
+    <span class="report-bar-amount">
+      {{ formatAmount(completed(), goal().unit) }} / {{ formatAmount(goal().targetAmount, goal().unit) }}
+    </span>
+  </div>
+  <div class="report-bar-track">
+    <div class="report-bar-fill" [style.width.%]="percent()">
+      @if (labelInside()) {
+        <span class="report-bar-percent inside">{{ percent() | number: '1.0-0' }}%</span>
+      }
+    </div>
+    @if (!labelInside()) {
+      <span class="report-bar-percent outside" [style.left]="'calc(' + percent() + '% + 8px)'">
+        {{ percent() | number: '1.0-0' }}%
+      </span>
+    }
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="progress-ring" [style.width.px]="size()" [style.height.px]="size()">
+  <svg [attr.width]="size()" [attr.height]="size()" [attr.viewBox]="'0 0 ' + size() + ' ' + size()">
+    <circle
+      [attr.cx]="size() / 2"
+      [attr.cy]="size() / 2"
+      [attr.r]="radius()"
+      fill="none"
+      stroke="rgba(255, 255, 255, 0.25)"
+      [attr.stroke-width]="strokeWidth"
+    ></circle>
+    <circle
+      class="ring-progress"
+      [attr.cx]="size() / 2"
+      [attr.cy]="size() / 2"
+      [attr.r]="radius()"
+      fill="none"
+      stroke="#ffffff"
+      stroke-linecap="round"
+      [attr.stroke-width]="strokeWidth"
+      [attr.stroke-dasharray]="circumference()"
+      [attr.stroke-dashoffset]="dashOffset()"
+      [attr.transform]="'rotate(-90 ' + size() / 2 + ' ' + size() / 2 + ')'"
+    ></circle>
+  </svg>
+  <div class="progress-ring-center">
+    <div class="progress-ring-percent">{{ percent() | number: '1.0-0' }}%</div>
+    @if (label()) {
+      <div class="progress-ring-label">{{ label() }}</div>
+    }
+  </div>
+</div>

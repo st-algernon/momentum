@@ -1,0 +1,20 @@
+<button type="button" class="scope-trigger" [matMenuTriggerFor]="scopeMenu">
+  <span class="scope-trigger-label">{{ currentLabel() }}</span>
+  <span class="scope-caret">▾</span>
+</button>
+
+<mat-menu #scopeMenu="matMenu" class="scope-menu-panel">
+  @if (ungroupedGoals().length) {
+    <button mat-menu-item disabled class="scope-section-label">Ungrouped</button>
+    @for (goal of ungroupedGoals(); track goal.id) {
+      <button mat-menu-item class="scope-goal-item" (click)="selectGoal(goal.id)">{{ goal.name }}</button>
+    }
+  }
+
+  @for (group of groups(); track group.id) {
+    <button mat-menu-item class="scope-group-item" (click)="selectGroup(group.id)">{{ group.name }}</button>
+    @for (goal of goalsInGroup(group.id); track goal.id) {
+      <button mat-menu-item class="scope-goal-item" (click)="selectGoal(goal.id)">{{ goal.name }}</button>
+    }
+  }
+</mat-menu>

@@ -11,8 +11,8 @@ export const routes: Routes = [
       import('./pages/goal-detail-page/goal-detail-page.component').then(m => m.GoalDetailPageComponent)
   },
   {
-    path: 'stats',
-    loadComponent: () => import('./pages/stats-page/stats-page.component').then(m => m.StatsPageComponent)
+    path: 'reports',
+    loadComponent: () => import('./pages/reports-page/reports-page.component').then(m => m.ReportsPageComponent)
   },
   {
     path: 'settings',

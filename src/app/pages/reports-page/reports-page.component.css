@@ -1,0 +1,242 @@
+.reports-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.reports-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  flex-wrap: wrap;
+}
+
+.period-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.period-trigger:hover {
+  border-color: var(--primary);
+}
+
+.scope-caret {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.report-card {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px;
+  padding: 28px;
+  background: linear-gradient(160deg, #3c2f80 0%, #5b5bd6 55%, #8c6ff7 100%);
+  box-shadow: 0 24px 60px rgba(60, 47, 128, 0.35);
+  color: #ffffff;
+}
+
+.report-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.report-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.report-brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.report-brand-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.report-date-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.report-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 24px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.report-ring-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 26px;
+}
+
+.report-linear {
+  margin-bottom: 22px;
+}
+
+.linear-track {
+  width: 100%;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.linear-fill-wrap {
+  display: flex;
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.linear-fill-prior {
+  background: #ffffff;
+}
+
+.linear-fill-recent {
+  background: #7ce6a6;
+}
+
+.linear-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.linear-delta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 6px 0 0;
+}
+
+.linear-delta-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7ce6a6;
+  flex-shrink: 0;
+}
+
+.report-chart-wrap {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 16px 26px;
+}
+
+.report-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.report-stat {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+}
+
+.report-stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.report-stat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.report-bars {
+  display: grid;
+  gap: 16px;
+}
+
+.report-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 20px 0;
+  margin: 0;
+}
+
+.report-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.theme-picker {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theme-swatch:hover {
+  transform: scale(1.08);
+}
+
+.theme-swatch.active {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.reports-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .report-card {
+    padding: 20px;
+  }
+}

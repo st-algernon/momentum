@@ -275,13 +275,31 @@ export class GoalsService {
     return streak;
   }
 
-  static dailyAverage(goal: Goal): number {
-    if (!goal.logs.length) return 0;
-    const totals: Record<string, number> = {};
-    goal.logs.forEach(log => {
-      totals[log.date] = (totals[log.date] || 0) + Number(log.amount);
-    });
-    const values = Object.values(totals);
-    return values.reduce((a, b) => a + b, 0) / values.length;
+  /**
+   * Total logged within the last `days` calendar days (or, for 'all', since the first-ever log)
+   * divided by that many calendar days — an average per day, not per day-with-activity, so it
+   * matches what a same-window chart of the same goal shows.
+   */
+  static dailyAverageOverDays(goal: Goal, days: number | 'all'): number {
+    let windowDays: number;
+    let startISO: string;
+
+    if (days === 'all') {
+      if (!goal.logs.length) return 0;
+      startISO = goal.logs.reduce((min, log) => (log.date < min ? log.date : min), goal.logs[0].date);
+      const start = new Date(`${startISO}T12:00:00`);
+      const end = new Date(`${todayISO()}T12:00:00`);
+      windowDays = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
+    } else {
+      windowDays = days;
+      const cursor = new Date(`${todayISO()}T12:00:00`);
+      cursor.setDate(cursor.getDate() - (days - 1));
+      startISO = dateToISO(cursor);
+    }
+
+    const total = goal.logs
+      .filter(log => log.date >= startISO)
+      .reduce((sum, log) => sum + Number(log.amount), 0);
+    return total / windowDays;
   }
 }

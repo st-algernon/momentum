@@ -56,7 +56,7 @@ export class GoalDetailPageComponent {
 
   protected readonly average = computed(() => {
     const goal = this.goal();
-    return goal ? GoalsService.dailyAverage(goal) : 0;
+    return goal ? GoalsService.dailyAverageOverDays(goal, 7) : 0;
   });
 
   protected formatAmount = formatAmount;

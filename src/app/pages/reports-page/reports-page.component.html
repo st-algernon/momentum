@@ -1,0 +1,114 @@
+<div class="reports-page">
+  <div class="reports-toolbar">
+    <app-scope-picker [scope]="scope()" (scopeChange)="scope.set($event)"></app-scope-picker>
+
+    @if (singleGoal()) {
+      <button type="button" class="period-trigger" [matMenuTriggerFor]="periodMenu">
+        <span>{{ periodLabel() }}</span>
+        <span class="scope-caret">▾</span>
+      </button>
+      <mat-menu #periodMenu="matMenu">
+        <button mat-menu-item (click)="setPeriod('all')">All time</button>
+        @for (days of periodOptions; track days) {
+          <button mat-menu-item (click)="setPeriod(days)">Last {{ days }} days</button>
+        }
+      </mat-menu>
+    }
+  </div>
+
+  <div class="report-card" #reportCard [style.background]="theme().gradient">
+    <div class="report-card-header">
+      <div class="report-brand">
+        <div class="report-brand-mark">M</div>
+        <span class="report-brand-name">Momentum</span>
+      </div>
+      <div class="report-date-badge">Generated {{ generatedAt | date: 'MMM d, y' }}</div>
+    </div>
+
+    <h1 class="report-title">{{ scopeTitle() }}</h1>
+
+    @if (singleGoal(); as g) {
+      <div class="report-linear">
+        <div class="linear-track">
+          <div class="linear-fill-wrap" [style.width.%]="overallPercent()">
+            <div class="linear-fill-prior" [style.flex]="periodAmountForGoal() > 0 ? priorPercentForGoal() : 1"></div>
+            @if (periodAmountForGoal() > 0) {
+              <div class="linear-fill-recent" [style.flex]="overallPercent() - priorPercentForGoal()"></div>
+            }
+          </div>
+        </div>
+        <div class="linear-caption">
+          <span>{{ formatAmount(completedForGoal(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
+          <span>{{ overallPercent() | number: '1.0-0' }}%</span>
+        </div>
+        @if (periodAmountForGoal() > 0) {
+          <p class="linear-delta">
+            <span class="linear-delta-dot"></span>
+            +{{ formatAmount(periodAmountForGoal(), g.unit) }} in the last {{ periodDays() }} days
+          </p>
+        }
+      </div>
+
+      <div class="report-stats">
+        <div class="report-stat">
+          <div class="report-stat-value">{{ formatAmount(completedForGoal(), g.unit) }}</div>
+          <div class="report-stat-label">Completed</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-value">{{ formatAmount(remainingForGoal(), g.unit) }}</div>
+          <div class="report-stat-label">Remaining</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-value">{{ streakForGoal() }}d</div>
+          <div class="report-stat-label">Current streak</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-value">{{ formatAmount(averageForGoal(), g.unit) }}</div>
+          <div class="report-stat-label">Daily average</div>
+        </div>
+      </div>
+
+      <div class="report-chart-wrap">
+        <app-week-chart [goal]="g" variant="report" [range]="periodDays()"></app-week-chart>
+      </div>
+    } @else {
+      <div class="report-ring-wrap">
+        <app-progress-ring [percent]="overallPercent()" [size]="180" label="Overall progress"></app-progress-ring>
+      </div>
+
+      @if (scopedGoals().length) {
+        <div class="report-bars">
+          @for (goal of scopedGoals(); track goal.id) {
+            <app-report-goal-bar [goal]="goal"></app-report-goal-bar>
+          }
+        </div>
+      } @else {
+        <p class="report-empty">Nothing tracked in this scope yet.</p>
+      }
+    }
+
+    <div class="report-footer">
+      <fa-icon [icon]="faFooterIcon"></fa-icon>
+      <span>Generated with Momentum</span>
+    </div>
+  </div>
+
+  <div class="theme-picker">
+    @for (t of themes; track t.id) {
+      <button
+        type="button"
+        class="theme-swatch"
+        [class.active]="theme().id === t.id"
+        [style.background]="t.gradient"
+        [attr.aria-label]="'Use ' + t.name + ' theme'"
+        [matTooltip]="t.name"
+        (click)="theme.set(t)"
+      ></button>
+    }
+  </div>
+
+  <div class="reports-actions">
+    <button class="btn btn-secondary" type="button" [disabled]="busy()" (click)="downloadImage()">Download</button>
+    <button class="btn btn-primary" type="button" [disabled]="busy()" (click)="shareImage()">Share</button>
+  </div>
+</div>

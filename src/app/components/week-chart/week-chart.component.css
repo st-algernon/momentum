@@ -3,29 +3,188 @@
   margin: 0;
 }
 
+.chart-frame {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.y-axis {
+  position: relative;
+  width: 34px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.y-tick {
+  position: absolute;
+  right: 0;
+  transform: translateY(50%);
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.y-axis-caption {
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-transform: lowercase;
+  margin: 10px 0 0;
+}
+
+.plot-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 110px;
+  border-left: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--border);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .mini-bar {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
   align-items: end;
   gap: 6px;
-  height: 110px;
-  margin-top: 12px;
+  height: 100%;
+  padding: 0 4px;
+  z-index: 1;
 }
 
 .mini-day {
   height: var(--height, 8%);
-  min-height: 6px;
+  min-height: 3px;
   background: linear-gradient(180deg, #8c6ff7, var(--primary));
-  border-radius: 7px 7px 3px 3px;
-  position: relative;
+  border-radius: 5px 5px 2px 2px;
 }
 
-.mini-day::after {
-  content: attr(data-label);
+.average-line {
   position: absolute;
-  bottom: -22px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgba(91, 91, 214, 0.75);
+  z-index: 2;
+}
+
+.average-label {
+  position: absolute;
+  right: 2px;
+  top: -13px;
+  font-size: 0.6rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.line-chart {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+
+.chart-fill-start {
+  stop-color: var(--primary);
+  stop-opacity: 0.3;
+}
+
+.chart-fill-end {
+  stop-color: var(--primary);
+  stop-opacity: 0;
+}
+
+.chart-area {
+  stroke: none;
+}
+
+.chart-line {
+  stroke: var(--primary);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.x-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 6px;
+  padding-left: 42px;
+}
+
+.x-labels-bars {
+  padding-left: 46px;
+  padding-right: 4px;
+}
+
+.x-labels span {
+  flex: 1;
+  text-align: center;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+/* Light-on-dark theming when embedded in the violet report card. */
+:host(.week-chart-report) h2 {
+  color: #ffffff;
+}
+
+:host(.week-chart-report) .subtitle {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+:host(.week-chart-report) .y-tick,
+:host(.week-chart-report) .y-axis-caption {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+:host(.week-chart-report) .plot-area {
+  border-left-color: rgba(255, 255, 255, 0.3);
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+:host(.week-chart-report) .gridline {
+  border-top-color: rgba(255, 255, 255, 0.18);
+}
+
+:host(.week-chart-report) .mini-day {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), #ffffff);
+}
+
+:host(.week-chart-report) .average-line {
+  border-top-color: rgba(255, 255, 255, 0.8);
+}
+
+:host(.week-chart-report) .average-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:host(.week-chart-report) .chart-fill-start {
+  stop-color: #ffffff;
+  stop-opacity: 0.4;
+}
+
+:host(.week-chart-report) .chart-fill-end {
+  stop-color: #ffffff;
+  stop-opacity: 0;
+}
+
+:host(.week-chart-report) .chart-line {
+  stroke: #ffffff;
+}
+
+:host(.week-chart-report) .x-labels span {
+  color: rgba(255, 255, 255, 0.75);
 }

@@ -1,55 +1,196 @@
 import { Component, computed, input } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Goal } from '../../models/goal.model';
-import { formatAmount, todayISO } from '../../services/goals.service';
+import { GoalsService, dateToISO, formatAmount, todayISO } from '../../services/goals.service';
 
-interface DayBar {
-  date: string;
+export type ChartRange = number | 'all';
+
+interface ChartPoint {
+  key: string;
   label: string;
   amount: number;
   heightPercent: number;
 }
+
+const MS_PER_DAY = 86400000;
+/** Up to a week renders as readable columns; anything longer becomes a line. */
+const MAX_BAR_DAYS = 7;
+/** Past this span, daily points get bucketed so the line stays legible. */
+const MAX_DAILY_POINTS = 45;
+const MAX_WEEKLY_POINTS = 18;
 
 @Component({
   selector: 'app-week-chart',
   standalone: true,
   imports: [MatTooltipModule],
   templateUrl: './week-chart.component.html',
-  styleUrl: './week-chart.component.css'
+  styleUrl: './week-chart.component.css',
+  host: {
+    '[class.week-chart-report]': "variant() === 'report'"
+  }
 })
 export class WeekChartComponent {
   readonly goal = input.required<Goal>();
+  readonly variant = input<'default' | 'report'>('default');
+  readonly range = input<ChartRange>(7);
 
-  protected readonly days = computed<DayBar[]>(() => {
+  protected readonly average = computed(() => GoalsService.dailyAverageOverDays(this.goal(), this.range()));
+
+  private readonly startISO = computed(() => {
+    const range = this.range();
+    if (range === 'all') {
+      const dates = this.goal().logs.map(log => log.date);
+      return dates.length ? dates.reduce((min, date) => (date < min ? date : min)) : todayISO();
+    }
+    const cursor = new Date(`${todayISO()}T12:00:00`);
+    cursor.setDate(cursor.getDate() - (range - 1));
+    return dateToISO(cursor);
+  });
+
+  private readonly totalDays = computed(() => {
+    const start = new Date(`${this.startISO()}T12:00:00`);
+    const end = new Date(`${todayISO()}T12:00:00`);
+    return Math.max(1, Math.round((end.getTime() - start.getTime()) / MS_PER_DAY) + 1);
+  });
+
+  protected readonly chartMode = computed<'bar' | 'line'>(() =>
+    this.totalDays() <= MAX_BAR_DAYS ? 'bar' : 'line'
+  );
+
+  /** Days per plotted point: 1 for short spans, then weekly, then monthly. */
+  private readonly bucketDays = computed(() => {
+    const days = this.totalDays();
+    if (days <= MAX_DAILY_POINTS) return 1;
+    if (days <= MAX_WEEKLY_POINTS * 7) return 7;
+    return 30;
+  });
+
+  private readonly rawPoints = computed<{ key: string; label: string; amount: number }[]>(() => {
     const totals: Record<string, number> = {};
     this.goal().logs.forEach(log => {
       totals[log.date] = (totals[log.date] || 0) + Number(log.amount);
     });
 
-    const raw = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(`${todayISO()}T12:00:00`);
-      d.setDate(d.getDate() - i);
-      const iso = d.toISOString().slice(0, 10);
-      raw.push({
-        date: iso,
-        label: d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2),
-        amount: totals[iso] || 0
-      });
+    const bucketDays = this.bucketDays();
+    const useWeekdayLabels = this.chartMode() === 'bar';
+
+    const points: { key: string; label: string; amount: number }[] = [];
+    const cursor = new Date(`${this.startISO()}T12:00:00`);
+    const today = new Date(`${todayISO()}T12:00:00`);
+
+    while (cursor <= today) {
+      const bucketStart = new Date(cursor);
+      let sum = 0;
+      for (let i = 0; i < bucketDays && cursor <= today; i++) {
+        sum += totals[dateToISO(cursor)] || 0;
+        cursor.setDate(cursor.getDate() + 1);
+      }
+
+      let label: string;
+      if (useWeekdayLabels) {
+        label = bucketStart.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2);
+      } else if (bucketDays === 30) {
+        label = bucketStart.toLocaleDateString(undefined, { month: 'short' });
+      } else {
+        label = bucketStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      }
+
+      points.push({ key: dateToISO(bucketStart), label, amount: sum });
     }
-
-    const maxAmount = Math.max(1, ...raw.map(day => day.amount));
-    return raw.map(day => ({ ...day, heightPercent: Math.max(7, (day.amount / maxAmount) * 100) }));
+    return points;
   });
 
-  protected readonly weekSummary = computed<string>(() => {
-    const weekTotal = this.days().reduce((sum, day) => sum + day.amount, 0);
-    return weekTotal
-      ? `${formatAmount(weekTotal, this.goal().unit)} logged during the last 7 days.`
-      : 'No progress logged in the last 7 days.';
+  private readonly maxAmount = computed(() => Math.max(1, this.average(), ...this.rawPoints().map(p => p.amount)));
+
+  protected readonly points = computed<ChartPoint[]>(() =>
+    this.rawPoints().map(p => ({ ...p, heightPercent: Math.max(0, (p.amount / this.maxAmount()) * 100) }))
+  );
+
+  /** Bars get a visible stub for zero days; the line plots true zeroes. */
+  protected barHeight(point: ChartPoint): number {
+    return Math.max(point.amount > 0 ? 7 : 3, point.heightPercent);
+  }
+
+  /** A label under every point is unreadable past a handful, so thin them to ~5 evenly spaced. */
+  protected readonly axisLabels = computed<{ key: string; label: string }[]>(() => {
+    const points = this.points();
+    if (points.length <= 6) return points.map(p => ({ key: p.key, label: p.label }));
+
+    const wanted = 5;
+    const step = (points.length - 1) / (wanted - 1);
+    const picked: { key: string; label: string }[] = [];
+    for (let i = 0; i < wanted; i++) {
+      const p = points[Math.round(i * step)];
+      picked.push({ key: p.key, label: p.label });
+    }
+    return picked;
   });
 
-  protected barTitle(day: DayBar): string {
-    return `${day.date}: ${formatAmount(day.amount, this.goal().unit)}`;
+  protected readonly averageLinePercent = computed(() => Math.min(100, (this.average() / this.maxAmount()) * 100));
+
+  /** Y scale: 0 / mid / top, so bar and line heights can actually be read as values. */
+  protected readonly yTicks = computed<{ percent: number; label: string }[]>(() => {
+    const max = this.maxAmount();
+    return [0, 0.5, 1].map(fraction => ({
+      percent: fraction * 100,
+      label: this.formatTick(max * fraction)
+    }));
+  });
+
+  /** Says what one plotted point represents, e.g. "hours per day". */
+  protected readonly yAxisCaption = computed(() => {
+    const unit = this.goal().unit;
+    const per = this.bucketDays() === 30 ? 'month' : this.bucketDays() === 7 ? 'week' : 'day';
+    return `${unit} per ${per}`;
+  });
+
+  private formatTick(value: number): string {
+    if (value === 0) return '0';
+    if (value >= 100) return String(Math.round(value));
+    return String(Math.round(value * 10) / 10);
+  }
+
+  protected readonly summary = computed<string>(() => {
+    const total = this.points().reduce((sum, p) => sum + p.amount, 0);
+    const goal = this.goal();
+    const windowLabel = this.range() === 'all' ? 'all time' : `the last ${this.range()} days`;
+    const bucketNote = this.bucketDays() === 7 ? ' (weekly)' : this.bucketDays() === 30 ? ' (monthly)' : '';
+    return total
+      ? `${formatAmount(total, goal.unit)} logged over ${windowLabel}${bucketNote}.`
+      : `No progress logged over ${windowLabel}.`;
+  });
+
+  protected readonly chartTitle = computed(() => {
+    const range = this.range();
+    return range === 'all' ? 'All time' : `Last ${range} days`;
+  });
+
+  protected formatAmount = formatAmount;
+
+  protected pointTitle(point: ChartPoint): string {
+    return `${point.key}: ${formatAmount(point.amount, this.goal().unit)}`;
+  }
+
+  protected linePoints(): string {
+    return this.svgCoords()
+      .map(([x, y]) => `${x},${y}`)
+      .join(' ');
+  }
+
+  protected areaPoints(): string {
+    const coords = this.svgCoords();
+    if (!coords.length) return '';
+    const [firstX] = coords[0];
+    const [lastX] = coords[coords.length - 1];
+    const top = coords.map(([x, y]) => `${x},${y}`).join(' ');
+    return `${firstX},100 ${top} ${lastX},100`;
+  }
+
+  private svgCoords(): [number, number][] {
+    const points = this.points();
+    if (!points.length) return [];
+    if (points.length === 1) return [[150, 100 - points[0].heightPercent]];
+    const step = 300 / (points.length - 1);
+    return points.map((p, i) => [i * step, 100 - p.heightPercent] as [number, number]);
   }
 }
