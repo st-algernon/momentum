@@ -18,6 +18,13 @@
       @if (g.description) {
         <p class="goal-description">{{ g.description }}</p>
       }
+      @if (deadlineStatus(); as d) {
+        <p class="deadline-line" [class.deadline-good]="d.tone === 'good'" [class.deadline-overdue]="d.tone === 'overdue'">
+          <span>Deadline: {{ g.deadline | date: 'MMM d, y' }}</span>
+          <span class="deadline-sep">·</span>
+          <span>{{ d.text }}</span>
+        </p>
+      }
 
       <section class="hero">
         <div class="progress-track" aria-label="Goal progress">

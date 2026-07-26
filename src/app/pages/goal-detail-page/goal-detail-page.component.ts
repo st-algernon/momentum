@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
-import { GoalsService, formatAmount } from '../../services/goals.service';
+import { GoalsService, formatAmount, todayISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { LogFormComponent } from '../../components/log-form/log-form.component';
 import { HistoryListComponent } from '../../components/history-list/history-list.component';
@@ -72,6 +72,33 @@ export class GoalDetailPageComponent {
   protected readonly average = computed(() => {
     const goal = this.goal();
     return goal ? GoalsService.dailyAverageOverDays(goal, 'all') : 0;
+  });
+
+  /** Null when there's no deadline set. Compares against completedOn for a finished goal
+   *  (a fixed, historical comparison) or against today for one still in progress (so it
+   *  keeps counting down/up live as time passes). */
+  protected readonly deadlineStatus = computed<{ text: string; tone: 'good' | 'neutral' | 'overdue' } | null>(() => {
+    const goal = this.goal();
+    if (!goal || !goal.deadline) return null;
+
+    const complete = this.isComplete();
+    const referenceDate = complete ? this.completedOn() : todayISO();
+    if (!referenceDate) return null;
+
+    const diffDays = GoalsService.deadlineDeltaDays(goal, referenceDate);
+    if (diffDays === null) return null;
+
+    if (complete) {
+      if (diffDays > 0) return { text: `Beat deadline by ${diffDays} day${diffDays === 1 ? '' : 's'}`, tone: 'good' };
+      if (diffDays === 0) return { text: 'Right on deadline', tone: 'good' };
+      const late = Math.abs(diffDays);
+      return { text: `Finished ${late} day${late === 1 ? '' : 's'} after deadline`, tone: 'neutral' };
+    }
+
+    if (diffDays > 0) return { text: `Due in ${diffDays} day${diffDays === 1 ? '' : 's'}`, tone: 'neutral' };
+    if (diffDays === 0) return { text: 'Due today', tone: 'neutral' };
+    const overdue = Math.abs(diffDays);
+    return { text: `${overdue} day${overdue === 1 ? '' : 's'} overdue`, tone: 'overdue' };
   });
 
   protected formatAmount = formatAmount;

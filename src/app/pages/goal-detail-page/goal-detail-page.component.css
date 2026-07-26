@@ -54,6 +54,30 @@
   margin: 0;
 }
 
+.deadline-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 6px 0 0;
+}
+
+.deadline-line.deadline-good {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.deadline-line.deadline-overdue {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.deadline-sep {
+  opacity: 0.6;
+}
+
 .kebab-btn {
   width: 34px;
   height: 34px;
