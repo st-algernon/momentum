@@ -18,10 +18,25 @@ form {
 }
 
 label {
-  display: grid;
-  gap: 7px;
   font-size: 0.88rem;
   font-weight: 700;
+}
+
+/* A field's label sits above its control in its own wrapper div rather than wrapping the
+   control directly — a <label> that *wraps* its control forwards clicks anywhere in its own
+   box to that control, so a label stretched to fill this whole row would make the row-gap
+   and any space beside short label text silently focus (or, for click-to-open fields like a
+   datepicker or autocomplete, pop open) the control instead of doing nothing as expected. */
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+/* justify-self overrides the grid default of stretch — without it, the label (even shrink-
+   wrapped via display:inline-block) would still fill the whole row as a grid item. */
+.field label {
+  display: inline-block;
+  justify-self: start;
 }
 
 input,

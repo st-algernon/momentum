@@ -19,10 +19,11 @@
   } @else {
     <form (ngSubmit)="submit()">
       <div class="form-grid">
-        <label>
-          Date
+        <div class="field">
+          <label for="logDate">Date</label>
           <div class="date-input-wrap">
             <input
+              id="logDate"
               class="date-input"
               type="text"
               name="logDate"
@@ -35,16 +36,16 @@
             <mat-datepicker-toggle class="date-toggle" [for]="logDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #logDatePicker></mat-datepicker>
           </div>
-        </label>
-        <label class="unit-label">
-          {{ goal().unit }}
-          <input type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
-        </label>
+        </div>
+        <div class="field">
+          <label for="logAmount" class="unit-label">{{ goal().unit }}</label>
+          <input id="logAmount" type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
+        </div>
       </div>
-      <label>
-        <span class="label-text">Notes <span class="optional-hint">(optional)</span></span>
-        <textarea name="logNote" [(ngModel)]="note" placeholder="Any details worth remembering"></textarea>
-      </label>
+      <div class="field">
+        <label for="logNote"><span class="label-text">Notes <span class="optional-hint">(optional)</span></span></label>
+        <textarea id="logNote" name="logNote" [(ngModel)]="note" placeholder="Any details worth remembering"></textarea>
+      </div>
       <button class="btn btn-primary" type="submit">Add progress</button>
     </form>
   }

@@ -1,4 +1,5 @@
 @import '../../../styles/_form.css';
+@import '../../../styles/_info-icon.css';
 
 .subtitle {
   margin-bottom: 10px;
@@ -21,26 +22,6 @@
 
 .hint a {
   color: var(--primary);
-}
-
-.info-icon {
-  display: inline-flex;
-  align-items: center;
-  margin-left: 6px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1;
-  cursor: help;
-  vertical-align: middle;
-}
-
-.info-icon:hover,
-.info-icon:focus-visible {
-  color: var(--primary);
-  outline: none;
 }
 
 .form-grid {

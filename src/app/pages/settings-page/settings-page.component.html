@@ -8,25 +8,29 @@
   </p>
 
   <div class="form-grid">
-    <label>
-      <span class="label-text">
-        GitHub token
-        <button type="button" class="info-icon" aria-label="How to get a token"
-          matTooltip="Create a token at github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token. Give it the 'Gists' permission with read/write access, then copy it."
-          matTooltipPosition="above" matTooltipClass="setup-tooltip"><fa-icon [icon]="faInfo"></fa-icon></button>
-      </span>
-      <input type="password" name="gistToken" [(ngModel)]="token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+    <div class="field">
+      <label for="gistToken">
+        <span class="label-text">
+          GitHub token
+          <button type="button" class="info-icon" aria-label="How to get a token"
+            matTooltip="Create a token at github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token. Give it the 'Gists' permission with read/write access, then copy it."
+            matTooltipPosition="above" matTooltipClass="setup-tooltip"><fa-icon [icon]="faInfo"></fa-icon></button>
+        </span>
+      </label>
+      <input id="gistToken" type="password" name="gistToken" [(ngModel)]="token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
         autocomplete="off" />
-    </label>
-    <label>
-      <span class="label-text">
-        Gist ID <span class="optional-hint">(optional)</span>
-        <button type="button" class="info-icon" aria-label="How to get a gist ID"
-          matTooltip="Leave blank and the first backup creates a gist for you. Or create one at gist.github.com with any content (it gets replaced) and copy the ID from its URL: gist.github.com/username/THIS_IS_THE_ID"
-          matTooltipPosition="above" matTooltipClass="setup-tooltip"><fa-icon [icon]="faInfo"></fa-icon></button>
-      </span>
-      <input type="text" name="gistId" [(ngModel)]="gistId" placeholder="a1b2c3d4e5f6..." />
-    </label>
+    </div>
+    <div class="field">
+      <label for="gistId">
+        <span class="label-text">
+          Gist ID <span class="optional-hint">(optional)</span>
+          <button type="button" class="info-icon" aria-label="How to get a gist ID"
+            matTooltip="Leave blank and the first backup creates a gist for you. Or create one at gist.github.com with any content (it gets replaced) and copy the ID from its URL: gist.github.com/username/THIS_IS_THE_ID"
+            matTooltipPosition="above" matTooltipClass="setup-tooltip"><fa-icon [icon]="faInfo"></fa-icon></button>
+        </span>
+      </label>
+      <input id="gistId" type="text" name="gistId" [(ngModel)]="gistId" placeholder="a1b2c3d4e5f6..." />
+    </div>
   </div>
 
   <p class="sync-status">

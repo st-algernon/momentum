@@ -4,14 +4,14 @@
     <button class="close-btn" type="button" aria-label="Close" matTooltip="Close" (click)="close()"><fa-icon [icon]="faClose"></fa-icon></button>
   </div>
   <form (ngSubmit)="submit()">
-    <label>
-      Group name
-      <input type="text" name="groupName" [(ngModel)]="name" placeholder="Find a new job" maxlength="80" required />
-    </label>
-    <label>
-      <span class="label-text">Description <span class="optional-hint">(optional)</span></span>
-      <textarea name="groupDescription" [(ngModel)]="description" placeholder="What is this group about?" rows="2"></textarea>
-    </label>
+    <div class="field">
+      <label for="groupName">Group name</label>
+      <input id="groupName" type="text" name="groupName" [(ngModel)]="name" placeholder="Find a new job" maxlength="80" required />
+    </div>
+    <div class="field">
+      <label for="groupDescription"><span class="label-text">Description <span class="optional-hint">(optional)</span></span></label>
+      <textarea id="groupDescription" name="groupDescription" [(ngModel)]="description" placeholder="What is this group about?" rows="2"></textarea>
+    </div>
     @if (!isEdit) {
       <p class="hint">A group is just a way to organize related goals — you can also assign a goal to a group (or none) when you create it.</p>
     }

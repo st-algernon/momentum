@@ -5,9 +5,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Goal, GoalType } from '../../models/goal.model';
-import { GoalsService, UNIT_OPTIONS, dateToISO } from '../../services/goals.service';
+import { GoalsService, UNIT_OPTIONS, dateToISO, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
 export interface GoalModalData {
@@ -33,6 +33,13 @@ export class GoalModalComponent {
   protected readonly unitOptions = UNIT_OPTIONS;
   protected readonly isEdit = this.data.mode === 'edit';
   protected readonly faClose = faXmark;
+  protected readonly faInfo = faCircleInfo;
+
+  /** Examples live here rather than beside either option: shown together the contrast is
+   *  clearer, and neither mode gets a static example that may not fit the user's goal. */
+  protected readonly goalTypeTooltip =
+    'Total suits anything you accumulate — hours studied, books read, km run. ' +
+    'Personal best suits a single-attempt result you want to push higher, like a single 100 km ultra hike.';
 
   private readonly initialGroupId = this.isEdit ? this.data.goal?.groupId ?? null : this.data.defaultGroupId ?? null;
 
@@ -50,6 +57,16 @@ export class GoalModalComponent {
 
   protected get canSubmit(): boolean {
     return this.name.trim().length > 0 && Number(this.targetAmount) > 0;
+  }
+
+  /** Explains the selected mode using the target and unit the user actually entered, so the
+   *  copy always matches their goal instead of leaning on a generic example. */
+  protected get goalTypeHint(): string {
+    const target = Number(this.targetAmount);
+    const goal = target > 0 ? formatAmount(target, this.unit.trim() || 'units') : 'the target';
+    return this.goalType === 'best'
+      ? `Reached when one entry hits ${goal} — earlier entries don't add up.`
+      : `Reached when your entries add up to ${goal}.`;
   }
 
   protected filteredGroupNames(): string[] {

@@ -322,6 +322,32 @@ export class GoalsService {
     return null;
   }
 
+  /** The earliest logged date — the day work on this goal actually started. Null only if the
+   *  goal has no logs, which can't happen for a completed goal. */
+  static firstLogDate(goal: Goal): string | null {
+    return goal.logs.reduce<string | null>(
+      (earliest, log) => (earliest === null || log.date < earliest ? log.date : earliest),
+      null
+    );
+  }
+
+  /** Calendar days between two ISO dates, never negative. Uses the same noon-anchored parsing
+   *  as the rest of this service to avoid DST/timezone off-by-one on date-only strings. */
+  static daysBetween(fromISO: string, toISO: string): number {
+    const from = new Date(`${fromISO}T12:00:00`);
+    const to = new Date(`${toISO}T12:00:00`);
+    return Math.max(0, Math.round((to.getTime() - from.getTime()) / 86400000));
+  }
+
+  /** How the completion date compares to the goal's deadline: positive = finished early,
+   *  negative = finished late, 0 = exactly on the day, null = no deadline was set. */
+  static deadlineDeltaDays(goal: Goal, onDateISO: string): number | null {
+    if (!goal.deadline) return null;
+    const deadline = new Date(`${goal.deadline}T12:00:00`);
+    const done = new Date(`${onDateISO}T12:00:00`);
+    return Math.round((deadline.getTime() - done.getTime()) / 86400000);
+  }
+
   /** Per-calendar-date amounts, aggregated per the goal's type — the shared basis for daily
    *  averages and the trend chart, so multiple same-day logs behave consistently everywhere. */
   static perDayAmounts(goal: Goal): Record<string, number> {

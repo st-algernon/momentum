@@ -10,8 +10,6 @@ export interface GoalCompleteDialogData {
   goal: Goal;
 }
 
-const MS_PER_DAY = 86400000;
-
 @Component({
   selector: 'app-goal-complete-dialog',
   standalone: true,
@@ -48,18 +46,15 @@ export class GoalCompleteDialogComponent {
 
   /** Calendar days from the first log to the one that crossed the target. */
   private computeDaysElapsed(): number {
-    const dates = this.goal.logs.map(log => log.date).sort();
-    if (!dates.length || !this.completedOn) return 0;
-    const first = new Date(`${dates[0]}T12:00:00`);
-    const done = new Date(`${this.completedOn}T12:00:00`);
-    return Math.max(0, Math.round((done.getTime() - first.getTime()) / MS_PER_DAY));
+    const first = GoalsService.firstLogDate(this.goal);
+    if (!first || !this.completedOn) return 0;
+    return GoalsService.daysBetween(first, this.completedOn);
   }
 
   private computeDeadlineMessage(): string | null {
-    if (!this.goal.deadline || !this.completedOn) return null;
-    const deadline = new Date(`${this.goal.deadline}T12:00:00`);
-    const done = new Date(`${this.completedOn}T12:00:00`);
-    const diffDays = Math.round((deadline.getTime() - done.getTime()) / MS_PER_DAY);
+    if (!this.completedOn) return null;
+    const diffDays = GoalsService.deadlineDeltaDays(this.goal, this.completedOn);
+    if (diffDays === null) return null;
 
     if (diffDays > 0) return `${diffDays} day${diffDays === 1 ? '' : 's'} ahead of your deadline`;
     if (diffDays < 0) return `${Math.abs(diffDays)} day${Math.abs(diffDays) === 1 ? '' : 's'} past your deadline`;

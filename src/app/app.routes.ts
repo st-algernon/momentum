@@ -11,6 +11,11 @@ export const routes: Routes = [
       import('./pages/goal-detail-page/goal-detail-page.component').then(m => m.GoalDetailPageComponent)
   },
   {
+    path: 'achievements',
+    loadComponent: () =>
+      import('./pages/achievements-page/achievements-page.component').then(m => m.AchievementsPageComponent)
+  },
+  {
     path: 'reports',
     loadComponent: () => import('./pages/reports-page/reports-page.component').then(m => m.ReportsPageComponent)
   },

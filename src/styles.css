@@ -156,6 +156,15 @@ a {
   max-width: 240px;
 }
 
+/* Menu panels can grow taller than the viewport once they hold many items (the scope
+   picker's group/goal tree, or "Move to group" with many groups) — cap the height and let
+   the panel scroll internally instead of spilling past the edge of the page. Global because
+   these overlays are portaled to <body>, out of reach of component styles. */
+.mat-mdc-menu-panel {
+  max-height: min(70vh, 420px);
+  overflow-y: auto;
+}
+
 /* Angular Material's overlay panels (autocomplete, datepicker, menus) render in a
    CDK overlay portaled to <body>, so they can't be reached from component styles.
    Material 3's default "surface-container" background reads as a faded grey-violet;

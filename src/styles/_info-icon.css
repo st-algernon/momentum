@@ -1,0 +1,23 @@
+/* Small inline "(i)" affordance that carries an explanatory matTooltip, sitting next to a
+   field label (settings-page, goal-modal). Pair with matTooltipClass="setup-tooltip" for
+   the wider tooltip surface defined globally in styles.css. */
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: help;
+  vertical-align: middle;
+}
+
+.info-icon:hover,
+.info-icon:focus-visible {
+  color: var(--primary);
+  outline: none;
+}

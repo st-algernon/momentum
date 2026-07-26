@@ -4,46 +4,47 @@
     <button class="close-btn" type="button" aria-label="Close" matTooltip="Close" (click)="close()"><fa-icon [icon]="faClose"></fa-icon></button>
   </div>
   <form (ngSubmit)="submit()">
-    <label>
-      Goal name
-      <input type="text" name="goalName" [(ngModel)]="name" placeholder="Interviews, Applications, Workouts…" maxlength="80" required />
-    </label>
-    <label>
-      <span class="label-text">Description <span class="optional-hint">(optional)</span></span>
-      <textarea name="goalDescription" [(ngModel)]="description" placeholder="What is this goal about?" rows="2"></textarea>
-    </label>
-    <div class="goal-type-toggle" role="radiogroup" aria-label="How progress is tracked">
-      <button
-        type="button"
-        class="type-option"
-        role="radio"
-        [attr.aria-checked]="goalType === 'cumulative'"
-        [class.active]="goalType === 'cumulative'"
-        (click)="goalType = 'cumulative'"
-      >
-        <strong>Add up totals</strong>
-        <span>Every log adds up, e.g. hours studied</span>
-      </button>
-      <button
-        type="button"
-        class="type-option"
-        role="radio"
-        [attr.aria-checked]="goalType === 'best'"
-        [class.active]="goalType === 'best'"
-        (click)="goalType = 'best'"
-      >
-        <strong>Best result</strong>
-        <span>Only your top log counts, e.g. reps in a row</span>
-      </button>
+    <div class="field">
+      <label for="goalName">Goal name</label>
+      <input id="goalName" type="text" name="goalName" [(ngModel)]="name" placeholder="Interviews, Applications, Workouts…" maxlength="80" required />
     </div>
+    <div class="field">
+      <label for="goalDescription"><span class="label-text">Description <span class="optional-hint">(optional)</span></span></label>
+      <textarea id="goalDescription" name="goalDescription" [(ngModel)]="description" placeholder="What is this goal about?" rows="2"></textarea>
+    </div>
+    <fieldset class="goal-type-field" aria-describedby="goalTypeHint">
+      <legend class="label-text">
+        How progress counts
+        <button
+          type="button"
+          class="info-icon"
+          aria-label="About progress modes"
+          [matTooltip]="goalTypeTooltip"
+          matTooltipPosition="above"
+          matTooltipClass="setup-tooltip"
+        ><fa-icon [icon]="faInfo"></fa-icon></button>
+      </legend>
+      <div class="segmented">
+        <label class="segment">
+          <input type="radio" name="goalType" value="cumulative" [(ngModel)]="goalType" />
+          <span>Total</span>
+        </label>
+        <label class="segment">
+          <input type="radio" name="goalType" value="best" [(ngModel)]="goalType" />
+          <span>Personal best</span>
+        </label>
+      </div>
+      <p class="segment-hint" id="goalTypeHint">{{ goalTypeHint }}</p>
+    </fieldset>
     <div class="form-grid">
-      <label>
-        {{ goalType === 'best' ? 'Target to reach' : 'Target amount' }}
-        <input type="number" name="goalTarget" [(ngModel)]="targetAmount" min="1" step="1" placeholder="100" required />
-      </label>
-      <label>
-        Unit
+      <div class="field">
+        <label for="goalTarget">{{ goalType === 'best' ? 'Target to reach' : 'Target amount' }}</label>
+        <input id="goalTarget" type="number" name="goalTarget" [(ngModel)]="targetAmount" min="1" step="1" placeholder="100" required />
+      </div>
+      <div class="field">
+        <label for="goalUnit">Unit</label>
         <input
+          id="goalUnit"
           type="text"
           name="goalUnit"
           class="picker-input"
@@ -58,11 +59,12 @@
             <mat-option [value]="option">{{ option }}</mat-option>
           }
         </mat-autocomplete>
-      </label>
+      </div>
     </div>
-    <label>
-      <span class="label-text">Group <span class="optional-hint">(optional)</span></span>
+    <div class="field">
+      <label for="goalGroup"><span class="label-text">Group <span class="optional-hint">(optional)</span></span></label>
       <input
+        id="goalGroup"
         type="text"
         name="goalGroup"
         [(ngModel)]="groupName"
@@ -78,11 +80,12 @@
           <mat-option [value]="groupName.trim()">Create "{{ groupName.trim() }}"</mat-option>
         }
       </mat-autocomplete>
-    </label>
-    <label>
-      <span class="label-text">Deadline <span class="optional-hint">(optional)</span></span>
+    </div>
+    <div class="field">
+      <label for="goalDeadline"><span class="label-text">Deadline <span class="optional-hint">(optional)</span></span></label>
       <div class="date-input-wrap">
         <input
+          id="goalDeadline"
           class="date-input"
           type="text"
           name="goalDeadline"
@@ -94,7 +97,7 @@
         <mat-datepicker-toggle class="date-toggle" [for]="deadlinePicker"></mat-datepicker-toggle>
         <mat-datepicker #deadlinePicker></mat-datepicker>
       </div>
-    </label>
+    </div>
     <button class="btn btn-primary" type="submit" [disabled]="!canSubmit">{{ isEdit ? 'Save changes' : 'Create goal' }}</button>
   </form>
 </div>
