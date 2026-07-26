@@ -264,42 +264,33 @@ export class GoalsService {
     return latest;
   }
 
-  static currentStreak(goal: Goal): number {
-    const loggedDates = new Set(goal.logs.filter(log => Number(log.amount) > 0).map(log => log.date));
-    let streak = 0;
-    const cursor = new Date(`${todayISO()}T12:00:00`);
-    while (loggedDates.has(cursor.toISOString().slice(0, 10))) {
-      streak += 1;
-      cursor.setDate(cursor.getDate() - 1);
-    }
-    return streak;
+  /** The single biggest log entry ever recorded for this goal — a personal-best session. */
+  static highestLoggedAmount(goal: Goal): number {
+    return goal.logs.reduce((max, log) => Math.max(max, Number(log.amount)), 0);
   }
 
   /**
-   * Total logged within the last `days` calendar days (or, for 'all', since the first-ever log)
-   * divided by that many calendar days — an average per day, not per day-with-activity, so it
-   * matches what a same-window chart of the same goal shows.
+   * Average amount per *logged* day within the window ('all' = since the first entry).
+   * Days with nothing logged are left out of the divisor, so e.g. 2h every other day
+   * averages 2h — it measures typical session size, not calendar-day consistency.
    */
   static dailyAverageOverDays(goal: Goal, days: number | 'all'): number {
-    let windowDays: number;
-    let startISO: string;
+    let logs = goal.logs;
 
-    if (days === 'all') {
-      if (!goal.logs.length) return 0;
-      startISO = goal.logs.reduce((min, log) => (log.date < min ? log.date : min), goal.logs[0].date);
-      const start = new Date(`${startISO}T12:00:00`);
-      const end = new Date(`${todayISO()}T12:00:00`);
-      windowDays = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
-    } else {
-      windowDays = days;
+    if (days !== 'all') {
       const cursor = new Date(`${todayISO()}T12:00:00`);
       cursor.setDate(cursor.getDate() - (days - 1));
-      startISO = dateToISO(cursor);
+      const startISO = dateToISO(cursor);
+      logs = logs.filter(log => log.date >= startISO);
     }
 
-    const total = goal.logs
-      .filter(log => log.date >= startISO)
-      .reduce((sum, log) => sum + Number(log.amount), 0);
-    return total / windowDays;
+    const perDay: Record<string, number> = {};
+    for (const log of logs) {
+      perDay[log.date] = (perDay[log.date] || 0) + Number(log.amount);
+    }
+
+    const dayTotals = Object.values(perDay).filter(amount => amount > 0);
+    if (!dayTotals.length) return 0;
+    return dayTotals.reduce((sum, amount) => sum + amount, 0) / dayTotals.length;
   }
 }

@@ -20,16 +20,16 @@ const MAX_DAILY_POINTS = 45;
 const MAX_WEEKLY_POINTS = 18;
 
 @Component({
-  selector: 'app-week-chart',
+  selector: 'app-trend-chart',
   standalone: true,
   imports: [MatTooltipModule],
-  templateUrl: './week-chart.component.html',
-  styleUrl: './week-chart.component.css',
+  templateUrl: './trend-chart.component.html',
+  styleUrl: './trend-chart.component.css',
   host: {
-    '[class.week-chart-report]': "variant() === 'report'"
+    '[class.trend-chart-report]': "variant() === 'report'"
   }
 })
-export class WeekChartComponent {
+export class TrendChartComponent {
   readonly goal = input.required<Goal>();
   readonly variant = input<'default' | 'report'>('default');
   readonly range = input<ChartRange>(7);
@@ -149,16 +149,6 @@ export class WeekChartComponent {
     if (value >= 100) return String(Math.round(value));
     return String(Math.round(value * 10) / 10);
   }
-
-  protected readonly summary = computed<string>(() => {
-    const total = this.points().reduce((sum, p) => sum + p.amount, 0);
-    const goal = this.goal();
-    const windowLabel = this.range() === 'all' ? 'all time' : `the last ${this.range()} days`;
-    const bucketNote = this.bucketDays() === 7 ? ' (weekly)' : this.bucketDays() === 30 ? ' (monthly)' : '';
-    return total
-      ? `${formatAmount(total, goal.unit)} logged over ${windowLabel}${bucketNote}.`
-      : `No progress logged over ${windowLabel}.`;
-  });
 
   protected readonly chartTitle = computed(() => {
     const range = this.range();

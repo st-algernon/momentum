@@ -10,14 +10,14 @@ import { GoalsService, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { LogFormComponent } from '../../components/log-form/log-form.component';
 import { HistoryListComponent } from '../../components/history-list/history-list.component';
-import { WeekChartComponent } from '../../components/week-chart/week-chart.component';
+import { TrendChartComponent } from '../../components/trend-chart/trend-chart.component';
 import { GoalModalComponent } from '../../components/goal-modal/goal-modal.component';
 import { DIALOG_WIDTH } from '../../components/goal-card/goal-card.component';
 
 @Component({
   selector: 'app-goal-detail-page',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent, LogFormComponent, HistoryListComponent, WeekChartComponent],
+  imports: [DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent, LogFormComponent, HistoryListComponent, TrendChartComponent],
   templateUrl: './goal-detail-page.component.html',
   styleUrl: './goal-detail-page.component.css'
 })
@@ -49,9 +49,9 @@ export class GoalDetailPageComponent {
     return goal ? GoalsService.goalPercent(goal) : 0;
   });
 
-  protected readonly streak = computed(() => {
+  protected readonly highest = computed(() => {
     const goal = this.goal();
-    return goal ? GoalsService.currentStreak(goal) : 0;
+    return goal ? GoalsService.highestLoggedAmount(goal) : 0;
   });
 
   protected readonly average = computed(() => {

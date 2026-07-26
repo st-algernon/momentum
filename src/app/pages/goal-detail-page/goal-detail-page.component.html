@@ -39,8 +39,8 @@
           <div class="stat-value">{{ formatAmount(remaining(), g.unit) }}</div>
         </div>
         <div class="stat">
-          <div class="stat-label">Current streak</div>
-          <div class="stat-value">{{ streak() }} day{{ streak() === 1 ? '' : 's' }}</div>
+          <div class="stat-label">Best session</div>
+          <div class="stat-value">{{ formatAmount(highest(), g.unit) }}</div>
         </div>
         <div class="stat">
           <div class="stat-label">Daily average</div>
@@ -54,7 +54,7 @@
 
     <aside class="side-stack">
       <section class="card">
-        <app-week-chart [goal]="g"></app-week-chart>
+        <app-trend-chart [goal]="g"></app-trend-chart>
       </section>
 
       <section class="card tip">

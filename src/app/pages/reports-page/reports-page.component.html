@@ -59,8 +59,8 @@
           <div class="report-stat-label">Remaining</div>
         </div>
         <div class="report-stat">
-          <div class="report-stat-value">{{ streakForGoal() }}d</div>
-          <div class="report-stat-label">Current streak</div>
+          <div class="report-stat-value">{{ formatAmount(highestForGoal(), g.unit) }}</div>
+          <div class="report-stat-label">Best session</div>
         </div>
         <div class="report-stat">
           <div class="report-stat-value">{{ formatAmount(averageForGoal(), g.unit) }}</div>
@@ -69,7 +69,7 @@
       </div>
 
       <div class="report-chart-wrap">
-        <app-week-chart [goal]="g" variant="report" [range]="periodDays()"></app-week-chart>
+        <app-trend-chart [goal]="g" variant="report" [range]="periodDays()"></app-trend-chart>
       </div>
     } @else {
       <div class="report-ring-wrap">

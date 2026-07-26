@@ -11,7 +11,7 @@ import { ToastService } from '../../services/toast.service';
 import { ScopePickerComponent, ReportScope } from '../../components/scope-picker/scope-picker.component';
 import { ProgressRingComponent } from '../../components/progress-ring/progress-ring.component';
 import { ReportGoalBarComponent } from '../../components/report-goal-bar/report-goal-bar.component';
-import { WeekChartComponent, ChartRange } from '../../components/week-chart/week-chart.component';
+import { TrendChartComponent, ChartRange } from '../../components/trend-chart/trend-chart.component';
 
 export interface ReportTheme {
   id: string;
@@ -42,7 +42,7 @@ const PERIOD_OPTIONS = [7, 14, 30] as const;
     ScopePickerComponent,
     ProgressRingComponent,
     ReportGoalBarComponent,
-    WeekChartComponent
+    TrendChartComponent
   ],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.css'
@@ -102,9 +102,9 @@ export class ReportsPageComponent {
     return goal ? Math.max(0, goal.targetAmount - this.completedForGoal()) : 0;
   });
 
-  protected readonly streakForGoal = computed(() => {
+  protected readonly highestForGoal = computed(() => {
     const goal = this.singleGoal();
-    return goal ? GoalsService.currentStreak(goal) : 0;
+    return goal ? GoalsService.highestLoggedAmount(goal) : 0;
   });
 
   protected readonly averageForGoal = computed(() => {
