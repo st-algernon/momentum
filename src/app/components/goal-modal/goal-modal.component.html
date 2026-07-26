@@ -8,6 +8,10 @@
       Goal name
       <input type="text" name="goalName" [(ngModel)]="name" placeholder="Interviews, Applications, Workouts…" maxlength="80" required />
     </label>
+    <label>
+      <span class="label-text">Description <span class="optional-hint">(optional)</span></span>
+      <textarea name="goalDescription" [(ngModel)]="description" placeholder="What is this goal about?" rows="2"></textarea>
+    </label>
     <div class="form-grid">
       <label>
         Target amount

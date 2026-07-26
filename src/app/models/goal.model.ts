@@ -10,6 +10,7 @@ export interface Goal {
   id: string;
   groupId: string | null;
   name: string;
+  description: string;
   targetAmount: number;
   unit: string;
   deadline: string | null;
@@ -20,6 +21,7 @@ export interface Goal {
 export interface GoalGroup {
   id: string;
   name: string;
+  description: string;
   createdAt: number;
 }
 

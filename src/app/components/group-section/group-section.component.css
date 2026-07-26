@@ -28,6 +28,13 @@
   font-size: 0.82rem;
 }
 
+.group-section-description {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 6px 0 0;
+}
+
 .group-section-actions {
   display: flex;
   align-items: center;

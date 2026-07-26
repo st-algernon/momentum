@@ -31,7 +31,7 @@ export class GroupSectionComponent {
   protected readonly percent = computed(() => GoalsService.groupPercent(this.goals()));
   protected readonly faKebab = faEllipsisVertical;
 
-  protected renameGroup(): void {
+  protected editGroup(): void {
     this.dialog.open(GroupModalComponent, { width: DIALOG_WIDTH, data: { mode: 'edit', group: this.group() } });
   }
 

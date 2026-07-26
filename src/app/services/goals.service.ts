@@ -64,10 +64,11 @@ function flattenV2(state: V2State): AppState {
   const groups: GoalGroup[] = state.groups.map(group => ({
     id: group.id,
     name: group.name,
+    description: '',
     createdAt: group.createdAt
   }));
   const goals: Goal[] = state.groups.flatMap(group =>
-    group.goals.map(goal => ({ ...goal, groupId: group.id }))
+    group.goals.map(goal => ({ ...goal, description: '', groupId: group.id }))
   );
   return { groups, goals };
 }
@@ -75,11 +76,12 @@ function flattenV2(state: V2State): AppState {
 function migrateV1(legacy: V1State): AppState {
   if (!legacy.goals.length) return { groups: [], goals: [] };
 
-  const group: GoalGroup = { id: uid(), name: 'My Goals', createdAt: Date.now() };
+  const group: GoalGroup = { id: uid(), name: 'My Goals', description: '', createdAt: Date.now() };
   const goals: Goal[] = legacy.goals.map(goal => ({
     id: goal.id,
     groupId: group.id,
     name: goal.name,
+    description: '',
     targetAmount: goal.targetHours,
     unit: 'hours',
     deadline: goal.deadline,
@@ -153,14 +155,14 @@ export class GoalsService {
     return this.goals().filter(goal => goal.groupId === groupId);
   }
 
-  createGroup(name: string): GoalGroup {
-    const group: GoalGroup = { id: uid(), name, createdAt: Date.now() };
+  createGroup(name: string, description = ''): GoalGroup {
+    const group: GoalGroup = { id: uid(), name, description, createdAt: Date.now() };
     this.groups.update(groups => [group, ...groups]);
     return group;
   }
 
-  renameGroup(id: string, name: string): void {
-    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, name } : group)));
+  updateGroup(id: string, patch: Partial<Pick<GoalGroup, 'name' | 'description'>>): void {
+    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, ...patch } : group)));
   }
 
   deleteGroup(id: string): void {
@@ -168,11 +170,19 @@ export class GoalsService {
     this.goals.update(goals => goals.filter(goal => goal.groupId !== id));
   }
 
-  createGoal(name: string, targetAmount: number, unit: string, deadline: string | null, groupId: string | null): Goal {
+  createGoal(
+    name: string,
+    targetAmount: number,
+    unit: string,
+    deadline: string | null,
+    groupId: string | null,
+    description = ''
+  ): Goal {
     const goal: Goal = {
       id: uid(),
       groupId,
       name,
+      description,
       targetAmount,
       unit: unit.trim().toLowerCase() || 'hours',
       deadline,
@@ -185,7 +195,7 @@ export class GoalsService {
 
   updateGoal(
     id: string,
-    patch: Partial<Pick<Goal, 'name' | 'targetAmount' | 'unit' | 'deadline' | 'groupId'>>
+    patch: Partial<Pick<Goal, 'name' | 'description' | 'targetAmount' | 'unit' | 'deadline' | 'groupId'>>
   ): void {
     this.goals.update(goals =>
       goals.map(goal =>

@@ -6,3 +6,8 @@
   cursor: pointer;
   text-transform: capitalize;
 }
+
+textarea {
+  resize: vertical;
+  min-height: 56px;
+}

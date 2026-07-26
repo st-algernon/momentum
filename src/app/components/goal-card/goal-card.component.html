@@ -1,5 +1,10 @@
 <div class="goal-card">
-  <a class="goal-card-link" [routerLink]="interactive() ? ['/goal', goal().id] : null">
+  <a
+    class="goal-card-link"
+    [routerLink]="interactive() ? ['/goal', goal().id] : null"
+    [matTooltip]="goal().description"
+    matTooltipPosition="above"
+  >
     <div class="goal-card-head">
       <strong>{{ goal().name }}</strong>
       <span class="goal-card-percent">{{ percent() | number: '1.0-0' }}%</span>

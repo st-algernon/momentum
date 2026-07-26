@@ -5,6 +5,9 @@
       <span class="group-section-meta">
         {{ goals().length }} goal{{ goals().length === 1 ? '' : 's' }} · {{ percent() | number: '1.0-0' }}% overall
       </span>
+      @if (group().description) {
+        <p class="group-section-description">{{ group().description }}</p>
+      }
     </div>
     @if (interactive()) {
       <div class="group-section-actions">
@@ -32,6 +35,6 @@
 </section>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="renameGroup()">Rename</button>
+  <button mat-menu-item (click)="editGroup()">Edit</button>
   <button mat-menu-item class="danger-item" (click)="deleteGroup()">Delete</button>
 </mat-menu>

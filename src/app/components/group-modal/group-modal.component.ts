@@ -30,6 +30,7 @@ export class GroupModalComponent {
   protected readonly faClose = faXmark;
 
   name = this.data.group?.name ?? '';
+  description = this.data.group?.description ?? '';
 
   close(): void {
     this.dialogRef.close();
@@ -39,11 +40,13 @@ export class GroupModalComponent {
     const name = this.name.trim();
     if (!name) return;
 
+    const description = this.description.trim();
+
     if (this.isEdit && this.data.group) {
-      this.goalsService.renameGroup(this.data.group.id, name);
-      this.toast.show('Group renamed');
+      this.goalsService.updateGroup(this.data.group.id, { name, description });
+      this.toast.show('Group updated');
     } else {
-      this.goalsService.createGroup(name);
+      this.goalsService.createGroup(name, description);
       this.toast.show('Group created');
     }
 

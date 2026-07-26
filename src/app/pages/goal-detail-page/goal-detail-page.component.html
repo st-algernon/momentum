@@ -15,6 +15,9 @@
           <fa-icon [icon]="faKebab"></fa-icon>
         </button>
       </div>
+      @if (g.description) {
+        <p class="goal-description">{{ g.description }}</p>
+      }
 
       <section class="hero">
         <div class="progress-track" aria-label="Goal progress">

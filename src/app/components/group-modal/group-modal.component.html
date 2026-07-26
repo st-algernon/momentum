@@ -1,12 +1,16 @@
 <div class="modal-inner">
   <div class="modal-head">
-    <h2 class="modal-title">{{ isEdit ? 'Rename group' : 'New group' }}</h2>
+    <h2 class="modal-title">{{ isEdit ? 'Edit group' : 'New group' }}</h2>
     <button class="close-btn" type="button" aria-label="Close" matTooltip="Close" (click)="close()"><fa-icon [icon]="faClose"></fa-icon></button>
   </div>
   <form (ngSubmit)="submit()">
     <label>
       Group name
       <input type="text" name="groupName" [(ngModel)]="name" placeholder="Find a new job" maxlength="80" required />
+    </label>
+    <label>
+      <span class="label-text">Description <span class="optional-hint">(optional)</span></span>
+      <textarea name="groupDescription" [(ngModel)]="description" placeholder="What is this group about?" rows="2"></textarea>
     </label>
     @if (!isEdit) {
       <p class="hint">A group is just a way to organize related goals — you can also assign a goal to a group (or none) when you create it.</p>

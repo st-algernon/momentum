@@ -37,6 +37,7 @@ export class GoalModalComponent {
   private readonly initialGroupId = this.isEdit ? this.data.goal?.groupId ?? null : this.data.defaultGroupId ?? null;
 
   name = this.data.goal?.name ?? '';
+  description = this.data.goal?.description ?? '';
   targetAmount: number | null = this.data.goal?.targetAmount ?? null;
   unit = this.data.goal?.unit ?? 'hours';
   deadline: Date | null = this.data.goal?.deadline ? new Date(`${this.data.goal.deadline}T12:00:00`) : null;
@@ -66,12 +67,20 @@ export class GoalModalComponent {
     }
 
     const deadline = this.deadline ? dateToISO(this.deadline) : null;
+    const description = this.description.trim();
 
     if (this.isEdit && this.data.goal) {
-      this.goalsService.updateGoal(this.data.goal.id, { name, targetAmount: target, unit: this.unit, deadline, groupId });
+      this.goalsService.updateGoal(this.data.goal.id, {
+        name,
+        description,
+        targetAmount: target,
+        unit: this.unit,
+        deadline,
+        groupId
+      });
       this.toast.show('Goal updated');
     } else {
-      this.goalsService.createGoal(name, target, this.unit, deadline, groupId);
+      this.goalsService.createGoal(name, target, this.unit, deadline, groupId, description);
       this.toast.show('Goal created');
     }
 

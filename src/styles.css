@@ -76,6 +76,7 @@ a {
 .btn-primary {
   background: var(--primary);
   color: white;
+  border: 1px solid var(--border);
 }
 
 .btn-primary:hover {
