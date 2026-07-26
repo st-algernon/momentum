@@ -31,4 +31,23 @@
   <router-outlet></router-outlet>
 </main>
 
+<nav class="bottom-nav" aria-label="Primary">
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <fa-icon class="bottom-nav-icon" [icon]="faDashboard"></fa-icon>
+    <span>Dashboard</span>
+  </a>
+  <a routerLink="/achievements" routerLinkActive="active">
+    <fa-icon class="bottom-nav-icon" [icon]="faAchievements"></fa-icon>
+    <span>Achievements</span>
+  </a>
+  <a routerLink="/reports" routerLinkActive="active">
+    <fa-icon class="bottom-nav-icon" [icon]="faReports"></fa-icon>
+    <span>Reports</span>
+  </a>
+  <a routerLink="/settings" routerLinkActive="active">
+    <fa-icon class="bottom-nav-icon" [icon]="faSettings"></fa-icon>
+    <span>Settings</span>
+  </a>
+</nav>
+
 <app-toast></app-toast>

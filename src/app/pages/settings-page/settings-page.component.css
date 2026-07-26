@@ -1,10 +1,6 @@
 @import '../../../styles/_form.css';
 @import '../../../styles/_info-icon.css';
 
-.subtitle {
-  margin-bottom: 10px;
-}
-
 .settings-section {
   margin-bottom: 20px;
 }

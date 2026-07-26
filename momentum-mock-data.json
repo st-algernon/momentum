@@ -1,0 +1,893 @@
+{
+  "groups": [
+    {
+      "id": "grp-career",
+      "name": "Career Growth",
+      "description": "Prepping for my next role.",
+      "archivedAt": null,
+      "createdAt": 1767614400000
+    },
+    {
+      "id": "grp-fitness",
+      "name": "Fitness",
+      "description": "Building strength and endurance this year.",
+      "archivedAt": null,
+      "createdAt": 1768046400000
+    },
+    {
+      "id": "grp-reading-2024",
+      "name": "2024 Reading Challenge",
+      "description": "My reading goals from last year.",
+      "archivedAt": 1733400000000,
+      "createdAt": 1704196800000
+    }
+  ],
+  "goals": [
+    {
+      "id": "goal-interview-prep",
+      "groupId": "grp-career",
+      "name": "Interview prep hours",
+      "description": "Behavioral + system design practice ahead of first-rounds.",
+      "targetAmount": 50,
+      "unit": "hours",
+      "goalType": "cumulative",
+      "deadline": "2026-08-15",
+      "createdAt": 1779969600000,
+      "logs": [
+        {
+          "id": "log-1",
+          "date": "2026-06-02",
+          "amount": 3,
+          "note": "Behavioral prep",
+          "createdAt": 1780401600000
+        },
+        {
+          "id": "log-2",
+          "date": "2026-06-09",
+          "amount": 2.5,
+          "note": "",
+          "createdAt": 1781006400000
+        },
+        {
+          "id": "log-3",
+          "date": "2026-06-16",
+          "amount": 4,
+          "note": "Mock interview with a friend",
+          "createdAt": 1781611200000
+        },
+        {
+          "id": "log-4",
+          "date": "2026-06-23",
+          "amount": 2,
+          "note": "",
+          "createdAt": 1782216000000
+        },
+        {
+          "id": "log-5",
+          "date": "2026-06-30",
+          "amount": 3.5,
+          "note": "System design review",
+          "createdAt": 1782820800000
+        },
+        {
+          "id": "log-6",
+          "date": "2026-07-07",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1783425600000
+        },
+        {
+          "id": "log-7",
+          "date": "2026-07-14",
+          "amount": 4,
+          "note": "Recorded myself answering questions",
+          "createdAt": 1784030400000
+        },
+        {
+          "id": "log-8",
+          "date": "2026-07-21",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1784635200000
+        },
+        {
+          "id": "log-9",
+          "date": "2026-07-25",
+          "amount": 2,
+          "note": "",
+          "createdAt": 1784980800000
+        }
+      ]
+    },
+    {
+      "id": "goal-job-apps",
+      "groupId": "grp-career",
+      "name": "Job applications sent",
+      "description": "Casting a wide net before narrowing down.",
+      "targetAmount": 30,
+      "unit": "times",
+      "goalType": "cumulative",
+      "deadline": "2026-06-01",
+      "createdAt": 1767873600000,
+      "logs": [
+        {
+          "id": "log-10",
+          "date": "2026-01-12",
+          "amount": 4,
+          "note": "",
+          "createdAt": 1768219200000
+        },
+        {
+          "id": "log-11",
+          "date": "2026-01-26",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1769428800000
+        },
+        {
+          "id": "log-12",
+          "date": "2026-02-09",
+          "amount": 5,
+          "note": "",
+          "createdAt": 1770638400000
+        },
+        {
+          "id": "log-13",
+          "date": "2026-02-23",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1771848000000
+        },
+        {
+          "id": "log-14",
+          "date": "2026-03-09",
+          "amount": 4,
+          "note": "",
+          "createdAt": 1773057600000
+        },
+        {
+          "id": "log-15",
+          "date": "2026-03-23",
+          "amount": 4,
+          "note": "Focused on startups this batch",
+          "createdAt": 1774267200000
+        },
+        {
+          "id": "log-16",
+          "date": "2026-04-06",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1775476800000
+        },
+        {
+          "id": "log-17",
+          "date": "2026-04-20",
+          "amount": 4,
+          "note": "",
+          "createdAt": 1776686400000
+        },
+        {
+          "id": "log-18",
+          "date": "2026-05-04",
+          "amount": 3,
+          "note": "Final push before the deadline",
+          "createdAt": 1777896000000
+        }
+      ]
+    },
+    {
+      "id": "goal-pushups",
+      "groupId": "grp-fitness",
+      "name": "Push-ups in a row",
+      "description": "Chasing a real personal record, not just reps.",
+      "targetAmount": 50,
+      "unit": "times",
+      "goalType": "best",
+      "deadline": null,
+      "createdAt": 1769342400000,
+      "logs": [
+        {
+          "id": "log-19",
+          "date": "2026-02-01",
+          "amount": 32,
+          "note": "",
+          "createdAt": 1769947200000
+        },
+        {
+          "id": "log-20",
+          "date": "2026-02-08",
+          "amount": 35,
+          "note": "",
+          "createdAt": 1770552000000
+        },
+        {
+          "id": "log-21",
+          "date": "2026-02-15",
+          "amount": 38,
+          "note": "",
+          "createdAt": 1771156800000
+        },
+        {
+          "id": "log-22",
+          "date": "2026-02-22",
+          "amount": 41,
+          "note": "",
+          "createdAt": 1771761600000
+        },
+        {
+          "id": "log-23",
+          "date": "2026-03-01",
+          "amount": 44,
+          "note": "",
+          "createdAt": 1772366400000
+        },
+        {
+          "id": "log-24",
+          "date": "2026-03-08",
+          "amount": 47,
+          "note": "",
+          "createdAt": 1772971200000
+        },
+        {
+          "id": "log-25",
+          "date": "2026-03-15",
+          "amount": 49,
+          "note": "",
+          "createdAt": 1773576000000
+        },
+        {
+          "id": "log-26",
+          "date": "2026-03-22",
+          "amount": 52,
+          "note": "New PR!",
+          "createdAt": 1774180800000
+        }
+      ]
+    },
+    {
+      "id": "goal-running",
+      "groupId": "grp-fitness",
+      "name": "Weekly running",
+      "description": "500 km on my legs before the year is out.",
+      "targetAmount": 500,
+      "unit": "km",
+      "goalType": "cumulative",
+      "deadline": "2026-12-31",
+      "createdAt": 1767096000000,
+      "logs": [
+        {
+          "id": "log-27",
+          "date": "2026-01-05",
+          "amount": 12,
+          "note": "",
+          "createdAt": 1767614400000
+        },
+        {
+          "id": "log-28",
+          "date": "2026-01-19",
+          "amount": 15,
+          "note": "",
+          "createdAt": 1768824000000
+        },
+        {
+          "id": "log-29",
+          "date": "2026-02-02",
+          "amount": 14,
+          "note": "",
+          "createdAt": 1770033600000
+        },
+        {
+          "id": "log-30",
+          "date": "2026-02-16",
+          "amount": 18,
+          "note": "",
+          "createdAt": 1771243200000
+        },
+        {
+          "id": "log-31",
+          "date": "2026-03-02",
+          "amount": 16,
+          "note": "",
+          "createdAt": 1772452800000
+        },
+        {
+          "id": "log-32",
+          "date": "2026-03-16",
+          "amount": 20,
+          "note": "",
+          "createdAt": 1773662400000
+        },
+        {
+          "id": "log-33",
+          "date": "2026-03-30",
+          "amount": 18,
+          "note": "",
+          "createdAt": 1774872000000
+        },
+        {
+          "id": "log-34",
+          "date": "2026-04-13",
+          "amount": 22,
+          "note": "",
+          "createdAt": 1776081600000
+        },
+        {
+          "id": "log-35",
+          "date": "2026-04-27",
+          "amount": 19,
+          "note": "",
+          "createdAt": 1777291200000
+        },
+        {
+          "id": "log-36",
+          "date": "2026-05-11",
+          "amount": 24,
+          "note": "",
+          "createdAt": 1778500800000
+        },
+        {
+          "id": "log-37",
+          "date": "2026-05-25",
+          "amount": 21,
+          "note": "",
+          "createdAt": 1779710400000
+        },
+        {
+          "id": "log-38",
+          "date": "2026-06-08",
+          "amount": 23,
+          "note": "",
+          "createdAt": 1780920000000
+        },
+        {
+          "id": "log-39",
+          "date": "2026-06-22",
+          "amount": 20,
+          "note": "",
+          "createdAt": 1782129600000
+        },
+        {
+          "id": "log-40",
+          "date": "2026-07-06",
+          "amount": 19,
+          "note": "Hot one today",
+          "createdAt": 1783339200000
+        },
+        {
+          "id": "log-41",
+          "date": "2026-07-20",
+          "amount": 17,
+          "note": "",
+          "createdAt": 1784548800000
+        }
+      ]
+    },
+    {
+      "id": "goal-plank",
+      "groupId": "grp-fitness",
+      "name": "Plank hold",
+      "description": "Working up to a solid 3-minute hold.",
+      "targetAmount": 3,
+      "unit": "minutes",
+      "goalType": "best",
+      "deadline": null,
+      "createdAt": 1776686400000,
+      "logs": [
+        {
+          "id": "log-42",
+          "date": "2026-05-01",
+          "amount": 1.5,
+          "note": "",
+          "createdAt": 1777636800000
+        },
+        {
+          "id": "log-43",
+          "date": "2026-05-15",
+          "amount": 1.8,
+          "note": "",
+          "createdAt": 1778846400000
+        },
+        {
+          "id": "log-44",
+          "date": "2026-06-01",
+          "amount": 2.1,
+          "note": "",
+          "createdAt": 1780315200000
+        },
+        {
+          "id": "log-45",
+          "date": "2026-06-15",
+          "amount": 2.3,
+          "note": "",
+          "createdAt": 1781524800000
+        },
+        {
+          "id": "log-46",
+          "date": "2026-07-01",
+          "amount": 2.5,
+          "note": "Legs shaking but held it",
+          "createdAt": 1782907200000
+        }
+      ]
+    },
+    {
+      "id": "goal-read-books",
+      "groupId": "grp-reading-2024",
+      "name": "Read 12 books",
+      "description": "A book a month for the whole year.",
+      "targetAmount": 12,
+      "unit": "times",
+      "goalType": "cumulative",
+      "deadline": "2024-12-31",
+      "createdAt": 1704196800000,
+      "logs": [
+        {
+          "id": "log-47",
+          "date": "2024-01-20",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1705752000000
+        },
+        {
+          "id": "log-48",
+          "date": "2024-02-18",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1708257600000
+        },
+        {
+          "id": "log-49",
+          "date": "2024-03-15",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1710504000000
+        },
+        {
+          "id": "log-50",
+          "date": "2024-04-10",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1712750400000
+        },
+        {
+          "id": "log-51",
+          "date": "2024-05-05",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1714910400000
+        },
+        {
+          "id": "log-52",
+          "date": "2024-06-01",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1717243200000
+        },
+        {
+          "id": "log-53",
+          "date": "2024-07-14",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1720958400000
+        },
+        {
+          "id": "log-54",
+          "date": "2024-08-09",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1723204800000
+        },
+        {
+          "id": "log-55",
+          "date": "2024-09-03",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1725364800000
+        },
+        {
+          "id": "log-56",
+          "date": "2024-09-28",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1727524800000
+        },
+        {
+          "id": "log-57",
+          "date": "2024-10-22",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1729598400000
+        },
+        {
+          "id": "log-58",
+          "date": "2024-11-18",
+          "amount": 1,
+          "note": "Finished the last one early!",
+          "createdAt": 1731931200000
+        }
+      ]
+    },
+    {
+      "id": "goal-ai-articles",
+      "groupId": "grp-reading-2024",
+      "name": "AI articles read",
+      "description": "Keeping up with the field outside of work.",
+      "targetAmount": 20,
+      "unit": "times",
+      "goalType": "cumulative",
+      "deadline": null,
+      "createdAt": 1718884800000,
+      "logs": [
+        {
+          "id": "log-59",
+          "date": "2024-07-02",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1719921600000
+        },
+        {
+          "id": "log-60",
+          "date": "2024-07-16",
+          "amount": 2,
+          "note": "",
+          "createdAt": 1721131200000
+        },
+        {
+          "id": "log-61",
+          "date": "2024-07-30",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1722340800000
+        },
+        {
+          "id": "log-62",
+          "date": "2024-08-13",
+          "amount": 2,
+          "note": "",
+          "createdAt": 1723550400000
+        },
+        {
+          "id": "log-63",
+          "date": "2024-08-27",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1724760000000
+        },
+        {
+          "id": "log-64",
+          "date": "2024-09-10",
+          "amount": 2,
+          "note": "",
+          "createdAt": 1725969600000
+        },
+        {
+          "id": "log-65",
+          "date": "2024-09-24",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1727179200000
+        },
+        {
+          "id": "log-66",
+          "date": "2024-10-08",
+          "amount": 2,
+          "note": "Caught up on the backlog",
+          "createdAt": 1728388800000
+        }
+      ]
+    },
+    {
+      "id": "goal-spanish",
+      "groupId": null,
+      "name": "Learn Spanish",
+      "description": "Conversational fluency, one lesson at a time.",
+      "targetAmount": 100,
+      "unit": "hours",
+      "goalType": "cumulative",
+      "deadline": null,
+      "createdAt": 1771588800000,
+      "logs": [
+        {
+          "id": "log-67",
+          "date": "2026-03-05",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1772712000000
+        },
+        {
+          "id": "log-68",
+          "date": "2026-03-19",
+          "amount": 2.5,
+          "note": "",
+          "createdAt": 1773921600000
+        },
+        {
+          "id": "log-69",
+          "date": "2026-04-02",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1775131200000
+        },
+        {
+          "id": "log-70",
+          "date": "2026-04-16",
+          "amount": 4,
+          "note": "",
+          "createdAt": 1776340800000
+        },
+        {
+          "id": "log-71",
+          "date": "2026-04-30",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1777550400000
+        },
+        {
+          "id": "log-72",
+          "date": "2026-05-14",
+          "amount": 2,
+          "note": "",
+          "createdAt": 1778760000000
+        },
+        {
+          "id": "log-73",
+          "date": "2026-05-28",
+          "amount": 3.5,
+          "note": "",
+          "createdAt": 1779969600000
+        },
+        {
+          "id": "log-74",
+          "date": "2026-06-11",
+          "amount": 4,
+          "note": "",
+          "createdAt": 1781179200000
+        },
+        {
+          "id": "log-75",
+          "date": "2026-06-25",
+          "amount": 3,
+          "note": "",
+          "createdAt": 1782388800000
+        },
+        {
+          "id": "log-76",
+          "date": "2026-07-09",
+          "amount": 2.5,
+          "note": "",
+          "createdAt": 1783598400000
+        },
+        {
+          "id": "log-77",
+          "date": "2026-07-23",
+          "amount": 3,
+          "note": "Finally had a full conversation with a native speaker",
+          "createdAt": 1784808000000
+        }
+      ]
+    },
+    {
+      "id": "goal-meditate",
+      "groupId": null,
+      "name": "Meditate for 30 days",
+      "description": "",
+      "targetAmount": 30,
+      "unit": "days",
+      "goalType": "cumulative",
+      "deadline": null,
+      "createdAt": 1767009600000,
+      "logs": [
+        {
+          "id": "log-78",
+          "date": "2026-01-01",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767268800000
+        },
+        {
+          "id": "log-79",
+          "date": "2026-01-02",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767355200000
+        },
+        {
+          "id": "log-80",
+          "date": "2026-01-03",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767441600000
+        },
+        {
+          "id": "log-81",
+          "date": "2026-01-04",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767528000000
+        },
+        {
+          "id": "log-82",
+          "date": "2026-01-05",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767614400000
+        },
+        {
+          "id": "log-83",
+          "date": "2026-01-06",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767700800000
+        },
+        {
+          "id": "log-84",
+          "date": "2026-01-07",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767787200000
+        },
+        {
+          "id": "log-85",
+          "date": "2026-01-08",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767873600000
+        },
+        {
+          "id": "log-86",
+          "date": "2026-01-09",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1767960000000
+        },
+        {
+          "id": "log-87",
+          "date": "2026-01-10",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768046400000
+        },
+        {
+          "id": "log-88",
+          "date": "2026-01-11",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768132800000
+        },
+        {
+          "id": "log-89",
+          "date": "2026-01-12",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768219200000
+        },
+        {
+          "id": "log-90",
+          "date": "2026-01-13",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768305600000
+        },
+        {
+          "id": "log-91",
+          "date": "2026-01-14",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768392000000
+        },
+        {
+          "id": "log-92",
+          "date": "2026-01-15",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768478400000
+        },
+        {
+          "id": "log-93",
+          "date": "2026-01-16",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768564800000
+        },
+        {
+          "id": "log-94",
+          "date": "2026-01-17",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768651200000
+        },
+        {
+          "id": "log-95",
+          "date": "2026-01-18",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768737600000
+        },
+        {
+          "id": "log-96",
+          "date": "2026-01-19",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768824000000
+        },
+        {
+          "id": "log-97",
+          "date": "2026-01-20",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768910400000
+        },
+        {
+          "id": "log-98",
+          "date": "2026-01-21",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1768996800000
+        },
+        {
+          "id": "log-99",
+          "date": "2026-01-22",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769083200000
+        },
+        {
+          "id": "log-100",
+          "date": "2026-01-23",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769169600000
+        },
+        {
+          "id": "log-101",
+          "date": "2026-01-24",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769256000000
+        },
+        {
+          "id": "log-102",
+          "date": "2026-01-25",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769342400000
+        },
+        {
+          "id": "log-103",
+          "date": "2026-01-26",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769428800000
+        },
+        {
+          "id": "log-104",
+          "date": "2026-01-27",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769515200000
+        },
+        {
+          "id": "log-105",
+          "date": "2026-01-28",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769601600000
+        },
+        {
+          "id": "log-106",
+          "date": "2026-01-29",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769688000000
+        },
+        {
+          "id": "log-107",
+          "date": "2026-01-30",
+          "amount": 1,
+          "note": "",
+          "createdAt": 1769774400000
+        }
+      ]
+    }
+  ]
+}

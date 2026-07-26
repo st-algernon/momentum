@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faChartSimple, faGear, faHouse, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { AutoSyncService } from './services/auto-sync.service';
 import { ToastComponent } from './components/toast/toast.component';
 
@@ -16,6 +16,10 @@ import { ToastComponent } from './components/toast/toast.component';
 export class AppComponent {
   protected readonly autoSync = inject(AutoSyncService);
   protected readonly faSync = faArrowsRotate;
+  protected readonly faDashboard = faHouse;
+  protected readonly faAchievements = faTrophy;
+  protected readonly faReports = faChartSimple;
+  protected readonly faSettings = faGear;
 
   protected syncLabel(): string {
     switch (this.autoSync.indicator()) {

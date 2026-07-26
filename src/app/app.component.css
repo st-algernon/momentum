@@ -137,15 +137,55 @@
   padding: 24px 0 56px;
 }
 
+.bottom-nav {
+  display: none;
+}
+
 @media (max-width: 620px) {
   .topnav-inner {
     padding: 12px 0;
   }
   .nav-links {
-    order: 3;
-    width: 100%;
+    display: none;
   }
-  .sync-indicator {
-    order: 2;
+
+  /* The bottom nav takes over primary navigation on small screens, so the page content
+     needs enough bottom padding to clear the fixed bar instead of sitting under it. */
+  .page-container {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    background: #ffffff;
+    border-top: 1px solid var(--border);
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 4px;
+    border-radius: 10px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.6rem;
+    font-weight: 700;
+  }
+
+  .bottom-nav a.active {
+    color: var(--primary);
+  }
+
+  .bottom-nav-icon {
+    font-size: 1.1rem;
   }
 }

@@ -123,11 +123,6 @@ a {
   border-radius: 14px;
 }
 
-.subtitle {
-  color: var(--muted);
-  margin: 0;
-}
-
 /* Form-label caption. Labels are display:grid, which would place a bare text node
    and an inline hint span on separate rows; wrapping the caption in one block keeps
    them together as a single grid item. */

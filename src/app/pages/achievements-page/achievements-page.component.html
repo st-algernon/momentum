@@ -1,6 +1,5 @@
 <div class="achievements-page">
   <h1>Achievements</h1>
-  <p class="subtitle">Every goal you've finished, newest first.</p>
 
   @if (!achievements().length) {
     <div class="empty-state">
@@ -9,25 +8,6 @@
       <a class="btn btn-primary" routerLink="/">Back to Dashboard</a>
     </div>
   } @else {
-    <div class="achievement-stats">
-      <div class="achievement-stat">
-        <div class="achievement-stat-value">{{ stats().achieved }}</div>
-        <div class="achievement-stat-label">Achieved</div>
-      </div>
-      <div class="achievement-stat">
-        <div class="achievement-stat-value">{{ stats().daysOfWork }}</div>
-        <div class="achievement-stat-label">Days of work</div>
-      </div>
-      <div class="achievement-stat">
-        <div class="achievement-stat-value">{{ stats().thisYear }}</div>
-        <div class="achievement-stat-label">This year</div>
-      </div>
-      <div class="achievement-stat">
-        <div class="achievement-stat-value">{{ stats().fastest }}</div>
-        <div class="achievement-stat-label">Fastest (days)</div>
-      </div>
-    </div>
-
     <ol class="timeline">
       @for (a of achievements(); track a.goal.id; let i = $index) {
         @if (a.showYear) {

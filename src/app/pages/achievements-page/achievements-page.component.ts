@@ -20,15 +20,6 @@ export interface Achievement {
   isFirstWin: boolean;
 }
 
-interface AchievementStats {
-  achieved: number;
-  daysOfWork: number;
-  thisYear: number;
-  fastest: number;
-}
-
-const EMPTY_STATS: AchievementStats = { achieved: 0, daysOfWork: 0, thisYear: 0, fastest: 0 };
-
 @Component({
   selector: 'app-achievements-page',
   standalone: true,
@@ -75,25 +66,6 @@ export class AchievementsPageComponent {
         isFirstWin: index === achieved.length - 1
       };
     });
-  });
-
-  protected readonly stats = computed<AchievementStats>(() => {
-    const items = this.achievements();
-    if (!items.length) return EMPTY_STATS;
-
-    const distinctDates = new Set<string>();
-    for (const item of items) {
-      for (const log of item.goal.logs) distinctDates.add(log.date);
-    }
-
-    const thisYear = String(new Date().getFullYear());
-
-    return {
-      achieved: items.length,
-      daysOfWork: distinctDates.size,
-      thisYear: items.filter(item => item.completedOn.slice(0, 4) === thisYear).length,
-      fastest: Math.min(...items.map(item => item.durationDays))
-    };
   });
 
   protected icon(achievement: Achievement): IconDefinition {
