@@ -1,10 +1,23 @@
 <section class="history">
-  <h2>History</h2>
+  <div class="history-head">
+    <h2>History</h2>
+    @if (totalPages() > 1) {
+      <div class="history-pagination">
+        <button class="page-nav-btn" type="button" [disabled]="currentPage() === 0" (click)="prevPage()" aria-label="Previous page">
+          <fa-icon [icon]="faPrev"></fa-icon>
+        </button>
+        <span class="history-page-label">Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+        <button class="page-nav-btn" type="button" [disabled]="currentPage() >= totalPages() - 1" (click)="nextPage()" aria-label="Next page">
+          <fa-icon [icon]="faNext"></fa-icon>
+        </button>
+      </div>
+    }
+  </div>
   <div class="history-list">
     @if (!logs().length) {
       <div class="empty-state">No activity yet. Log your first entry above.</div>
     } @else {
-      @for (log of logs(); track log.id) {
+      @for (log of pagedLogs(); track log.id) {
         <div class="history-item">
           <span class="history-date">{{ formatDateTime(log) }}</span>
           <span class="history-amount">{{ formatAmount(log.amount, goal().unit) }}</span>

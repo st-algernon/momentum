@@ -2,6 +2,13 @@
   margin-top: 20px;
 }
 
+.history-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .history-list {
   display: grid;
   gap: 10px;
@@ -24,7 +31,7 @@
 }
 
 .history-amount {
-  color: var(--success);
+  color: var(--primary);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -46,4 +53,41 @@
 
 .icon-btn:hover {
   background: #fff1f1;
+}
+
+.history-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.page-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+.page-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.history-page-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
 }

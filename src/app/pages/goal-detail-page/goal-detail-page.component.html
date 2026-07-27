@@ -77,11 +77,6 @@
       <section class="card">
         <app-activity-heatmap [goal]="g"></app-activity-heatmap>
       </section>
-
-      <section class="card tip">
-        <h2>Keep momentum</h2>
-        <p>Set a small daily minimum. Even one small logged entry keeps your streak alive and makes a big target feel manageable.</p>
-      </section>
     </aside>
   </div>
 } @else {
@@ -94,5 +89,14 @@
 
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="editGoal()">Edit</button>
+  @if (isUngrouped()) {
+    @if (isArchived()) {
+      <button mat-menu-item (click)="unarchiveGoal()">Unarchive</button>
+    } @else {
+      <button mat-menu-item [disabled]="!isComplete()" (click)="archiveGoal()">
+        <span [matTooltip]="isComplete() ? '' : 'Archive once this goal is achieved'">Archive</span>
+      </button>
+    }
+  }
   <button mat-menu-item class="danger-item" (click)="deleteGoal()">Delete</button>
 </mat-menu>

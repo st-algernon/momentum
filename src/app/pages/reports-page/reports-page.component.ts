@@ -237,10 +237,12 @@ export class ReportsPageComponent {
   private defaultScope(): ReportScope {
     const activeGroups = this.goalsService.activeGroups();
     if (activeGroups.length) return { type: 'group', groupId: activeGroups[0].id };
-    const ungrouped = this.goalsService.ungroupedGoals();
-    if (ungrouped.length) return { type: 'goal', goalId: ungrouped[0].id };
+    const activeUngrouped = this.goalsService.activeUngroupedGoals();
+    if (activeUngrouped.length) return { type: 'goal', goalId: activeUngrouped[0].id };
     const archivedGroups = this.goalsService.archivedGroups();
     if (archivedGroups.length) return { type: 'group', groupId: archivedGroups[0].id };
+    const archivedUngrouped = this.goalsService.archivedUngroupedGoals();
+    if (archivedUngrouped.length) return { type: 'goal', goalId: archivedUngrouped[0].id };
     return { type: 'all' };
   }
 }

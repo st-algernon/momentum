@@ -74,7 +74,13 @@ function flattenV2(state: V2State): AppState {
     createdAt: group.createdAt
   }));
   const goals: Goal[] = state.groups.flatMap(group =>
-    group.goals.map(goal => ({ ...goal, description: '', groupId: group.id, goalType: 'cumulative' as const }))
+    group.goals.map(goal => ({
+      ...goal,
+      description: '',
+      groupId: group.id,
+      goalType: 'cumulative' as const,
+      archivedAt: null
+    }))
   );
   return { groups, goals };
 }
@@ -92,6 +98,7 @@ function migrateV1(legacy: V1State): AppState {
     unit: 'hours',
     goalType: 'cumulative',
     deadline: goal.deadline,
+    archivedAt: null,
     createdAt: goal.createdAt,
     logs: goal.logs.map(log => ({
       id: log.id,
@@ -110,7 +117,11 @@ function migrateV1(legacy: V1State): AppState {
 function normalizeState(state: AppState): AppState {
   return {
     groups: state.groups.map(group => ({ ...group, archivedAt: group.archivedAt ?? null })),
-    goals: state.goals.map(goal => ({ ...goal, goalType: goal.goalType ?? 'cumulative' }))
+    goals: state.goals.map(goal => ({
+      ...goal,
+      goalType: goal.goalType ?? 'cumulative',
+      archivedAt: goal.archivedAt ?? null
+    }))
   };
 }
 
@@ -223,6 +234,7 @@ export class GoalsService {
       goalType,
       deadline,
       logs: [],
+      archivedAt: null,
       createdAt: Date.now()
     };
     this.goals.update(goals => [goal, ...goals]);
@@ -248,6 +260,25 @@ export class GoalsService {
 
   deleteGoal(id: string): void {
     this.goals.update(goals => goals.filter(goal => goal.id !== id));
+  }
+
+  archiveGoal(id: string): void {
+    this.goals.update(goals => goals.map(goal => (goal.id === id ? { ...goal, archivedAt: Date.now() } : goal)));
+  }
+
+  unarchiveGoal(id: string): void {
+    this.goals.update(goals => goals.map(goal => (goal.id === id ? { ...goal, archivedAt: null } : goal)));
+  }
+
+  /** Ungrouped goals only — grouped goals archive at the group level instead. */
+  activeUngroupedGoals(): Goal[] {
+    return this.ungroupedGoals().filter(goal => !goal.archivedAt);
+  }
+
+  archivedUngroupedGoals(): Goal[] {
+    return this.ungroupedGoals()
+      .filter(goal => goal.archivedAt)
+      .sort((a, b) => (b.archivedAt ?? 0) - (a.archivedAt ?? 0));
   }
 
   /** Returns whether this specific log is what pushed the goal from not-complete to complete,

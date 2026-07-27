@@ -18,8 +18,11 @@
     }
   }
 
-  @if (archivedGroups().length) {
+  @if (archivedGroups().length || archivedUngroupedGoals().length) {
     <button mat-menu-item disabled class="scope-section-label">Archived</button>
+    @for (goal of archivedUngroupedGoals(); track goal.id) {
+      <button mat-menu-item class="scope-goal-item" (click)="selectGoal(goal.id)">{{ goal.name }}</button>
+    }
     @for (group of archivedGroups(); track group.id) {
       <button mat-menu-item class="scope-group-item" (click)="selectGroup(group.id)">{{ group.name }}</button>
       @for (goal of goalsInGroup(group.id); track goal.id) {

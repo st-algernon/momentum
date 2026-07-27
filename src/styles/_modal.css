@@ -2,6 +2,8 @@
 
 .modal-inner {
   padding: 22px;
+  max-height: min(90vh, 700px);
+  overflow-y: auto;
 }
 
 .modal-head {

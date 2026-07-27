@@ -6,11 +6,6 @@
   text-transform: capitalize;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 86px;
-}
-
 .text-btn {
   border: 0;
   background: transparent;

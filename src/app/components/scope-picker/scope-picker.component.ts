@@ -19,7 +19,8 @@ export class ScopePickerComponent {
 
   protected readonly activeGroups = computed(() => this.goalsService.activeGroups());
   protected readonly archivedGroups = computed(() => this.goalsService.archivedGroups());
-  protected readonly ungroupedGoals = computed(() => this.goalsService.ungroupedGoals());
+  protected readonly ungroupedGoals = computed(() => this.goalsService.activeUngroupedGoals());
+  protected readonly archivedUngroupedGoals = computed(() => this.goalsService.archivedUngroupedGoals());
 
   protected goalsInGroup(groupId: string) {
     return this.goalsService.goalsInGroup(groupId);

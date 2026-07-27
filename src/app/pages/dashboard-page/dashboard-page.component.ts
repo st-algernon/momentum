@@ -25,7 +25,10 @@ export class DashboardPageComponent {
 
   protected readonly faChevron = faChevronRight;
 
-  protected readonly ungroupedGoals = computed(() => GoalsService.sortForDisplay(this.goalsService.ungroupedGoals()));
+  protected readonly ungroupedGoals = computed(() =>
+    GoalsService.sortForDisplay(this.goalsService.activeUngroupedGoals())
+  );
+  protected readonly archivedUngroupedGoals = computed(() => this.goalsService.archivedUngroupedGoals());
   protected readonly hasAnything = computed(() => this.goalsService.goals().length > 0 || this.goalsService.groups().length > 0);
 
   protected readonly goalsByGroup = computed(() => {
@@ -47,6 +50,17 @@ export class DashboardPageComponent {
   });
 
   protected readonly archivedGroups = computed(() => this.goalsService.archivedGroups());
+
+  protected readonly hasArchivedContent = computed(() => this.archivedGroups().length > 0 || this.archivedUngroupedGoals().length > 0);
+
+  protected readonly archivedSummary = computed(() => {
+    const groupCount = this.archivedGroups().length;
+    const goalCount = this.archivedUngroupedGoals().length;
+    const parts: string[] = [];
+    if (groupCount) parts.push(`${groupCount} group${groupCount === 1 ? '' : 's'}`);
+    if (goalCount) parts.push(`${goalCount} goal${goalCount === 1 ? '' : 's'}`);
+    return parts.join(' · ');
+  });
 
   protected readonly hasActiveContent = computed(() => this.ungroupedGoals().length > 0 || this.activeGroups().length > 0);
 

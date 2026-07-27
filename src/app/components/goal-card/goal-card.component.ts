@@ -27,6 +27,7 @@ export class GoalCardComponent {
 
   readonly goal = input.required<Goal>();
   readonly interactive = input(true);
+  readonly archived = input(false);
 
   protected readonly faKebab = faEllipsisVertical;
 
@@ -34,6 +35,7 @@ export class GoalCardComponent {
   protected readonly percent = computed(() => GoalsService.goalPercent(this.goal()));
   protected readonly completedAmount = computed(() => GoalsService.totalAmount(this.goal()));
   protected readonly isComplete = computed(() => GoalsService.isGoalComplete(this.goal()));
+  protected readonly isUngrouped = computed(() => !this.goal().groupId);
 
   protected formatAmount = formatAmount;
 
@@ -51,5 +53,16 @@ export class GoalCardComponent {
     if (!confirmed) return;
     this.goalsService.deleteGoal(this.goal().id);
     this.toast.show('Goal deleted');
+  }
+
+  protected archiveGoal(): void {
+    if (!this.isComplete()) return;
+    this.goalsService.archiveGoal(this.goal().id);
+    this.toast.show(`${this.goal().name} archived`);
+  }
+
+  protected unarchiveGoal(): void {
+    this.goalsService.unarchiveGoal(this.goal().id);
+    this.toast.show(`${this.goal().name} unarchived`);
   }
 }

@@ -1,4 +1,4 @@
-<div class="goal-card" [class.is-complete]="isComplete()">
+<div class="goal-card" [class.is-complete]="isComplete()" [class.is-archived]="archived()">
   <a
     class="goal-card-link"
     [routerLink]="interactive() ? ['/goal', goal().id] : null"
@@ -27,6 +27,15 @@
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="editGoal()">Edit</button>
   <button mat-menu-item [matMenuTriggerFor]="moveMenu">Move to group</button>
+  @if (isUngrouped()) {
+    @if (archived()) {
+      <button mat-menu-item (click)="unarchiveGoal()">Unarchive</button>
+    } @else {
+      <button mat-menu-item [disabled]="!isComplete()" (click)="archiveGoal()">
+        <span [matTooltip]="isComplete() ? '' : 'Archive once this goal is achieved'">Archive</span>
+      </button>
+    }
+  }
   <button mat-menu-item class="danger-item" (click)="deleteGoal()">Delete</button>
 </mat-menu>
 

@@ -29,7 +29,6 @@ export class LogFormComponent {
 
   date: Date | null = new Date();
   amount: number | null = null;
-  note = '';
 
   /** Once revealed the form stays open for the rest of this view — no need to persist it. */
   protected readonly showFormAnyway = signal(false);
@@ -52,10 +51,9 @@ export class LogFormComponent {
 
     const amount = Number(this.amount);
     const goalId = this.goal().id;
-    const { justCompleted } = this.goalsService.addLog(goalId, dateToISO(date), amount, this.note);
+    const { justCompleted } = this.goalsService.addLog(goalId, dateToISO(date), amount, '');
 
     this.amount = null;
-    this.note = '';
 
     if (justCompleted) {
       const updatedGoal = this.goalsService.goalById(goalId);

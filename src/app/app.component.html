@@ -1,39 +1,27 @@
-<nav class="side-nav" aria-label="Primary">
-  <div class="side-nav-links">
-    <a
-      class="side-nav-link"
-      routerLink="/"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      aria-label="Dashboard"
-      matTooltip="Dashboard"
-      matTooltipPosition="right"
-    >
-      <fa-icon class="side-nav-icon" [icon]="faDashboard"></fa-icon>
-    </a>
-    <a class="side-nav-link" routerLink="/achievements" routerLinkActive="active" aria-label="Achievements" matTooltip="Achievements" matTooltipPosition="right">
-      <fa-icon class="side-nav-icon" [icon]="faAchievements"></fa-icon>
-    </a>
-    <a class="side-nav-link" routerLink="/reports" routerLinkActive="active" aria-label="Reports" matTooltip="Reports" matTooltipPosition="right">
-      <fa-icon class="side-nav-icon" [icon]="faReports"></fa-icon>
-    </a>
-    <a class="side-nav-link" routerLink="/settings" routerLinkActive="active" aria-label="Settings" matTooltip="Settings" matTooltipPosition="right">
-      <fa-icon class="side-nav-icon" [icon]="faSettings"></fa-icon>
-    </a>
-  </div>
+<!-- Desktop only — no logo. Sync docks right via absolute positioning so the links
+     stay truly centered. -->
+<nav class="top-nav" aria-label="Primary">
+  <div class="top-nav-inner">
+    <div class="top-nav-links">
+      <a class="top-nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+      <a class="top-nav-link" routerLink="/achievements" routerLinkActive="active">Achievements</a>
+      <a class="top-nav-link" routerLink="/reports" routerLinkActive="active">Reports</a>
+      <a class="top-nav-link" routerLink="/settings" routerLinkActive="active">Settings</a>
+    </div>
 
-  <button
-    type="button"
-    class="sync-indicator side-nav-sync"
-    [class]="'sync-' + autoSync.indicator()"
-    [disabled]="autoSync.status() === 'syncing'"
-    (click)="triggerSync()"
-    [attr.aria-label]="syncLabel()"
-    [matTooltip]="syncLabel()"
-    matTooltipPosition="right"
-  >
-    <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
-  </button>
+    <button
+      type="button"
+      class="sync-indicator top-nav-sync"
+      [class]="'sync-' + autoSync.indicator()"
+      [disabled]="autoSync.status() === 'syncing'"
+      (click)="triggerSync()"
+      [attr.aria-label]="syncLabel()"
+      [matTooltip]="syncLabel()"
+      matTooltipPosition="below"
+    >
+      <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
+    </button>
+  </div>
 </nav>
 
 <main class="page-container">

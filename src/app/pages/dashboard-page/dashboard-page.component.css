@@ -70,6 +70,10 @@
   margin-top: 8px;
 }
 
+.archived-groups .goal-grid {
+  margin-bottom: 24px;
+}
+
 @media (max-width: 620px) {
   .page-head {
     flex-direction: column;

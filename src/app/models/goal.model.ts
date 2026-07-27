@@ -20,6 +20,7 @@ export interface Goal {
   goalType: GoalType;
   deadline: string | null;
   logs: LogEntry[];
+  archivedAt: number | null;
   createdAt: number;
 }
 

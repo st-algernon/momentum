@@ -55,6 +55,9 @@ export class GoalDetailPageComponent {
     return goal ? GoalsService.isGoalComplete(goal) : false;
   });
 
+  protected readonly isUngrouped = computed(() => !this.goal()?.groupId);
+  protected readonly isArchived = computed(() => !!this.goal()?.archivedAt);
+
   protected readonly completedOn = computed(() => {
     const goal = this.goal();
     return goal ? GoalsService.completedOn(goal) : null;
@@ -119,5 +122,19 @@ export class GoalDetailPageComponent {
     this.goalsService.deleteGoal(goal.id);
     this.toast.show('Goal deleted');
     this.router.navigateByUrl('/');
+  }
+
+  protected archiveGoal(): void {
+    const goal = this.goal();
+    if (!goal || !this.isComplete()) return;
+    this.goalsService.archiveGoal(goal.id);
+    this.toast.show(`${goal.name} archived`);
+  }
+
+  protected unarchiveGoal(): void {
+    const goal = this.goal();
+    if (!goal) return;
+    this.goalsService.unarchiveGoal(goal.id);
+    this.toast.show(`${goal.name} unarchived`);
   }
 }

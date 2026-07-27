@@ -25,6 +25,12 @@
   box-shadow: 0 8px 22px rgba(184, 134, 11, 0.14);
 }
 
+.goal-card.is-archived {
+  background-color: var(--surface);
+  box-shadow: none;
+  opacity: 0.85;
+}
+
 .goal-card-link {
   display: block;
   padding: 14px 40px 14px 14px;

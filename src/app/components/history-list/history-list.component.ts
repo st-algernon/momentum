@@ -1,10 +1,12 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { Goal, LogEntry } from '../../models/goal.model';
 import { GoalsService, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
+
+const PAGE_SIZE = 3;
 
 @Component({
   selector: 'app-history-list',
@@ -20,10 +22,34 @@ export class HistoryListComponent {
   readonly goal = input.required<Goal>();
 
   protected readonly faTrash = faTrashCan;
+  protected readonly faPrev = faChevronLeft;
+  protected readonly faNext = faChevronRight;
+
+  private readonly page = signal(0);
 
   protected readonly logs = computed<LogEntry[]>(() =>
-    [...this.goal().logs].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt).slice(0, 12)
+    [...this.goal().logs].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt)
   );
+
+  protected readonly totalPages = computed(() => Math.max(1, Math.ceil(this.logs().length / PAGE_SIZE)));
+
+  /** Clamped so deleting entries off the last page (or switching to a shorter-history goal)
+   *  can't strand the view on a now-empty page. */
+  protected readonly currentPage = computed(() => Math.min(this.page(), this.totalPages() - 1));
+
+  protected readonly pagedLogs = computed<LogEntry[]>(() => {
+    const start = this.currentPage() * PAGE_SIZE;
+    return this.logs().slice(start, start + PAGE_SIZE);
+  });
+
+  constructor() {
+    // Jump back to page 1 when the goal itself changes (not on every log edit, which would
+    // otherwise strand-then-reset a user paging through a goal they're actively logging to).
+    effect(() => {
+      this.goal().id;
+      this.page.set(0);
+    });
+  }
 
   protected formatAmount = formatAmount;
 
@@ -36,5 +62,13 @@ export class HistoryListComponent {
   protected removeLog(log: LogEntry): void {
     this.goalsService.deleteLog(this.goal().id, log.id);
     this.toast.show('Entry deleted');
+  }
+
+  protected prevPage(): void {
+    this.page.update(p => Math.max(0, p - 1));
+  }
+
+  protected nextPage(): void {
+    this.page.update(p => Math.min(this.totalPages() - 1, p + 1));
   }
 }
