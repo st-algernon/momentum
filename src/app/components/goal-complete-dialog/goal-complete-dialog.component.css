@@ -20,7 +20,7 @@
   left: calc(var(--i) * 7%);
   width: 8px;
   height: 14px;
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   background: var(--primary);
   opacity: 0;
 }
@@ -57,7 +57,7 @@
 
 .modal-eyebrow {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -85,7 +85,7 @@
 .deadline-line {
   margin: 0 0 14px;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: var(--text-md);
 }
 
 .dialog-stats {
@@ -98,18 +98,18 @@
 .dialog-stat {
   background: var(--surface-soft);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 10px;
 }
 
 .dialog-stat-value {
-  font-size: 1.3rem;
+  font-size: var(--text-3xl);
   font-weight: 800;
 }
 
 .dialog-stat-label {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
 }
 
 .dialog-actions {

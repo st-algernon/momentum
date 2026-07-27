@@ -1,7 +1,5 @@
 <div class="page-head">
-  <div>
-    <h1>Dashboard</h1>
-  </div>
+  <h1>Dashboard</h1>
   <div class="page-actions">
     <button class="btn btn-secondary" type="button" (click)="openNewGroup()">+ New group</button>
     <button class="btn btn-primary" type="button" (click)="openNewGoal()">+ New goal</button>
@@ -20,9 +18,14 @@
   }
 
   @if (ungroupedGoals().length) {
-    <section class="ungrouped-section">
-      @if (activeGroups().length || hasArchivedContent()) {
-        <h3 class="section-label">Ungrouped</h3>
+    <section class="ungrouped-section" [class.is-distinguished]="hasGroupedContent()">
+      @if (hasGroupedContent()) {
+        <h3 class="section-label">
+          Ungrouped
+          <span class="section-label-count">
+            {{ ungroupedGoals().length }} goal{{ ungroupedGoals().length === 1 ? '' : 's' }}
+          </span>
+        </h3>
       }
       <div class="goal-grid">
         @for (goal of ungroupedGoals(); track goal.id) {
@@ -52,11 +55,19 @@
       @if (archivedExpanded()) {
         <div id="archived-groups" class="archived-groups">
           @if (archivedUngroupedGoals().length) {
-            <div class="goal-grid">
-              @for (goal of archivedUngroupedGoals(); track goal.id) {
-                <app-goal-card [goal]="goal" [archived]="true"></app-goal-card>
-              }
-            </div>
+            <section class="ungrouped-section is-distinguished">
+              <h3 class="section-label">
+                Ungrouped
+                <span class="section-label-count">
+                  {{ archivedUngroupedGoals().length }} goal{{ archivedUngroupedGoals().length === 1 ? '' : 's' }}
+                </span>
+              </h3>
+              <div class="goal-grid">
+                @for (goal of archivedUngroupedGoals(); track goal.id) {
+                  <app-goal-card [goal]="goal" [archived]="true"></app-goal-card>
+                }
+              </div>
+            </section>
           }
           @for (group of archivedGroups(); track group.id) {
             <app-group-section

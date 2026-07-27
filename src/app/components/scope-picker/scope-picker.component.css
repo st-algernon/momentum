@@ -6,7 +6,7 @@
   width: 240px;
   padding: 10px 16px;
   border: 1px solid var(--border);
-  border-radius: 11px;
+  border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text);
   font-weight: 700;
@@ -25,7 +25,7 @@
 
 .scope-caret {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   flex-shrink: 0;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .scope-section-label {
-  font-size: 0.75rem !important;
+  font-size: var(--text-xs) !important;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted) !important;

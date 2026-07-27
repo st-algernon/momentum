@@ -1,11 +1,14 @@
-.achievements-page {
-  max-width: 760px;
+@import '../../../styles/_page-head.css';
+
+:host {
+  display: block;
+  max-width: var(--page-narrow);
   margin: 0 auto;
 }
 
 .timeline {
   list-style: none;
-  margin: 24px 0 0;
+  margin: 0;
   padding: 0;
 }
 
@@ -16,7 +19,7 @@
   margin: 0 0 14px;
   color: var(--muted);
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: var(--text-lg);
 }
 
 .timeline-year:not(:first-child) {
@@ -81,7 +84,7 @@
   background: var(--gold-soft);
   border: 1px solid var(--gold-border);
   color: var(--gold);
-  font-size: 0.95rem;
+  font-size: var(--text-lg);
   z-index: 1;
 }
 
@@ -89,7 +92,7 @@
   display: block;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   padding: 16px 18px;
   text-decoration: none;
   color: inherit;
@@ -113,15 +116,15 @@
 
 .timeline-goal-name {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: var(--text-xl);
   overflow-wrap: anywhere;
 }
 
 .timeline-pill {
   flex-shrink: 0;
   padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.72rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -139,7 +142,7 @@
 
 .timeline-description {
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: var(--text-md);
   line-height: 1.45;
   margin: 0 0 10px;
   overflow-wrap: anywhere;
@@ -151,7 +154,7 @@
   align-items: center;
   gap: 6px;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
 }
 
 .meta-dot {
@@ -160,13 +163,13 @@
 
 .timeline-deadline {
   margin: 10px 0 0;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .timeline-deadline.deadline-good {
   display: inline-flex;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--gold-soft);
   border: 1px solid var(--gold-border);
   color: var(--gold);

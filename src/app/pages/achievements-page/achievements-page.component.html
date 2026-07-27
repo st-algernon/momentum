@@ -1,71 +1,71 @@
-<div class="achievements-page">
+<div class="page-head">
   <h1>Achievements</h1>
+</div>
 
-  @if (!achievements().length) {
-    <div class="empty-state">
-      <h2>No achievements yet</h2>
-      <p>Finish a goal and it'll land here — with the dates, the numbers, and how long it took.</p>
-      <a class="btn btn-primary" routerLink="/">Back to Dashboard</a>
-    </div>
-  } @else {
-    <ol class="timeline">
-      @for (a of achievements(); track a.goal.id; let i = $index) {
-        @if (a.showYear) {
-          <li class="timeline-year">
-            <span>{{ a.showYear }}</span>
-          </li>
-        }
-        <li class="timeline-item" [style.--i]="animationStep(i)">
-          <span class="timeline-marker" aria-hidden="true">
-            <fa-icon [icon]="icon(a)"></fa-icon>
-          </span>
-          <a
-            class="timeline-card"
-            [routerLink]="['/reports']"
-            [queryParams]="{ goal: a.goal.id }"
-            [attr.aria-label]="'View report for ' + a.goal.name"
-          >
-            <div class="timeline-card-head">
-              <span class="timeline-goal-name">{{ a.goal.name }}</span>
-              @if (a.isLatest) {
-                <span class="timeline-pill pill-latest">Latest</span>
-              } @else if (a.isFirstWin) {
-                <span class="timeline-pill pill-first">First win</span>
-              }
-            </div>
-
-            @if (a.goal.description) {
-              <p class="timeline-description">{{ a.goal.description }}</p>
-            }
-
-            <div class="timeline-meta">
-              <span>{{ formatAmount(a.amount, a.goal.unit) }}</span>
-              <span class="meta-dot">·</span>
-              <span>{{ a.logCount }} log{{ a.logCount === 1 ? '' : 's' }}</span>
-              <span class="meta-dot">·</span>
-              <span>{{ a.startDate | date: 'MMM d' }} → {{ a.completedOn | date: 'MMM d' }}</span>
-              <span class="meta-dot">·</span>
-              <span>{{ a.durationDays === 0 ? 'same day' : (a.durationDays + ' day' + (a.durationDays === 1 ? '' : 's')) }}</span>
-            </div>
-
-            @if (a.deadlineDeltaDays !== null) {
-              <p
-                class="timeline-deadline"
-                [class.deadline-good]="a.deadlineDeltaDays >= 0"
-                [class.deadline-late]="a.deadlineDeltaDays < 0"
-              >
-                @if (a.deadlineDeltaDays > 0) {
-                  Beat deadline by {{ a.deadlineDeltaDays }} day{{ a.deadlineDeltaDays === 1 ? '' : 's' }}
-                } @else if (a.deadlineDeltaDays === 0) {
-                  Right on deadline
-                } @else {
-                  Finished {{ -a.deadlineDeltaDays }} day{{ -a.deadlineDeltaDays === 1 ? '' : 's' }} after deadline
-                }
-              </p>
-            }
-          </a>
+@if (!achievements().length) {
+  <div class="empty-state">
+    <h2>No achievements yet</h2>
+    <p>Finish a goal and it'll land here — with the dates, the numbers, and how long it took.</p>
+    <a class="btn btn-primary" routerLink="/">Back to Dashboard</a>
+  </div>
+} @else {
+  <ol class="timeline">
+    @for (a of achievements(); track a.goal.id; let i = $index) {
+      @if (a.showYear) {
+        <li class="timeline-year">
+          <span>{{ a.showYear }}</span>
         </li>
       }
-    </ol>
-  }
-</div>
+      <li class="timeline-item" [style.--i]="animationStep(i)">
+        <span class="timeline-marker" aria-hidden="true">
+          <fa-icon [icon]="icon(a)"></fa-icon>
+        </span>
+        <a
+          class="timeline-card"
+          [routerLink]="['/reports']"
+          [queryParams]="{ goal: a.goal.id }"
+          [attr.aria-label]="'View report for ' + a.goal.name"
+        >
+          <div class="timeline-card-head">
+            <span class="timeline-goal-name">{{ a.goal.name }}</span>
+            @if (a.isLatest) {
+              <span class="timeline-pill pill-latest">Latest</span>
+            } @else if (a.isFirstWin) {
+              <span class="timeline-pill pill-first">First win</span>
+            }
+          </div>
+
+          @if (a.goal.description) {
+            <p class="timeline-description">{{ a.goal.description }}</p>
+          }
+
+          <div class="timeline-meta">
+            <span>{{ formatAmount(a.amount, a.goal.unit) }}</span>
+            <span class="meta-dot">·</span>
+            <span>{{ a.logCount }} log{{ a.logCount === 1 ? '' : 's' }}</span>
+            <span class="meta-dot">·</span>
+            <span>{{ a.startDate | date: 'MMM d' }} → {{ a.completedOn | date: 'MMM d' }}</span>
+            <span class="meta-dot">·</span>
+            <span>{{ a.durationDays === 0 ? 'same day' : (a.durationDays + ' day' + (a.durationDays === 1 ? '' : 's')) }}</span>
+          </div>
+
+          @if (a.deadlineDeltaDays !== null) {
+            <p
+              class="timeline-deadline"
+              [class.deadline-good]="a.deadlineDeltaDays >= 0"
+              [class.deadline-late]="a.deadlineDeltaDays < 0"
+            >
+              @if (a.deadlineDeltaDays > 0) {
+                Beat deadline by {{ a.deadlineDeltaDays }} day{{ a.deadlineDeltaDays === 1 ? '' : 's' }}
+              } @else if (a.deadlineDeltaDays === 0) {
+                Right on deadline
+              } @else {
+                Finished {{ -a.deadlineDeltaDays }} day{{ -a.deadlineDeltaDays === 1 ? '' : 's' }} after deadline
+              }
+            </p>
+          }
+        </a>
+      </li>
+    }
+  </ol>
+}

@@ -10,7 +10,7 @@
   border: 0;
   background: transparent;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-lg);
   line-height: 1;
   cursor: help;
   vertical-align: middle;

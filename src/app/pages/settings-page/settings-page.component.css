@@ -1,19 +1,26 @@
+@import '../../../styles/_page-head.css';
 @import '../../../styles/_form.css';
 @import '../../../styles/_info-icon.css';
 
+:host {
+  display: block;
+  max-width: var(--page-narrow);
+  margin: 0 auto;
+}
+
 .settings-section {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .settings-section h2 {
-  margin-bottom: 10px;
+  margin-bottom: var(--space-3);
 }
 
 .hint {
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: var(--text-md);
   line-height: 1.55;
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
 }
 
 .hint a {
@@ -21,17 +28,17 @@
 }
 
 .form-grid {
-  margin-bottom: 14px;
+  margin-bottom: var(--space-4);
 }
 
 .sync-status {
   color: var(--muted);
-  font-size: 0.85rem;
-  margin: 0 0 16px;
+  font-size: var(--text-md);
+  margin: 0 0 var(--space-4);
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }

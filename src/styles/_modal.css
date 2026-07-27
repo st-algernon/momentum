@@ -21,7 +21,7 @@
 .close-btn {
   border: 0;
   background: transparent;
-  font-size: 1.05rem;
+  font-size: var(--text-xl);
   color: var(--muted);
   cursor: pointer;
 }

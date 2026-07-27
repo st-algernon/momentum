@@ -64,6 +64,8 @@ export class DashboardPageComponent {
 
   protected readonly hasActiveContent = computed(() => this.ungroupedGoals().length > 0 || this.activeGroups().length > 0);
 
+  protected readonly hasGroupedContent = computed(() => this.goalsService.groups().length > 0);
+
   protected readonly archivedExpanded = signal(localStorage.getItem(ARCHIVED_EXPANDED_KEY) === 'true');
 
   protected toggleArchived(): void {
