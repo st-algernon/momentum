@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, amountStepFor, dateToISO } from '../../services/goals.service';
+import { GoalsService, amountStepFor, dateToISO, isValidLogAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { GoalCompleteDialogComponent } from '../goal-complete-dialog/goal-complete-dialog.component';
 import { DIALOG_WIDTH } from '../goal-card/goal-card.component';
@@ -42,12 +42,17 @@ export class LogFormComponent {
     return amountStepFor(this.goal().unit);
   }
 
-  submit(): void {
-    const amount = Number(this.amount);
-    if (!this.date || !amount || amount <= 0) return;
+  protected get canSubmit(): boolean {
+    return this.date !== null && this.amount !== null && isValidLogAmount(this.goal(), Number(this.amount));
+  }
 
+  submit(): void {
+    const date = this.date;
+    if (!date || !this.canSubmit) return;
+
+    const amount = Number(this.amount);
     const goalId = this.goal().id;
-    const { justCompleted } = this.goalsService.addLog(goalId, dateToISO(this.date), amount, this.note);
+    const { justCompleted } = this.goalsService.addLog(goalId, dateToISO(date), amount, this.note);
 
     this.amount = null;
     this.note = '';

@@ -46,7 +46,7 @@
         <label for="logNote"><span class="label-text">Notes <span class="optional-hint">(optional)</span></span></label>
         <textarea id="logNote" name="logNote" [(ngModel)]="note" placeholder="Any details worth remembering"></textarea>
       </div>
-      <button class="btn btn-primary" type="submit">Add progress</button>
+      <button class="btn btn-primary" type="submit" [disabled]="!canSubmit">Add progress</button>
     </form>
   }
 </section>

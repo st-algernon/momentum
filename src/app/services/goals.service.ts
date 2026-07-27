@@ -24,13 +24,18 @@ export function formatAmount(value: number, unit: string): string {
 }
 
 /** Units a goal can be measured in. Pick-only in the UI — no custom values. */
-export const UNIT_OPTIONS = ['hours', 'minutes', 'days', 'times', 'km'] as const;
+export const UNIT_OPTIONS = ['hours', 'minutes', 'days', 'times', 'km', 'attempts'] as const;
 
 /** Units that accept fractional amounts; everything else logs whole numbers. */
 const DECIMAL_UNITS = new Set(['hours', 'km']);
 
 export function amountStepFor(unit: string): number {
   return DECIMAL_UNITS.has(unit) ? 0.1 : 1;
+}
+
+export function isValidLogAmount(goal: Goal, amount: number): boolean {
+  if (!Number.isFinite(amount)) return false;
+  return goal.unit === 'attempts' ? amount >= 0 : amount > 0;
 }
 
 interface V2Goal {

@@ -91,6 +91,16 @@
   color: white;
   background: linear-gradient(135deg, #34346f, var(--primary));
   margin: 16px 0;
+  border: 1px solid transparent;
+}
+
+/* Same tokens as .goal-card.is-complete on the Dashboard (--gold-soft background,
+   --gold-border border) — this is a light card once achieved, not a dark banner, so
+   the text and progress-track colors flip too instead of just tinting the gradient. */
+.hero.is-complete {
+  background: var(--gold-soft);
+  border-color: var(--gold-border);
+  color: var(--text);
 }
 
 .progress-track {
@@ -100,6 +110,10 @@
   background: rgba(255, 255, 255, 0.22);
   overflow: hidden;
   margin-bottom: 10px;
+}
+
+.hero.is-complete .progress-track {
+  background: rgba(184, 134, 11, 0.18);
 }
 
 .progress-fill {
