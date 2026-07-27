@@ -112,9 +112,24 @@ export class ReportsPageComponent {
   protected readonly isBestType = computed(() => this.singleGoal()?.goalType === 'best');
   protected readonly attemptsForGoal = computed(() => this.singleGoal()?.logs.length ?? 0);
 
+  protected readonly isSingleGoalComplete = computed(() => {
+    const goal = this.singleGoal();
+    return goal ? GoalsService.isGoalComplete(goal) : false;
+  });
+
+  /** The period picker is hidden for a completed goal (there's no "recent window" for a
+   *  goal that's already finished), but periodDays() itself keeps whatever the picker was
+   *  last set to — from viewing a different, still-active goal. Everything that reads the
+   *  period for chart/stat purposes should go through this instead of periodDays() directly,
+   *  so a completed goal always behaves as if 'all' were selected regardless of that leftover
+   *  state. */
+  protected readonly effectivePeriodDays = computed<ChartRange>(() =>
+    this.isSingleGoalComplete() ? 'all' : this.periodDays()
+  );
+
   protected readonly averageForGoal = computed(() => {
     const goal = this.singleGoal();
-    return goal ? GoalsService.dailyAverageOverDays(goal, this.periodDays()) : 0;
+    return goal ? GoalsService.dailyAverageOverDays(goal, this.effectivePeriodDays()) : 0;
   });
 
   /** Amount logged within the selected recent window, for the single-goal view. Meaningless for
@@ -123,7 +138,7 @@ export class ReportsPageComponent {
    *  summing reps from separate attempts wouldn't mean anything. */
   protected readonly periodAmountForGoal = computed(() => {
     const goal = this.singleGoal();
-    const period = this.periodDays();
+    const period = this.effectivePeriodDays();
     if (!goal || period === 'all') return 0;
     const start = this.periodStartISO(period);
     const recentLogs = goal.logs.filter(log => log.date >= start);

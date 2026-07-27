@@ -32,24 +32,34 @@ const MAX_WEEKLY_POINTS = 18;
 export class TrendChartComponent {
   readonly goal = input.required<Goal>();
   readonly variant = input<'default' | 'report'>('default');
-  readonly range = input<ChartRange>(7);
+  readonly range = input<ChartRange>('all');
 
   protected readonly average = computed(() => GoalsService.dailyAverageOverDays(this.goal(), this.range()));
 
+  /** An achieved goal's story ends with its last entry, not today — charting on to the
+   *  present would draw a flat, empty tail past the point where the goal was actually
+   *  won. An active goal still runs to today so a recent gap reads as a real gap. */
+  private readonly endISO = computed(() => {
+    const goal = this.goal();
+    if (!GoalsService.isGoalComplete(goal)) return todayISO();
+    return GoalsService.lastLogDate(goal) ?? todayISO();
+  });
+
   private readonly startISO = computed(() => {
     const range = this.range();
+    const end = this.endISO();
     if (range === 'all') {
       const dates = this.goal().logs.map(log => log.date);
-      return dates.length ? dates.reduce((min, date) => (date < min ? date : min)) : todayISO();
+      return dates.length ? dates.reduce((min, date) => (date < min ? date : min)) : end;
     }
-    const cursor = new Date(`${todayISO()}T12:00:00`);
+    const cursor = new Date(`${end}T12:00:00`);
     cursor.setDate(cursor.getDate() - (range - 1));
     return dateToISO(cursor);
   });
 
   private readonly totalDays = computed(() => {
     const start = new Date(`${this.startISO()}T12:00:00`);
-    const end = new Date(`${todayISO()}T12:00:00`);
+    const end = new Date(`${this.endISO()}T12:00:00`);
     return Math.max(1, Math.round((end.getTime() - start.getTime()) / MS_PER_DAY) + 1);
   });
 
@@ -74,12 +84,12 @@ export class TrendChartComponent {
 
     const points: { key: string; label: string; amount: number }[] = [];
     const cursor = new Date(`${this.startISO()}T12:00:00`);
-    const today = new Date(`${todayISO()}T12:00:00`);
+    const end = new Date(`${this.endISO()}T12:00:00`);
 
-    while (cursor <= today) {
+    while (cursor <= end) {
       const bucketStart = new Date(cursor);
       const bucketValues: number[] = [];
-      for (let i = 0; i < bucketDays && cursor <= today; i++) {
+      for (let i = 0; i < bucketDays && cursor <= end; i++) {
         bucketValues.push(perDay[dateToISO(cursor)] || 0);
         cursor.setDate(cursor.getDate() + 1);
       }

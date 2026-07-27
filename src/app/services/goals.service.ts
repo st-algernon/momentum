@@ -336,6 +336,13 @@ export class GoalsService {
     );
   }
 
+  static lastLogDate(goal: Goal): string | null {
+    return goal.logs.reduce<string | null>(
+      (latest, log) => (latest === null || log.date > latest ? log.date : latest),
+      null
+    );
+  }
+
   /** Calendar days between two ISO dates, never negative. Uses the same noon-anchored parsing
    *  as the rest of this service to avoid DST/timezone off-by-one on date-only strings. */
   static daysBetween(fromISO: string, toISO: string): number {

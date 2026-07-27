@@ -2,7 +2,7 @@
   <div class="reports-toolbar">
     <app-scope-picker [scope]="scope()" (scopeChange)="scope.set($event)"></app-scope-picker>
 
-    @if (singleGoal()) {
+    @if (singleGoal() && !isSingleGoalComplete()) {
       <button type="button" class="period-trigger" [matMenuTriggerFor]="periodMenu">
         <span>{{ periodLabel() }}</span>
         <span class="scope-caret">▾</span>
@@ -78,7 +78,7 @@
       </div>
 
       <div class="report-chart-wrap">
-        <app-trend-chart [goal]="g" variant="report" [range]="periodDays()"></app-trend-chart>
+        <app-trend-chart [goal]="g" variant="report" [range]="effectivePeriodDays()"></app-trend-chart>
       </div>
     } @else {
       <div class="report-ring-wrap">
