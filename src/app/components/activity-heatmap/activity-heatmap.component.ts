@@ -31,10 +31,7 @@ interface MonthLabel {
   standalone: true,
   imports: [MatTooltipModule],
   templateUrl: './activity-heatmap.component.html',
-  styleUrl: './activity-heatmap.component.css',
-  host: {
-    '[class.is-complete]': 'isComplete()'
-  }
+  styleUrl: './activity-heatmap.component.css'
 })
 export class ActivityHeatmapComponent {
   readonly goal = input.required<Goal>();

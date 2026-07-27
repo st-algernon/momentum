@@ -1,5 +1,6 @@
-/* Violet ramp while a goal is in progress; the whole scale flips to gold once it's
-   achieved, matching the completed-state language used across the rest of the app. */
+/* Single violet ramp regardless of completion — unlike the rest of the app's gold
+   achieved-state language, this chart stays one consistent color so activity is
+   comparable at a glance whether the goal is still active or already done. */
 :host {
   --heat-gap: 2px;
   --heat-weekday-col: 26px;
@@ -12,14 +13,6 @@
   --heat-3: rgba(91, 91, 214, 0.7);
   --heat-4: var(--primary);
   --heat-ring: var(--primary);
-}
-
-:host(.is-complete) {
-  --heat-1: rgba(184, 134, 11, 0.22);
-  --heat-2: rgba(184, 134, 11, 0.44);
-  --heat-3: rgba(184, 134, 11, 0.7);
-  --heat-4: var(--gold);
-  --heat-ring: var(--gold);
 }
 
 .heatmap {
