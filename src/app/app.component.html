@@ -1,31 +1,40 @@
-<header class="topnav">
-  <div class="topnav-inner">
-    <a class="brand" routerLink="/">
-      <div class="brand-mark">M</div>
-      <span class="brand-name">Momentum</span>
-    </a>
-
-    <nav class="nav-links">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
-      <a routerLink="/achievements" routerLinkActive="active">Achievements</a>
-      <a routerLink="/reports" routerLinkActive="active">Reports</a>
-      <a routerLink="/settings" routerLinkActive="active">Settings</a>
-    </nav>
-
-    <button
-      type="button"
-      class="sync-indicator"
-      [class]="'sync-' + autoSync.indicator()"
-      [disabled]="autoSync.status() === 'syncing'"
-      (click)="triggerSync()"
-      [attr.aria-label]="syncLabel()"
-      [matTooltip]="syncLabel()"
-      matTooltipPosition="below"
+<nav class="side-nav" aria-label="Primary">
+  <div class="side-nav-links">
+    <a
+      class="side-nav-link"
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      aria-label="Dashboard"
+      matTooltip="Dashboard"
+      matTooltipPosition="right"
     >
-      <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
-    </button>
+      <fa-icon class="side-nav-icon" [icon]="faDashboard"></fa-icon>
+    </a>
+    <a class="side-nav-link" routerLink="/achievements" routerLinkActive="active" aria-label="Achievements" matTooltip="Achievements" matTooltipPosition="right">
+      <fa-icon class="side-nav-icon" [icon]="faAchievements"></fa-icon>
+    </a>
+    <a class="side-nav-link" routerLink="/reports" routerLinkActive="active" aria-label="Reports" matTooltip="Reports" matTooltipPosition="right">
+      <fa-icon class="side-nav-icon" [icon]="faReports"></fa-icon>
+    </a>
+    <a class="side-nav-link" routerLink="/settings" routerLinkActive="active" aria-label="Settings" matTooltip="Settings" matTooltipPosition="right">
+      <fa-icon class="side-nav-icon" [icon]="faSettings"></fa-icon>
+    </a>
   </div>
-</header>
+
+  <button
+    type="button"
+    class="sync-indicator side-nav-sync"
+    [class]="'sync-' + autoSync.indicator()"
+    [disabled]="autoSync.status() === 'syncing'"
+    (click)="triggerSync()"
+    [attr.aria-label]="syncLabel()"
+    [matTooltip]="syncLabel()"
+    matTooltipPosition="right"
+  >
+    <fa-icon class="sync-icon" [icon]="faSync" aria-hidden="true"></fa-icon>
+  </button>
+</nav>
 
 <main class="page-container">
   <router-outlet></router-outlet>

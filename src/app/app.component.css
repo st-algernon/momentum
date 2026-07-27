@@ -1,69 +1,59 @@
-.topnav {
-  position: sticky;
+.side-nav {
+  position: fixed;
   top: 0;
-  z-index: 5;
+  left: 0;
+  bottom: 0;
+  z-index: 6;
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
   background: #ffffff;
-  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
-.topnav-inner {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 14px 0;
+/* flex: 1 grows this to fill the space above .side-nav-sync (which stays pinned to the
+   bottom via its own margin-top: auto below), and justify-content centers the links
+   vertically within that grown space instead of leaving them stacked at the top. */
+.side-nav-links {
+  flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
 }
 
-.brand {
-  display: flex;
+.side-nav-link {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--text);
-  margin-right: auto;
-}
-
-.brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  display: grid;
-  place-items: center;
-  color: white;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), #8c6ff7);
-  box-shadow: 0 8px 18px rgba(91, 91, 214, 0.28);
-}
-
-.brand-name {
-  font-weight: 800;
-  font-size: 1.05rem;
-}
-
-.nav-links {
-  display: flex;
-  gap: 4px;
-}
-
-.nav-links a {
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   color: var(--muted);
   text-decoration: none;
-  font-weight: 700;
-  font-size: 0.92rem;
-  padding: 8px 12px;
-  border-radius: 9px;
+  transition: 0.15s ease;
 }
 
-.nav-links a:hover {
+.side-nav-link:hover {
   color: var(--text);
   background: var(--surface-soft);
 }
 
-.nav-links a.active {
+.side-nav-link.active {
   color: var(--primary);
-  background: #f5f4ff;
+}
+
+.side-nav-icon {
+  font-size: 1.35rem;
+}
+
+/* margin-top: auto in a column flex container pushes this to the bottom edge, away
+   from the nav links above it. */
+.side-nav-sync {
+  margin-top: auto;
 }
 
 .sync-indicator {
@@ -131,9 +121,16 @@
   }
 }
 
+/* width:min(...) + margin:0 auto only centers correctly when the containing block is
+   the full viewport. A fixed margin-left:72px here would fix the sidebar clearance but
+   leave the (still auto) right margin to absorb 100% of any extra viewport width,
+   pushing all the slack to one side. Building the offset into margin-left directly —
+   sidebar width plus half of whatever's left after the content and its gutters — keeps
+   the content properly centered within the space to the right of the sidebar instead. */
 .page-container {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 72px - 32px));
   margin: 0 auto;
+  margin-left: calc(72px + max(16px, (100% - 72px - 1180px) / 2));
   padding: 24px 0 56px;
 }
 
@@ -142,16 +139,20 @@
 }
 
 @media (max-width: 620px) {
-  .topnav-inner {
-    padding: 12px 0;
-  }
-  .nav-links {
+  /* .side-nav is desktop-only; the mobile layout uses .bottom-nav for links instead
+     (sync isn't available on small screens at all), so the left offset it reserves
+     needs undoing too. */
+  .side-nav {
     display: none;
   }
 
-  /* The bottom nav takes over primary navigation on small screens, so the page content
-     needs enough bottom padding to clear the fixed bar instead of sitting under it. */
+  /* The bottom nav takes over primary navigation (and sync) on small screens, so the
+     page content needs enough bottom padding to clear the fixed bar instead of sitting
+     under it — and both the width formula and the margin-left offset built for the
+     (now-hidden) side rail need reverting to plain centering, not just zeroing out. */
   .page-container {
+    width: min(1180px, calc(100% - 32px));
+    margin-left: auto;
     padding-bottom: calc(68px + env(safe-area-inset-bottom));
   }
 
