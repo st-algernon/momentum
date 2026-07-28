@@ -56,6 +56,18 @@ export class AutoSyncService {
     await this.sync();
   }
 
+  /** Clears the saved token/gist ID and this service's own sync state, so the app goes
+   *  back to a never-connected state rather than just losing the credentials while still
+   *  reporting a stale "synced" status. */
+  disconnect(): void {
+    clearTimeout(this.timer);
+    this.gistService.clearCredentials();
+    this.status.set('idle');
+    this.errorMessage.set('');
+    this.lastSyncedAt.set(null);
+    localStorage.removeItem(LAST_SYNCED_KEY);
+  }
+
   private async sync(): Promise<void> {
     this.status.set('syncing');
     try {

@@ -97,10 +97,12 @@ a {
 }
 
 .btn {
+  display: inline-block;
   border: 0;
   border-radius: var(--radius-md);
   padding: 10px 14px;
   font-weight: 700;
+  text-decoration: none;
   transition: 0.2s ease;
 }
 

@@ -26,6 +26,15 @@ export class GistService {
     localStorage.setItem(GIST_ID_KEY, gistId);
   }
 
+  clearCredentials(): void {
+    this.token.set('');
+    this.gistId.set('');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(GIST_ID_KEY);
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
+    localStorage.removeItem(LEGACY_GIST_ID_KEY);
+  }
+
   async backup(state: AppState): Promise<string> {
     const token = this.token();
     if (!token) throw new Error('Add a GitHub token first.');

@@ -57,6 +57,18 @@ export class SettingsPageComponent {
     }
   }
 
+  protected disconnectSync(): void {
+    const confirmed = window.confirm(
+      'Disconnect GitHub sync? This clears your saved token and gist ID from this browser — sync stops until you reconnect.'
+    );
+    if (!confirmed) return;
+
+    this.autoSync.disconnect();
+    this.token = '';
+    this.gistId = '';
+    this.toast.show('GitHub sync disconnected');
+  }
+
   protected exportData(): void {
     const blob = new Blob([JSON.stringify(this.goalsService.exportState(), null, 2)], {
       type: 'application/json'
