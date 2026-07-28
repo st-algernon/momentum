@@ -125,7 +125,7 @@
 .page-container {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 24px 0 56px;
+  padding: 24px 0 24px;
 }
 
 .bottom-nav {
