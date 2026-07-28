@@ -10,8 +10,7 @@ import { Goal } from '../../models/goal.model';
 import { GoalsService, formatAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { GoalModalComponent } from '../goal-modal/goal-modal.component';
-
-export const DIALOG_WIDTH = 'min(520px, calc(100vw - 28px))';
+import { DIALOG_WIDTH } from '../../shared/dialog';
 
 @Component({
   selector: 'app-goal-card',

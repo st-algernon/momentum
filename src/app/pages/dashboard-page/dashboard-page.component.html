@@ -81,3 +81,34 @@
     </div>
   }
 }
+
+<!-- Small screens only: the header's create buttons are hidden there, so this speed-dial
+     takes over both actions. -->
+@if (fabOpen()) {
+  <div class="fab-scrim" aria-hidden="true" (click)="closeFab()"></div>
+}
+
+<div class="fab-stack" [class.is-open]="fabOpen()">
+  <div class="fab-actions" id="fab-actions">
+    <button class="fab-action" type="button" (click)="openNewGroup()">
+      <span class="fab-action-label">New group</span>
+      <span class="fab-action-icon" aria-hidden="true"><fa-icon [icon]="faGroup"></fa-icon></span>
+    </button>
+    <button class="fab-action" type="button" (click)="openNewGoal()">
+      <span class="fab-action-label">New goal</span>
+      <span class="fab-action-icon" aria-hidden="true"><fa-icon [icon]="faGoal"></fa-icon></span>
+    </button>
+  </div>
+
+  <button
+    class="fab"
+    type="button"
+    aria-haspopup="true"
+    aria-controls="fab-actions"
+    [attr.aria-expanded]="fabOpen()"
+    [attr.aria-label]="fabOpen() ? 'Close create menu' : 'Create'"
+    (click)="toggleFab()"
+  >
+    <fa-icon class="fab-icon" [icon]="faPlus" aria-hidden="true"></fa-icon>
+  </button>
+</div>

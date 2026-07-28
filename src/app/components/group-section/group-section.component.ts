@@ -8,7 +8,8 @@ import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal, GoalGroup } from '../../models/goal.model';
 import { GoalsService } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
-import { GoalCardComponent, DIALOG_WIDTH } from '../goal-card/goal-card.component';
+import { GoalCardComponent } from '../goal-card/goal-card.component';
+import { DIALOG_WIDTH } from '../../shared/dialog';
 import { GoalModalComponent } from '../goal-modal/goal-modal.component';
 import { GroupModalComponent } from '../group-modal/group-modal.component';
 

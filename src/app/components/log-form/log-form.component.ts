@@ -9,7 +9,7 @@ import { Goal } from '../../models/goal.model';
 import { GoalsService, amountStepFor, dateToISO, isValidLogAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { GoalCompleteDialogComponent } from '../goal-complete-dialog/goal-complete-dialog.component';
-import { DIALOG_WIDTH } from '../goal-card/goal-card.component';
+import { DIALOG_WIDTH } from '../../shared/dialog';
 
 @Component({
   selector: 'app-log-form',

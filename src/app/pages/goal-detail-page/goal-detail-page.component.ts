@@ -13,7 +13,7 @@ import { HistoryListComponent } from '../../components/history-list/history-list
 import { TrendChartComponent } from '../../components/trend-chart/trend-chart.component';
 import { ActivityHeatmapComponent } from '../../components/activity-heatmap/activity-heatmap.component';
 import { GoalModalComponent } from '../../components/goal-modal/goal-modal.component';
-import { DIALOG_WIDTH } from '../../components/goal-card/goal-card.component';
+import { DIALOG_WIDTH } from '../../shared/dialog';
 
 @Component({
   selector: 'app-goal-detail-page',

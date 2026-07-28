@@ -1,10 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faBullseye, faChevronRight, faLayerGroup, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
 import { GoalsService } from '../../services/goals.service';
-import { GoalCardComponent, DIALOG_WIDTH } from '../../components/goal-card/goal-card.component';
+import { GoalCardComponent } from '../../components/goal-card/goal-card.component';
+import { DIALOG_WIDTH } from '../../shared/dialog';
 import { GroupSectionComponent } from '../../components/group-section/group-section.component';
 import { GoalModalComponent } from '../../components/goal-modal/goal-modal.component';
 import { GroupModalComponent } from '../../components/group-modal/group-modal.component';
@@ -24,6 +25,12 @@ export class DashboardPageComponent {
   private readonly dialog = inject(MatDialog);
 
   protected readonly faChevron = faChevronRight;
+  protected readonly faPlus = faPlus;
+  protected readonly faGoal = faBullseye;
+  protected readonly faGroup = faLayerGroup;
+
+  /** Mobile speed-dial expansion state. */
+  protected readonly fabOpen = signal(false);
 
   protected readonly ungroupedGoals = computed(() =>
     GoalsService.sortForDisplay(this.goalsService.activeUngroupedGoals())
@@ -74,11 +81,26 @@ export class DashboardPageComponent {
     localStorage.setItem(ARCHIVED_EXPANDED_KEY, String(next));
   }
 
+  protected toggleFab(): void {
+    this.fabOpen.update(open => !open);
+  }
+
+  protected closeFab(): void {
+    this.fabOpen.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    this.closeFab();
+  }
+
   protected openNewGoal(): void {
+    this.closeFab();
     this.dialog.open(GoalModalComponent, { width: DIALOG_WIDTH, data: { mode: 'create' } });
   }
 
   protected openNewGroup(): void {
+    this.closeFab();
     this.dialog.open(GroupModalComponent, { width: DIALOG_WIDTH, data: { mode: 'create' } });
   }
 }

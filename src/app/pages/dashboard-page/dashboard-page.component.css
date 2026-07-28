@@ -1,5 +1,14 @@
 @import '../../../styles/_page-head.css';
 
+/* The global create FAB offers both of these on small screens, so showing them here too
+   would stack two redundant full-width buttons under the title. Compound selector because
+   the imported .page-actions rule above sets display at the same specificity. */
+@media (max-width: 620px) {
+  .page-head .page-actions {
+    display: none;
+  }
+}
+
 .ungrouped-section {
   margin-bottom: var(--space-6);
 }
@@ -72,4 +81,141 @@
 
 .archived-groups {
   margin-top: var(--space-2);
+}
+
+/* The speed-dial replaces the header's create buttons on small screens only. Its scrim is
+   guarded here too, so resizing up to desktop while open can't leave a stray overlay. */
+.fab-stack,
+.fab-scrim {
+  display: none;
+}
+
+@media (max-width: 620px) {
+  /* Sits above .bottom-nav (z-index 5) but below the CDK dialog overlay, so opening a modal
+     from here covers the dial rather than fighting it. */
+  .fab-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    background: rgba(23, 32, 51, 0.32);
+    animation: fab-fade-in 0.18s ease;
+  }
+
+  .fab-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-3);
+    position: fixed;
+    right: var(--space-4);
+    bottom: calc(var(--bottom-nav-h) + var(--space-4) + env(safe-area-inset-bottom));
+    z-index: 7;
+  }
+
+  .fab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: var(--text-3xl);
+    box-shadow: 0 6px 20px rgba(91, 91, 214, 0.42);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .fab:hover {
+    background: var(--primary-dark);
+  }
+
+  .fab-icon {
+    display: inline-flex;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+
+  /* The single plus glyph doubles as the close affordance — 45° turns it into an ×. */
+  .fab-stack.is-open .fab-icon {
+    transform: rotate(45deg);
+  }
+
+  /* visibility (not just opacity) so the collapsed actions leave the tab order and the
+     accessibility tree entirely, instead of staying focusable while invisible. */
+  .fab-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(var(--space-2));
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  }
+
+  .fab-stack.is-open .fab-actions {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fab-action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .fab-action-label {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: var(--text-md);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(23, 32, 51, 0.12);
+  }
+
+  /* 44px keeps the tap target at the accessible minimum while staying visibly secondary to
+     the 56px primary FAB. */
+  .fab-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--primary);
+    font-size: var(--text-xl);
+    box-shadow: 0 2px 8px rgba(23, 32, 51, 0.12);
+  }
+}
+
+@keyframes fab-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab,
+  .fab-icon,
+  .fab-actions {
+    transition: none;
+  }
+
+  .fab-scrim {
+    animation: none;
+  }
 }

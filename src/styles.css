@@ -44,6 +44,10 @@
   --page-wide: 1180px;
   --page-narrow: 760px;
   --page-compact: 520px;
+
+  /* Height of the fixed mobile bottom nav, excluding the safe-area inset it also pads for.
+     Anything anchored above that bar offsets by this so the values can't drift apart. */
+  --bottom-nav-h: 68px;
 }
 
 * {
