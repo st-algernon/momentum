@@ -71,23 +71,31 @@ export class GistService {
     return json.id as string;
   }
 
-  async restore(): Promise<AppState> {
+  /**
+   * Fetches the stored copy, or null when there's simply nothing stored yet — a fresh setup
+   * with no gist, or a gist that doesn't hold a backup file. Those are ordinary states on
+   * the first sync, not failures, so they don't throw: only a real problem (bad token,
+   * network error, corrupt payload) does, because the caller treats a throw as "don't
+   * overwrite anything until this is understood".
+   */
+  async pull(): Promise<AppState | null> {
     const token = this.token();
     const gistId = this.gistId();
     if (!token) throw new Error('Add a GitHub token first.');
-    if (!gistId) throw new Error('No gist ID set yet — back up once first, or paste an existing gist ID.');
+    if (!gistId) return null;
 
     const response = await fetch(`https://api.github.com/gists/${gistId}`, {
       headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
     });
 
+    if (response.status === 404) return null;
     if (!response.ok) {
       throw new Error(`GitHub responded with ${response.status} ${response.statusText}`);
     }
 
     const json = await response.json();
     const file = json.files?.[GIST_FILENAME] ?? json.files?.[LEGACY_GIST_FILENAME];
-    if (!file) throw new Error(`Gist has no "${GIST_FILENAME}" file.`);
+    if (!file) return null;
 
     const content = file.truncated ? await (await fetch(file.raw_url)).text() : file.content;
     const parsed = JSON.parse(content);

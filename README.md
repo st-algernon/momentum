@@ -23,9 +23,11 @@ target and a unit: hours, interviews, applications, whatever you're working towa
 Open **Settings**, then:
 
 1. Create a [personal access token](https://github.com/settings/tokens/new?scopes=gist) with the `gist` scope.
-2. Paste it in. The first backup creates a new private gist; later backups update the same one.
-3. Turn on **Automatically sync** to have it back up ~4 seconds after you log progress, or use
-   **Backup now** / **Restore from gist** manually.
+2. Paste it in and press **Save**. The first sync creates a new private gist; later syncs update
+   the same one.
+3. From then on it syncs automatically a few seconds after you log progress. **Sync now** pushes
+   immediately, **Restore from gist** pulls the stored copy back down (use this to pick up changes
+   made on another device), and **Disconnect** clears the token from this browser.
 
 The token is stored only in this browser's `localStorage` and is sent only to `api.github.com` — never
 to any other server. Anyone with access to this browser profile can read it, so use a token scoped to

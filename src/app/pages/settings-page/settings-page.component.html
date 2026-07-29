@@ -41,6 +41,8 @@
     @default {
     @if (!token.trim()) {
     Add a token above to enable syncing.
+    } @else if (autoSync.pending()) {
+    Changes not synced yet — they'll go up automatically, or use "Sync now".
     } @else if (autoSync.lastSyncedAt()) {
     Changes sync automatically — last synced {{ autoSync.lastSyncedAt() | date: 'medium' }}.
     } @else {

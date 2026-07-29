@@ -1,5 +1,6 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { AppState, Goal, GoalGroup, GoalType, LogEntry } from '../models/goal.model';
+import { isLive, mergeStates } from './state-merge';
 
 const STORAGE_KEY = 'momentum-data-v3';
 const V2_STORAGE_KEY = 'skilltrack-data-v2';
@@ -71,7 +72,9 @@ function flattenV2(state: V2State): AppState {
     name: group.name,
     description: '',
     archivedAt: null,
-    createdAt: group.createdAt
+    createdAt: group.createdAt,
+    updatedAt: group.createdAt,
+    deletedAt: null
   }));
   const goals: Goal[] = state.groups.flatMap(group =>
     group.goals.map(goal => ({
@@ -79,7 +82,10 @@ function flattenV2(state: V2State): AppState {
       description: '',
       groupId: group.id,
       goalType: 'cumulative' as const,
-      archivedAt: null
+      archivedAt: null,
+      updatedAt: goal.createdAt,
+      deletedAt: null,
+      logs: goal.logs.map(log => ({ ...log, deletedAt: null }))
     }))
   );
   return { groups, goals };
@@ -88,7 +94,16 @@ function flattenV2(state: V2State): AppState {
 function migrateV1(legacy: V1State): AppState {
   if (!legacy.goals.length) return { groups: [], goals: [] };
 
-  const group: GoalGroup = { id: uid(), name: 'My Goals', description: '', archivedAt: null, createdAt: Date.now() };
+  const now = Date.now();
+  const group: GoalGroup = {
+    id: uid(),
+    name: 'My Goals',
+    description: '',
+    archivedAt: null,
+    createdAt: now,
+    updatedAt: now,
+    deletedAt: null
+  };
   const goals: Goal[] = legacy.goals.map(goal => ({
     id: goal.id,
     groupId: group.id,
@@ -100,27 +115,40 @@ function migrateV1(legacy: V1State): AppState {
     deadline: goal.deadline,
     archivedAt: null,
     createdAt: goal.createdAt,
+    updatedAt: goal.createdAt,
+    deletedAt: null,
     logs: goal.logs.map(log => ({
       id: log.id,
       date: log.date,
       amount: log.hours,
       note: log.note,
-      createdAt: log.createdAt
+      createdAt: log.createdAt,
+      deletedAt: null
     }))
   }));
 
   return { groups: [group], goals };
 }
 
-/** Backfills fields added after data may already exist in storage (goalType, archivedAt),
- *  so older saved states and Gist restores keep working without a storage-key bump. */
+/** Backfills fields added after data may already exist in storage (goalType, archivedAt,
+ *  updatedAt, deletedAt), so older saved states and gist copies keep working without a
+ *  storage-key bump. updatedAt falls back to createdAt: for data written before edit
+ *  tracking existed, "created" is the most recent timestamp we can honestly claim. */
 function normalizeState(state: AppState): AppState {
   return {
-    groups: state.groups.map(group => ({ ...group, archivedAt: group.archivedAt ?? null })),
+    groups: state.groups.map(group => ({
+      ...group,
+      archivedAt: group.archivedAt ?? null,
+      updatedAt: group.updatedAt ?? group.createdAt,
+      deletedAt: group.deletedAt ?? null
+    })),
     goals: state.goals.map(goal => ({
       ...goal,
       goalType: goal.goalType ?? 'cumulative',
-      archivedAt: goal.archivedAt ?? null
+      archivedAt: goal.archivedAt ?? null,
+      updatedAt: goal.updatedAt ?? goal.createdAt,
+      deletedAt: goal.deletedAt ?? null,
+      logs: goal.logs.map(log => ({ ...log, deletedAt: log.deletedAt ?? null }))
     }))
   };
 }
@@ -154,12 +182,22 @@ function loadState(): AppState {
 export class GoalsService {
   private readonly initial = loadState();
 
-  readonly groups = signal<GoalGroup[]>(this.initial.groups);
-  readonly goals = signal<Goal[]>(this.initial.goals);
+  /** Tombstones included — this is what gets persisted and synced. */
+  private readonly rawGroups = signal<GoalGroup[]>(this.initial.groups);
+  private readonly rawGoals = signal<Goal[]>(this.initial.goals);
+
+  /** What the rest of the app sees: deleted entries filtered out at every level, so no
+   *  consumer has to know tombstones exist. */
+  readonly groups = computed(() => this.rawGroups().filter(isLive));
+  readonly goals = computed(() =>
+    this.rawGoals()
+      .filter(isLive)
+      .map(goal => (goal.logs.every(isLive) ? goal : { ...goal, logs: goal.logs.filter(isLive) }))
+  );
 
   constructor() {
     effect(() => {
-      const state: AppState = { groups: this.groups(), goals: this.goals() };
+      const state: AppState = { groups: this.rawGroups(), goals: this.rawGoals() };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     });
   }
@@ -183,26 +221,51 @@ export class GoalsService {
   }
 
   createGroup(name: string, description = ''): GoalGroup {
-    const group: GoalGroup = { id: uid(), name, description, archivedAt: null, createdAt: Date.now() };
-    this.groups.update(groups => [group, ...groups]);
+    const now = Date.now();
+    const group: GoalGroup = {
+      id: uid(),
+      name,
+      description,
+      archivedAt: null,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null
+    };
+    this.rawGroups.update(groups => [group, ...groups]);
     return group;
   }
 
   updateGroup(id: string, patch: Partial<Pick<GoalGroup, 'name' | 'description'>>): void {
-    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, ...patch } : group)));
+    const now = Date.now();
+    this.rawGroups.update(groups =>
+      groups.map(group => (group.id === id ? { ...group, ...patch, updatedAt: now } : group))
+    );
   }
 
+  /** Soft delete: the group and its goals get tombstones so the removal survives a merge
+   *  with a device that still has them. */
   deleteGroup(id: string): void {
-    this.groups.update(groups => groups.filter(group => group.id !== id));
-    this.goals.update(goals => goals.filter(goal => goal.groupId !== id));
+    const now = Date.now();
+    this.rawGroups.update(groups =>
+      groups.map(group => (group.id === id ? { ...group, deletedAt: now, updatedAt: now } : group))
+    );
+    this.rawGoals.update(goals =>
+      goals.map(goal => (goal.groupId === id ? { ...goal, deletedAt: now, updatedAt: now } : goal))
+    );
   }
 
   archiveGroup(id: string): void {
-    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, archivedAt: Date.now() } : group)));
+    const now = Date.now();
+    this.rawGroups.update(groups =>
+      groups.map(group => (group.id === id ? { ...group, archivedAt: now, updatedAt: now } : group))
+    );
   }
 
   unarchiveGroup(id: string): void {
-    this.groups.update(groups => groups.map(group => (group.id === id ? { ...group, archivedAt: null } : group)));
+    const now = Date.now();
+    this.rawGroups.update(groups =>
+      groups.map(group => (group.id === id ? { ...group, archivedAt: null, updatedAt: now } : group))
+    );
   }
 
   activeGroups(): GoalGroup[] {
@@ -224,6 +287,7 @@ export class GoalsService {
     groupId: string | null,
     description = ''
   ): Goal {
+    const now = Date.now();
     const goal: Goal = {
       id: uid(),
       groupId,
@@ -235,9 +299,11 @@ export class GoalsService {
       deadline,
       logs: [],
       archivedAt: null,
-      createdAt: Date.now()
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null
     };
-    this.goals.update(goals => [goal, ...goals]);
+    this.rawGoals.update(goals => [goal, ...goals]);
     return goal;
   }
 
@@ -245,29 +311,42 @@ export class GoalsService {
     id: string,
     patch: Partial<Pick<Goal, 'name' | 'description' | 'targetAmount' | 'unit' | 'goalType' | 'deadline' | 'groupId'>>
   ): void {
-    this.goals.update(goals =>
+    const now = Date.now();
+    this.rawGoals.update(goals =>
       goals.map(goal =>
         goal.id === id
-          ? { ...goal, ...patch, unit: (patch.unit ?? goal.unit).trim().toLowerCase() || 'hours' }
+          ? { ...goal, ...patch, unit: (patch.unit ?? goal.unit).trim().toLowerCase() || 'hours', updatedAt: now }
           : goal
       )
     );
   }
 
   moveGoalToGroup(id: string, groupId: string | null): void {
-    this.goals.update(goals => goals.map(goal => (goal.id === id ? { ...goal, groupId } : goal)));
+    const now = Date.now();
+    this.rawGoals.update(goals =>
+      goals.map(goal => (goal.id === id ? { ...goal, groupId, updatedAt: now } : goal))
+    );
   }
 
   deleteGoal(id: string): void {
-    this.goals.update(goals => goals.filter(goal => goal.id !== id));
+    const now = Date.now();
+    this.rawGoals.update(goals =>
+      goals.map(goal => (goal.id === id ? { ...goal, deletedAt: now, updatedAt: now } : goal))
+    );
   }
 
   archiveGoal(id: string): void {
-    this.goals.update(goals => goals.map(goal => (goal.id === id ? { ...goal, archivedAt: Date.now() } : goal)));
+    const now = Date.now();
+    this.rawGoals.update(goals =>
+      goals.map(goal => (goal.id === id ? { ...goal, archivedAt: now, updatedAt: now } : goal))
+    );
   }
 
   unarchiveGoal(id: string): void {
-    this.goals.update(goals => goals.map(goal => (goal.id === id ? { ...goal, archivedAt: null } : goal)));
+    const now = Date.now();
+    this.rawGoals.update(goals =>
+      goals.map(goal => (goal.id === id ? { ...goal, archivedAt: null, updatedAt: now } : goal))
+    );
   }
 
   /** Ungrouped goals only — grouped goals archive at the group level instead. */
@@ -284,39 +363,50 @@ export class GoalsService {
   /** Returns whether this specific log is what pushed the goal from not-complete to complete,
    *  so the caller can celebrate exactly once, right when it's earned. */
   addLog(goalId: string, date: string, amount: number, note: string): { justCompleted: boolean } {
-    const goal = this.goalById(goalId);
-    const wasComplete = goal ? GoalsService.isGoalComplete(goal) : false;
+    const before = this.goalById(goalId);
+    const wasComplete = before ? GoalsService.isGoalComplete(before) : false;
 
-    const entry: LogEntry = { id: uid(), date, amount, note: note.trim(), createdAt: Date.now() };
-    let updated: Goal | undefined;
-    this.goals.update(goals =>
-      goals.map(g => {
-        if (g.id !== goalId) return g;
-        updated = { ...g, logs: [...g.logs, entry] };
-        return updated;
-      })
+    // No updatedAt bump: logs merge independently of the goal's fields, so touching it here
+    // would let an unrelated log entry win a field edit made on another device.
+    const entry: LogEntry = { id: uid(), date, amount, note: note.trim(), createdAt: Date.now(), deletedAt: null };
+    this.rawGoals.update(goals =>
+      goals.map(goal => (goal.id === goalId ? { ...goal, logs: [...goal.logs, entry] } : goal))
     );
 
-    const isComplete = updated ? GoalsService.isGoalComplete(updated) : false;
+    // Re-read through the filtered view so tombstoned logs can't count toward completion.
+    const after = this.goalById(goalId);
+    const isComplete = after ? GoalsService.isGoalComplete(after) : false;
     return { justCompleted: !wasComplete && isComplete };
   }
 
   deleteLog(goalId: string, logId: string): void {
-    this.goals.update(goals =>
+    const now = Date.now();
+    this.rawGoals.update(goals =>
       goals.map(goal =>
-        goal.id === goalId ? { ...goal, logs: goal.logs.filter(log => log.id !== logId) } : goal
+        goal.id === goalId
+          ? { ...goal, logs: goal.logs.map(log => (log.id === logId ? { ...log, deletedAt: now } : log)) }
+          : goal
       )
     );
   }
 
   importState(state: AppState): void {
     const normalized = normalizeState(state);
-    this.groups.set(normalized.groups);
-    this.goals.set(normalized.goals);
+    this.rawGroups.set(normalized.groups);
+    this.rawGoals.set(normalized.goals);
   }
 
+  /** Includes tombstones — this is the sync payload, not the display state. */
   exportState(): AppState {
-    return { groups: this.groups(), goals: this.goals() };
+    return { groups: this.rawGroups(), goals: this.rawGoals() };
+  }
+
+  /** Folds a remote copy into local state and returns the result, so the caller can push
+   *  the same merged value back without re-reading and racing another local edit. */
+  mergeRemote(remote: AppState): AppState {
+    const merged = mergeStates(this.exportState(), normalizeState(remote));
+    this.importState(merged);
+    return merged;
   }
 
   /** Reduces a set of amounts the way the goal's type dictates: summed for 'cumulative'
