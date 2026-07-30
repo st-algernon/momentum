@@ -1,92 +1,10 @@
 @import '../../../styles/_modal.css';
 @import '../../../styles/_form.css';
+@import '../../../styles/_segmented.css';
 @import '../../../styles/_datepicker-field.css';
 @import '../../../styles/_info-icon.css';
 
 .picker-input {
   cursor: pointer;
   text-transform: capitalize;
-}
-
-/* min-width:0 so the fieldset can shrink inside the grid form, as fieldsets otherwise
-   refuse to go below their content's intrinsic width. */
-.goal-type-field {
-  border: 0;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-}
-
-.goal-type-field legend {
-  padding: 0;
-  margin-bottom: 7px;
-  font-size: var(--text-md);
-  font-weight: 700;
-}
-
-.segmented {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface-soft);
-}
-
-/* Overrides the shared label grid styling from _form.css — here the label is just a
-   click target wrapping one segment. */
-.segment {
-  display: block;
-  position: relative;
-  gap: 0;
-  margin: 0;
-}
-
-/* The radio stays in the a11y tree and focusable, but is visually replaced by its sibling
-   span; also neutralizes the full-width input styling _form.css applies to every input. */
-.segment input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  pointer-events: none;
-}
-
-.segment span {
-  display: block;
-  padding: 9px 10px;
-  border-radius: var(--radius-sm);
-  text-align: center;
-  font-size: var(--text-md);
-  font-weight: 700;
-  color: var(--muted);
-  cursor: pointer;
-  user-select: none;
-  transition: 0.15s ease;
-}
-
-.segment span:hover {
-  color: var(--text);
-}
-
-.segment input:checked + span {
-  background: var(--surface);
-  color: var(--primary);
-  box-shadow: 0 1px 3px rgba(23, 32, 51, 0.12);
-}
-
-.segment input:focus-visible + span {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-.segment-hint {
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.45;
-  margin: 7px 0 0;
 }

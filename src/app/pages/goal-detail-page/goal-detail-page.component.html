@@ -31,38 +31,70 @@
           <div class="progress-fill" [class.is-complete]="isComplete()" [style.width.%]="percent()"></div>
         </div>
         <div class="progress-caption">
-          <span>{{ formatAmount(completed(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
+          @if (isOutcome()) {
+            <span>
+              {{ attempts() }} attempt{{ attempts() === 1 ? '' : 's' }} ·
+              {{ isComplete() ? 'achieved' : 'not yet' }}
+            </span>
+          } @else {
+            <span>{{ formatAmount(completed(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
+          }
           <span>{{ percent() | number: '1.0-0' }}%</span>
         </div>
       </section>
 
-      <section class="stats">
-        <div class="stat">
-          <div class="stat-label">{{ isBestType() ? 'Current best' : 'Completed' }}</div>
-          <div class="stat-value">{{ formatAmount(completed(), g.unit) }}</div>
-        </div>
-        <div class="stat">
-          @if (isComplete()) {
-            <div class="stat-label">Achieved</div>
-            <div class="stat-value">{{ completedOn() ? (completedOn() | date: 'MMM d') : 'Today' }}</div>
-          } @else {
-            <div class="stat-label">Remaining</div>
-            <div class="stat-value">{{ formatAmount(remaining(), g.unit) }}</div>
-          }
-        </div>
-        <div class="stat">
-          @if (isBestType()) {
+      <!-- Three branches rather than per-tile conditions: each goal kind wants a different
+           set of numbers, and "remaining" only means something when you're filling a quota. -->
+      <section class="stats" [class.stats-3]="isBestType()">
+        @if (isOutcome()) {
+          <div class="stat">
             <div class="stat-label">Attempts</div>
             <div class="stat-value">{{ attempts() }}</div>
-          } @else {
+          </div>
+          <div class="stat">
+            <div class="stat-label">Failed</div>
+            <div class="stat-value">{{ failedAttempts() }}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Success rate</div>
+            <div class="stat-value">{{ successRate() | number: '1.0-0' }}%</div>
+          </div>
+        } @else if (isBestType()) {
+          <div class="stat">
+            <div class="stat-label">Current best</div>
+            <div class="stat-value">{{ formatAmount(completed(), g.unit) }}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Attempts</div>
+            <div class="stat-value">{{ attempts() }}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Average attempt</div>
+            <div class="stat-value">{{ formatAmount(averageAttempt(), g.unit) }}</div>
+          </div>
+        } @else {
+          <div class="stat">
+            <div class="stat-label">Completed</div>
+            <div class="stat-value">{{ formatAmount(completed(), g.unit) }}</div>
+          </div>
+          <div class="stat">
+            @if (isComplete()) {
+              <div class="stat-label">Achieved</div>
+              <div class="stat-value">{{ completedOn() ? (completedOn() | date: 'MMM d') : 'Today' }}</div>
+            } @else {
+              <div class="stat-label">Remaining</div>
+              <div class="stat-value">{{ formatAmount(remaining(), g.unit) }}</div>
+            }
+          </div>
+          <div class="stat">
             <div class="stat-label">Best session</div>
             <div class="stat-value">{{ formatAmount(highest(), g.unit) }}</div>
-          }
-        </div>
-        <div class="stat">
-          <div class="stat-label">Daily average</div>
-          <div class="stat-value">{{ formatAmount(average(), g.unit) }}</div>
-        </div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Daily average</div>
+            <div class="stat-value">{{ formatAmount(average(), g.unit) }}</div>
+          </div>
+        }
       </section>
 
       <app-log-form [goal]="g"></app-log-form>

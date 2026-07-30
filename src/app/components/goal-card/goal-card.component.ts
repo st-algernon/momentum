@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, formatAmount } from '../../services/goals.service';
+import { GoalsService, formatAmount, isOutcomeGoal } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { GoalModalComponent } from '../goal-modal/goal-modal.component';
 import { DIALOG_WIDTH } from '../../shared/dialog';
@@ -35,6 +35,17 @@ export class GoalCardComponent {
   protected readonly completedAmount = computed(() => GoalsService.totalAmount(this.goal()));
   protected readonly isComplete = computed(() => GoalsService.isGoalComplete(this.goal()));
   protected readonly isUngrouped = computed(() => !this.goal().groupId);
+
+  /** "3 attempts · not yet" reads far better than "0 times of 1 times" for a pass/fail goal. */
+  protected readonly caption = computed(() => {
+    const goal = this.goal();
+    if (isOutcomeGoal(goal)) {
+      const attempts = goal.logs.length;
+      const label = `${attempts} attempt${attempts === 1 ? '' : 's'}`;
+      return `${label} · ${this.isComplete() ? 'achieved' : 'not yet'}`;
+    }
+    return `${formatAmount(this.completedAmount(), goal.unit)} of ${formatAmount(goal.targetAmount, goal.unit)}`;
+  });
 
   protected formatAmount = formatAmount;
 

@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
-import { GoalsService, formatAmount, todayISO } from '../../services/goals.service';
+import { GoalsService, formatAmount, isOutcomeGoal, todayISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { LogFormComponent } from '../../components/log-form/log-form.component';
 import { HistoryListComponent } from '../../components/history-list/history-list.component';
@@ -73,9 +73,32 @@ export class GoalDetailPageComponent {
   protected readonly isBestType = computed(() => this.goal()?.goalType === 'best');
   protected readonly attempts = computed(() => this.goal()?.logs.length ?? 0);
 
+  /** Pass/fail goals have no meaningful amount, best or average — the useful numbers are how
+   *  many attempts it took and how many of those missed. */
+  protected readonly isOutcome = computed(() => {
+    const goal = this.goal();
+    return goal ? isOutcomeGoal(goal) : false;
+  });
+
+  protected readonly failedAttempts = computed(() => {
+    const goal = this.goal();
+    return goal ? GoalsService.failedAttemptCount(goal) : 0;
+  });
+
+  protected readonly successRate = computed(() => {
+    const total = this.attempts();
+    if (!total) return 0;
+    return ((total - this.failedAttempts()) / total) * 100;
+  });
+
   protected readonly average = computed(() => {
     const goal = this.goal();
     return goal ? GoalsService.dailyAverageOverDays(goal, 'all') : 0;
+  });
+
+  protected readonly averageAttempt = computed(() => {
+    const goal = this.goal();
+    return goal ? GoalsService.averageAttempt(goal) : 0;
   });
 
   /** Null when there's no deadline set. Compares against completedOn for a finished goal

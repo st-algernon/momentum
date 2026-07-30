@@ -1,0 +1,109 @@
+/* Radio group styled as a segmented control (goal modal's progress modes and personal-best
+   modes, log form's pass/fail result). */
+
+/* min-width:0 so the fieldset can shrink inside the grid form, as fieldsets otherwise
+   refuse to go below their content's intrinsic width. */
+.segment-field {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.segment-field legend {
+  padding: 0;
+  margin-bottom: 7px;
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+/* minmax(0, 1fr) rather than 1fr so a long label wraps instead of forcing the track wider
+   than its share — three options in a phone-width modal rely on it. */
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(var(--segments, 2), minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
+}
+
+/* Overrides the shared label styling from _form.css — here the label is just a click target
+   wrapping one segment. Flex so the span can stretch to the tallest segment, keeping all
+   options the same height when one label wraps to two lines. */
+.segment {
+  display: flex;
+  position: relative;
+  gap: 0;
+  margin: 0;
+}
+
+/* The radio stays in the a11y tree and focusable, but is visually replaced by its sibling
+   span; also neutralizes the full-width input styling _form.css applies to every input. */
+.segment input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
+}
+
+/* Direct child only: a segment that stacks an icon above a .segment-label wraps that label
+   in its own span, which must not inherit this padding and nested flex layout.
+   Column flex so the icon sits above the label; a text-only segment just centres its single
+   child, so both shapes share these styles. */
+.segment > span {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 8px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: var(--text-md);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  transition: 0.15s ease;
+}
+
+.segment-icon {
+  font-size: var(--text-2xl);
+  line-height: 1;
+  opacity: 0.75;
+  transition: opacity 0.15s ease;
+}
+
+.segment input:checked + span .segment-icon {
+  opacity: 1;
+}
+
+.segment > span:hover {
+  color: var(--text);
+}
+
+.segment input:checked + span {
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow: 0 1px 3px rgba(23, 32, 51, 0.12);
+}
+
+.segment input:focus-visible + span {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.segment-hint {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  margin: 7px 0 0;
+}

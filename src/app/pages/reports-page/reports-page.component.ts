@@ -7,7 +7,7 @@ import { toBlob, toPng } from 'html-to-image';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChartSimple } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, dateToISO, formatAmount, todayISO } from '../../services/goals.service';
+import { GoalsService, dateToISO, formatAmount, isOutcomeGoal, todayISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { ScopePickerComponent, ReportScope } from '../../components/scope-picker/scope-picker.component';
 import { ProgressRingComponent } from '../../components/progress-ring/progress-ring.component';
@@ -112,6 +112,22 @@ export class ReportsPageComponent {
   protected readonly isBestType = computed(() => this.singleGoal()?.goalType === 'best');
   protected readonly attemptsForGoal = computed(() => this.singleGoal()?.logs.length ?? 0);
 
+  protected readonly isOutcomeForGoal = computed(() => {
+    const goal = this.singleGoal();
+    return goal ? isOutcomeGoal(goal) : false;
+  });
+
+  protected readonly failedAttemptsForGoal = computed(() => {
+    const goal = this.singleGoal();
+    return goal ? GoalsService.failedAttemptCount(goal) : 0;
+  });
+
+  protected readonly successRateForGoal = computed(() => {
+    const total = this.attemptsForGoal();
+    if (!total) return 0;
+    return ((total - this.failedAttemptsForGoal()) / total) * 100;
+  });
+
   protected readonly isSingleGoalComplete = computed(() => {
     const goal = this.singleGoal();
     return goal ? GoalsService.isGoalComplete(goal) : false;
@@ -130,6 +146,11 @@ export class ReportsPageComponent {
   protected readonly averageForGoal = computed(() => {
     const goal = this.singleGoal();
     return goal ? GoalsService.dailyAverageOverDays(goal, this.effectivePeriodDays()) : 0;
+  });
+
+  protected readonly averageAttemptForGoal = computed(() => {
+    const goal = this.singleGoal();
+    return goal ? GoalsService.averageAttempt(goal) : 0;
   });
 
   /** Amount logged within the selected recent window, for the single-goal view. Meaningless for

@@ -15,6 +15,17 @@ export interface LogEntry {
  *  log instead, for goals like "15 pull-ups in a row" where attempts aren't meant to be summed. */
 export type GoalType = 'cumulative' | 'best';
 
+/**
+ * How a 'best' goal records progress. Ignored for 'cumulative' goals.
+ *
+ * 'amount'  — each entry is a number you're pushing higher (a 30-minute run).
+ * 'outcome' — each entry is a pass/fail attempt, and one success completes the goal
+ *             (landing a job offer). Stored as amount 1 for a success and 0 for a failed
+ *             attempt against a target of 1, so the existing "highest single entry" rule
+ *             completes the goal the moment a success is logged.
+ */
+export type BestMode = 'amount' | 'outcome';
+
 export interface Goal {
   id: string;
   groupId: string | null;
@@ -23,6 +34,7 @@ export interface Goal {
   targetAmount: number;
   unit: string;
   goalType: GoalType;
+  bestMode: BestMode;
   deadline: string | null;
   logs: LogEntry[];
   archivedAt: number | null;

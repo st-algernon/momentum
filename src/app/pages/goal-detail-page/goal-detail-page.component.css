@@ -137,6 +137,12 @@
   margin-bottom: var(--space-5);
 }
 
+/* Pass/fail goals have only three meaningful stats, so the row fits them exactly instead of
+   leaving a fourth column empty. */
+.stats.stats-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .stat {
   background: var(--surface-soft);
   border: 1px solid var(--border);
@@ -165,7 +171,17 @@
   .detail-grid {
     grid-template-columns: 1fr;
   }
-  .stats {
+  /* .stats-3 listed explicitly: a media query adds no specificity, so the bare .stats rule
+     alone would lose to the compound .stats.stats-3 above and never stack on narrow screens. */
+  .stats,
+  .stats.stats-3 {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Three tiles across two columns leaves the last one alone on its row — stretch it over
+     the empty column rather than leaving a hole. Scoped to the 3-stat case: with four tiles
+     nothing is orphaned, and spanning the last one would push it onto a row of its own. */
+  .stats.stats-3 .stat:last-child {
+    grid-column: span 2;
   }
 }

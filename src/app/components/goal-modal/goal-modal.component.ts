@@ -5,9 +5,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faCircleInfo, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Goal, GoalType } from '../../models/goal.model';
-import { GoalsService, UNIT_OPTIONS, dateToISO, formatAmount } from '../../services/goals.service';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faArrowTrendUp, faBullseye, faCircleInfo, faMedal, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { BestMode, Goal, GoalType } from '../../models/goal.model';
+import {
+  GoalsService,
+  OUTCOME_TARGET,
+  OUTCOME_UNIT,
+  UNIT_OPTIONS,
+  dateToISO,
+  formatAmount
+} from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 
 export interface GoalModalData {
@@ -15,6 +23,13 @@ export interface GoalModalData {
   goal?: Goal;
   defaultGroupId?: string | null;
 }
+
+/**
+ * The counting modes as a user picks them, collapsing the stored goalType/bestMode pair into
+ * a single choice. Those two fields are a storage concern: presenting them as nested controls
+ * hid "pass or fail" until "personal best" was selected, and shifted the form mid-decision.
+ */
+type GoalMode = 'cumulative' | 'best' | 'outcome';
 
 @Component({
   selector: 'app-goal-modal',
@@ -35,11 +50,20 @@ export class GoalModalComponent {
   protected readonly faClose = faXmark;
   protected readonly faInfo = faCircleInfo;
 
-  /** Examples live here rather than beside either option: shown together the contrast is
-   *  clearer, and neither mode gets a static example that may not fit the user's goal. */
-  protected readonly goalTypeTooltip =
-    'Total suits anything you accumulate — hours studied, books read, km run. ' +
-    'Personal best suits a single-attempt result you want to push higher, like a single 100 km ultra hike.';
+  /** All three compared in one place, so the tooltip helps you choose before selecting —
+   *  something the per-mode hint below the control can't do on its own. */
+  protected readonly modeTooltip =
+    'Total adds every entry up — hours studied, books read, km run. ' +
+    'Personal best keeps your highest single entry, like a 100 km ultra hike. ' +
+    'Pass or fail logs each attempt as a success or a failure, and one success completes the ' +
+    'goal — landing an offer after any number of interviews.';
+
+  protected readonly modes: { value: GoalMode; label: string; icon: IconDefinition }[] = [
+    { value: 'cumulative', label: 'Total', icon: faArrowTrendUp },
+    // faMedal already marks personal-best goals in the achievements timeline.
+    { value: 'best', label: 'Personal best', icon: faMedal },
+    { value: 'outcome', label: 'Pass or fail', icon: faBullseye }
+  ];
 
   private readonly initialGroupId = this.isEdit ? this.data.goal?.groupId ?? null : this.data.defaultGroupId ?? null;
 
@@ -47,24 +71,39 @@ export class GoalModalComponent {
   description = this.data.goal?.description ?? '';
   targetAmount: number | null = this.data.goal?.targetAmount ?? null;
   unit = this.data.goal?.unit ?? 'hours';
-  goalType: GoalType = this.data.goal?.goalType ?? 'cumulative';
+  mode: GoalMode = GoalModalComponent.modeOf(this.data.goal);
   deadline: Date | null = this.data.goal?.deadline ? new Date(`${this.data.goal.deadline}T12:00:00`) : null;
   groupName = this.groups().find(group => group.id === this.initialGroupId)?.name ?? '';
+
+  private static modeOf(goal: Goal | undefined): GoalMode {
+    if (!goal || goal.goalType !== 'best') return 'cumulative';
+    return goal.bestMode === 'outcome' ? 'outcome' : 'best';
+  }
 
   close(): void {
     this.dialogRef.close();
   }
 
+  /** Pass/fail goals have nothing to measure: the target is always one success and the unit
+   *  is never shown, so both fields are hidden and supplied on submit. */
+  protected get isOutcome(): boolean {
+    return this.mode === 'outcome';
+  }
+
   protected get canSubmit(): boolean {
-    return this.name.trim().length > 0 && Number(this.targetAmount) > 0;
+    if (!this.name.trim()) return false;
+    return this.isOutcome || Number(this.targetAmount) > 0;
   }
 
   /** Explains the selected mode using the target and unit the user actually entered, so the
    *  copy always matches their goal instead of leaning on a generic example. */
-  protected get goalTypeHint(): string {
+  protected get modeHint(): string {
+    if (this.isOutcome) {
+      return 'Reached the first time you log a success — failed attempts are kept as history.';
+    }
     const target = Number(this.targetAmount);
     const goal = target > 0 ? formatAmount(target, this.unit.trim() || 'units') : 'the target';
-    return this.goalType === 'best'
+    return this.mode === 'best'
       ? `Reached when one entry hits ${goal} — earlier entries don't add up.`
       : `Reached when your entries add up to ${goal}.`;
   }
@@ -78,8 +117,13 @@ export class GoalModalComponent {
 
   submit(): void {
     const name = this.name.trim();
-    const target = Number(this.targetAmount);
-    if (!name || !target || target <= 0) return;
+    if (!this.canSubmit) return;
+
+    // Expand the single picked mode back into the two stored fields.
+    const goalType: GoalType = this.mode === 'cumulative' ? 'cumulative' : 'best';
+    const bestMode: BestMode = this.mode === 'outcome' ? 'outcome' : 'amount';
+    const target = this.isOutcome ? OUTCOME_TARGET : Number(this.targetAmount);
+    const unit = this.isOutcome ? OUTCOME_UNIT : this.unit;
 
     const groupNameTrimmed = this.groupName.trim();
     let groupId: string | null = null;
@@ -96,14 +140,24 @@ export class GoalModalComponent {
         name,
         description,
         targetAmount: target,
-        unit: this.unit,
-        goalType: this.goalType,
+        unit,
+        goalType,
+        bestMode,
         deadline,
         groupId
       });
       this.toast.show('Goal updated');
     } else {
-      this.goalsService.createGoal(name, target, this.unit, this.goalType, deadline, groupId, description);
+      this.goalsService.createGoal({
+        name,
+        targetAmount: target,
+        unit,
+        goalType,
+        bestMode,
+        deadline,
+        groupId,
+        description
+      });
       this.toast.show('Goal created');
     }
 

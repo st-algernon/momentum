@@ -40,7 +40,14 @@
           </div>
         </div>
         <div class="linear-caption">
-          <span>{{ formatAmount(completedForGoal(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
+          @if (isOutcomeForGoal()) {
+            <span>
+              {{ attemptsForGoal() }} attempt{{ attemptsForGoal() === 1 ? '' : 's' }} ·
+              {{ isSingleGoalComplete() ? 'achieved' : 'not yet' }}
+            </span>
+          } @else {
+            <span>{{ formatAmount(completedForGoal(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
+          }
           <span>{{ overallPercent() | number: '1.0-0' }}%</span>
         </div>
         @if (periodAmountForGoal() > 0) {
@@ -55,28 +62,51 @@
         }
       </div>
 
-      <div class="report-stats">
-        <div class="report-stat">
-          <div class="report-stat-value">{{ formatAmount(completedForGoal(), g.unit) }}</div>
-          <div class="report-stat-label">{{ isBestType() ? 'Current best' : 'Completed' }}</div>
-        </div>
-        <div class="report-stat">
-          <div class="report-stat-value">{{ formatAmount(remainingForGoal(), g.unit) }}</div>
-          <div class="report-stat-label">Remaining</div>
-        </div>
-        <div class="report-stat">
-          @if (isBestType()) {
+      <div class="report-stats" [class.report-stats-3]="isBestType()">
+        @if (isOutcomeForGoal()) {
+          <div class="report-stat">
             <div class="report-stat-value">{{ attemptsForGoal() }}</div>
             <div class="report-stat-label">Attempts</div>
-          } @else {
+          </div>
+          <div class="report-stat">
+            <div class="report-stat-value">{{ failedAttemptsForGoal() }}</div>
+            <div class="report-stat-label">Failed</div>
+          </div>
+          <div class="report-stat">
+            <div class="report-stat-value">{{ successRateForGoal() | number: '1.0-0' }}%</div>
+            <div class="report-stat-label">Success rate</div>
+          </div>
+        } @else if (isBestType()) {
+          <div class="report-stat">
+            <div class="report-stat-value">{{ formatAmount(completedForGoal(), g.unit) }}</div>
+            <div class="report-stat-label">Current best</div>
+          </div>
+          <div class="report-stat">
+            <div class="report-stat-value">{{ attemptsForGoal() }}</div>
+            <div class="report-stat-label">Attempts</div>
+          </div>
+          <div class="report-stat">
+            <div class="report-stat-value">{{ formatAmount(averageAttemptForGoal(), g.unit) }}</div>
+            <div class="report-stat-label">Average attempt</div>
+          </div>
+        } @else {
+          <div class="report-stat">
+            <div class="report-stat-value">{{ formatAmount(completedForGoal(), g.unit) }}</div>
+            <div class="report-stat-label">Completed</div>
+          </div>
+          <div class="report-stat">
+            <div class="report-stat-value">{{ formatAmount(remainingForGoal(), g.unit) }}</div>
+            <div class="report-stat-label">Remaining</div>
+          </div>
+          <div class="report-stat">
             <div class="report-stat-value">{{ formatAmount(highestForGoal(), g.unit) }}</div>
             <div class="report-stat-label">Best session</div>
-          }
-        </div>
-        <div class="report-stat">
-          <div class="report-stat-value">{{ formatAmount(averageForGoal(), g.unit) }}</div>
-          <div class="report-stat-label">Daily average</div>
-        </div>
+          </div>
+          <div class="report-stat">
+            <div class="report-stat-value">{{ formatAmount(averageForGoal(), g.unit) }}</div>
+            <div class="report-stat-label">Daily average</div>
+          </div>
+        }
       </div>
 
       <div class="report-chart-wrap">

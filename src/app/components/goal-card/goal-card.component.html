@@ -12,9 +12,7 @@
     <div class="progress-track">
       <div class="progress-fill" [class.is-complete]="isComplete()" [style.width.%]="percent()"></div>
     </div>
-    <div class="goal-card-caption">
-      {{ formatAmount(completedAmount(), goal().unit) }} of {{ formatAmount(goal().targetAmount, goal().unit) }}
-    </div>
+    <div class="goal-card-caption">{{ caption() }}</div>
   </a>
 
   @if (interactive()) {

@@ -17,6 +17,13 @@ form {
   }
 }
 
+/* Pairs short enough to stay side by side even on the narrowest screens — a number next to
+   its unit reads as one control, unlike the full-width text inputs the rule above targets.
+   Compound selector so it outranks that single-column rule regardless of source order. */
+.form-grid.form-grid-inline {
+  grid-template-columns: 1fr 1fr;
+}
+
 label {
   font-size: var(--text-md);
   font-weight: 700;

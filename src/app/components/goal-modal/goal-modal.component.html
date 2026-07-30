@@ -8,58 +8,67 @@
       <label for="goalName">Goal name</label>
       <input id="goalName" type="text" name="goalName" [(ngModel)]="name" placeholder="Interviews, Applications, Workouts…" maxlength="80" required />
     </div>
-    <div class="field">
-      <label for="goalDescription"><span class="label-text">Description <span class="optional-hint">(optional)</span></span></label>
-      <textarea id="goalDescription" name="goalDescription" [(ngModel)]="description" placeholder="What is this goal about?" rows="2"></textarea>
-    </div>
-    <fieldset class="goal-type-field" aria-describedby="goalTypeHint">
+
+    <!-- One control for all three counting modes: they're mutually exclusive from the user's
+         point of view, even though they're stored as goalType + bestMode. -->
+    <fieldset class="segment-field" aria-describedby="modeHint">
       <legend class="label-text">
         How progress counts
         <button
           type="button"
           class="info-icon"
-          aria-label="About progress modes"
-          [matTooltip]="goalTypeTooltip"
+          aria-label="About counting modes"
+          [matTooltip]="modeTooltip"
           matTooltipPosition="above"
           matTooltipClass="setup-tooltip"
         ><fa-icon [icon]="faInfo"></fa-icon></button>
       </legend>
-      <div class="segmented">
-        <label class="segment">
-          <input type="radio" name="goalType" value="cumulative" [(ngModel)]="goalType" />
-          <span>Total</span>
-        </label>
-        <label class="segment">
-          <input type="radio" name="goalType" value="best" [(ngModel)]="goalType" />
-          <span>Personal best</span>
-        </label>
+      <div class="segmented" [style.--segments]="modes.length">
+        @for (option of modes; track option.value) {
+          <label class="segment">
+            <input type="radio" name="goalMode" [value]="option.value" [(ngModel)]="mode" />
+            <span>
+              <fa-icon class="segment-icon" [icon]="option.icon" aria-hidden="true"></fa-icon>
+              <span class="segment-label">{{ option.label }}</span>
+            </span>
+          </label>
+        }
       </div>
-      <p class="segment-hint" id="goalTypeHint">{{ goalTypeHint }}</p>
+      <p class="segment-hint" id="modeHint">{{ modeHint }}</p>
     </fieldset>
-    <div class="form-grid">
-      <div class="field">
-        <label for="goalTarget">{{ goalType === 'best' ? 'Target to reach' : 'Target amount' }}</label>
-        <input id="goalTarget" type="number" name="goalTarget" [(ngModel)]="targetAmount" min="1" step="1" placeholder="100" required />
+
+    <!-- A pass/fail goal is always "one success", so there's nothing to measure or count in. -->
+    @if (!isOutcome) {
+      <div class="form-grid form-grid-inline">
+        <div class="field">
+          <label for="goalTarget">{{ mode === 'best' ? 'Target to reach' : 'Target amount' }}</label>
+          <input id="goalTarget" type="number" name="goalTarget" [(ngModel)]="targetAmount" min="1" step="1" placeholder="100" required />
+        </div>
+        <div class="field">
+          <label for="goalUnit">Unit</label>
+          <input
+            id="goalUnit"
+            type="text"
+            name="goalUnit"
+            class="picker-input"
+            [(ngModel)]="unit"
+            [matAutocomplete]="unitAuto"
+            #unitTrigger="matAutocompleteTrigger"
+            (click)="unitTrigger.openPanel()"
+            readonly
+          />
+          <mat-autocomplete #unitAuto="matAutocomplete">
+            @for (option of unitOptions; track option) {
+              <mat-option [value]="option">{{ option }}</mat-option>
+            }
+          </mat-autocomplete>
+        </div>
       </div>
-      <div class="field">
-        <label for="goalUnit">Unit</label>
-        <input
-          id="goalUnit"
-          type="text"
-          name="goalUnit"
-          class="picker-input"
-          [(ngModel)]="unit"
-          [matAutocomplete]="unitAuto"
-          #unitTrigger="matAutocompleteTrigger"
-          (click)="unitTrigger.openPanel()"
-          readonly
-        />
-        <mat-autocomplete #unitAuto="matAutocomplete">
-          @for (option of unitOptions; track option) {
-            <mat-option [value]="option">{{ option }}</mat-option>
-          }
-        </mat-autocomplete>
-      </div>
+    }
+
+    <div class="field">
+      <label for="goalDescription"><span class="label-text">Description <span class="optional-hint">(optional)</span></span></label>
+      <textarea id="goalDescription" name="goalDescription" [(ngModel)]="description" placeholder="What is this goal about?" rows="2"></textarea>
     </div>
     <div class="field">
       <label for="goalGroup"><span class="label-text">Group <span class="optional-hint">(optional)</span></span></label>

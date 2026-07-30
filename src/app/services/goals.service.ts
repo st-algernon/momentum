@@ -1,5 +1,5 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
-import { AppState, Goal, GoalGroup, GoalType, LogEntry } from '../models/goal.model';
+import { AppState, BestMode, Goal, GoalGroup, GoalType, LogEntry } from '../models/goal.model';
 import { isLive, mergeStates } from './state-merge';
 
 const STORAGE_KEY = 'momentum-data-v3';
@@ -25,7 +25,16 @@ export function formatAmount(value: number, unit: string): string {
 }
 
 /** Units a goal can be measured in. Pick-only in the UI — no custom values. */
-export const UNIT_OPTIONS = ['hours', 'minutes', 'days', 'times', 'km', 'attempts'] as const;
+export const UNIT_OPTIONS = ['hours', 'minutes', 'days', 'times', 'km'] as const;
+
+/** Pass/fail goals have no unit or target to choose — they're always "one success out of
+ *  however many attempts it takes", so the modal hides both fields and fixes them here. */
+export const OUTCOME_UNIT = 'times';
+export const OUTCOME_TARGET = 1;
+
+export function isOutcomeGoal(goal: Goal): boolean {
+  return goal.goalType === 'best' && goal.bestMode === 'outcome';
+}
 
 /** Units that accept fractional amounts; everything else logs whole numbers. */
 const DECIMAL_UNITS = new Set(['hours', 'km']);
@@ -36,7 +45,8 @@ export function amountStepFor(unit: string): number {
 
 export function isValidLogAmount(goal: Goal, amount: number): boolean {
   if (!Number.isFinite(amount)) return false;
-  return goal.unit === 'attempts' ? amount >= 0 : amount > 0;
+  // A failed attempt is a real data point worth keeping, so pass/fail goals accept 0.
+  return isOutcomeGoal(goal) ? amount === 0 || amount === 1 : amount > 0;
 }
 
 interface V2Goal {
@@ -82,6 +92,7 @@ function flattenV2(state: V2State): AppState {
       description: '',
       groupId: group.id,
       goalType: 'cumulative' as const,
+      bestMode: 'amount' as const,
       archivedAt: null,
       updatedAt: goal.createdAt,
       deletedAt: null,
@@ -112,6 +123,7 @@ function migrateV1(legacy: V1State): AppState {
     targetAmount: goal.targetHours,
     unit: 'hours',
     goalType: 'cumulative',
+    bestMode: 'amount',
     deadline: goal.deadline,
     archivedAt: null,
     createdAt: goal.createdAt,
@@ -145,6 +157,8 @@ function normalizeState(state: AppState): AppState {
     goals: state.goals.map(goal => ({
       ...goal,
       goalType: goal.goalType ?? 'cumulative',
+      // Goals written before pass/fail mode existed were all numeric by definition.
+      bestMode: goal.bestMode ?? 'amount',
       archivedAt: goal.archivedAt ?? null,
       updatedAt: goal.updatedAt ?? goal.createdAt,
       deletedAt: goal.deletedAt ?? null,
@@ -278,25 +292,27 @@ export class GoalsService {
       .sort((a, b) => (b.archivedAt ?? 0) - (a.archivedAt ?? 0));
   }
 
-  createGoal(
-    name: string,
-    targetAmount: number,
-    unit: string,
-    goalType: GoalType,
-    deadline: string | null,
-    groupId: string | null,
-    description = ''
-  ): Goal {
+  createGoal(draft: {
+    name: string;
+    targetAmount: number;
+    unit: string;
+    goalType: GoalType;
+    bestMode: BestMode;
+    deadline: string | null;
+    groupId: string | null;
+    description?: string;
+  }): Goal {
     const now = Date.now();
     const goal: Goal = {
       id: uid(),
-      groupId,
-      name,
-      description,
-      targetAmount,
-      unit: unit.trim().toLowerCase() || 'hours',
-      goalType,
-      deadline,
+      groupId: draft.groupId,
+      name: draft.name,
+      description: draft.description ?? '',
+      targetAmount: draft.targetAmount,
+      unit: draft.unit.trim().toLowerCase() || 'hours',
+      goalType: draft.goalType,
+      bestMode: draft.bestMode,
+      deadline: draft.deadline,
       logs: [],
       archivedAt: null,
       createdAt: now,
@@ -309,7 +325,9 @@ export class GoalsService {
 
   updateGoal(
     id: string,
-    patch: Partial<Pick<Goal, 'name' | 'description' | 'targetAmount' | 'unit' | 'goalType' | 'deadline' | 'groupId'>>
+    patch: Partial<
+      Pick<Goal, 'name' | 'description' | 'targetAmount' | 'unit' | 'goalType' | 'bestMode' | 'deadline' | 'groupId'>
+    >
   ): void {
     const now = Date.now();
     this.rawGoals.update(goals =>
@@ -425,6 +443,16 @@ export class GoalsService {
     return GoalsService.amountForLogs(goal.goalType, goal.logs);
   }
 
+  /** Pass/fail goals: how many entries were logged, and how many of those were failures.
+   *  These replace amount-based stats, which say nothing useful about a 0/1 goal. */
+  static attemptCount(goal: Goal): number {
+    return goal.logs.length;
+  }
+
+  static failedAttemptCount(goal: Goal): number {
+    return goal.logs.filter(log => Number(log.amount) === 0).length;
+  }
+
   static isGoalComplete(goal: Goal): boolean {
     return goal.targetAmount > 0 && GoalsService.totalAmount(goal) >= goal.targetAmount;
   }
@@ -479,6 +507,19 @@ export class GoalsService {
     const deadline = new Date(`${goal.deadline}T12:00:00`);
     const done = new Date(`${onDateISO}T12:00:00`);
     return Math.round((deadline.getTime() - done.getTime()) / 86400000);
+  }
+
+  /**
+   * Mean of every logged attempt.
+   *
+   * The meaningful "typical result" for a personal-best goal, where a daily average is
+   * actively misleading: per-day amounts collapse to that day's *best* for 'best' goals, so
+   * three attempts of 1/50/25 km on one day average to 50 — identical to Current best, and
+   * reading as though the stat were broken.
+   */
+  static averageAttempt(goal: Goal): number {
+    if (!goal.logs.length) return 0;
+    return goal.logs.reduce((sum, log) => sum + Number(log.amount), 0) / goal.logs.length;
   }
 
   /** Per-calendar-date amounts, aggregated per the goal's type — the shared basis for daily

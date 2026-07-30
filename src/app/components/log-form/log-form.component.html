@@ -37,12 +37,31 @@
             <mat-datepicker #logDatePicker></mat-datepicker>
           </div>
         </div>
-        <div class="field">
-          <label for="logAmount" class="unit-label">{{ goal().unit }}</label>
-          <input id="logAmount" type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
-        </div>
+        <!-- Pass/fail goals record the result of the attempt, not a quantity. -->
+        @if (isOutcome()) {
+          <fieldset class="segment-field">
+            <legend class="label-text">Result</legend>
+            <div class="segmented">
+              <label class="segment">
+                <input type="radio" name="logOutcome" value="fail" [(ngModel)]="outcome" />
+                <span>Failed</span>
+              </label>
+              <label class="segment">
+                <input type="radio" name="logOutcome" value="success" [(ngModel)]="outcome" />
+                <span>Success</span>
+              </label>
+            </div>
+          </fieldset>
+        } @else {
+          <div class="field">
+            <label for="logAmount" class="unit-label">{{ goal().unit }}</label>
+            <input id="logAmount" type="number" name="logAmount" [(ngModel)]="amount" min="0" [step]="amountStep" placeholder="1.5" required />
+          </div>
+        }
       </div>
-      <button class="btn btn-primary" type="submit" [disabled]="!canSubmit">Add progress</button>
+      <button class="btn btn-primary" type="submit" [disabled]="!canSubmit">
+        {{ isOutcome() ? 'Log attempt' : 'Add progress' }}
+      </button>
     </form>
   }
 </section>

@@ -162,6 +162,13 @@
   margin-bottom: 22px;
 }
 
+/* Pass/fail goals have only three meaningful stats. The card is far narrower than the goal
+   page, so three across would squeeze each tile — instead the last one spans the empty
+   column, matching how .stats-3 behaves on the goal detail page. */
+.report-stats.report-stats-3 .report-stat:last-child {
+  grid-column: span 2;
+}
+
 .report-stat {
   background: rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-lg);
