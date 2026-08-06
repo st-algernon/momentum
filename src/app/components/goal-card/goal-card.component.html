@@ -7,7 +7,7 @@
   >
     <div class="goal-card-head">
       <strong>{{ goal().name }}</strong>
-      <span class="goal-card-percent">{{ percent() | number: '1.0-0' }}%</span>
+      <span class="goal-card-percent">{{ displayPercent() }}%</span>
     </div>
     <div class="progress-track">
       <div class="progress-fill" [class.is-complete]="isComplete()" [style.width.%]="percent()"></div>

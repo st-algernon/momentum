@@ -1,5 +1,4 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, formatAmount, isOutcomeGoal } from '../../services/goals.service';
+import { GoalsService, formatAmount, isOutcomeGoal, progressAmount } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { GoalModalComponent } from '../goal-modal/goal-modal.component';
 import { DIALOG_WIDTH } from '../../shared/dialog';
@@ -15,7 +14,7 @@ import { DIALOG_WIDTH } from '../../shared/dialog';
 @Component({
   selector: 'app-goal-card',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent],
+  imports: [RouterLink, MatMenuModule, MatTooltipModule, FaIconComponent],
   templateUrl: './goal-card.component.html',
   styleUrl: './goal-card.component.css'
 })
@@ -32,7 +31,8 @@ export class GoalCardComponent {
 
   protected readonly groups = this.goalsService.groups;
   protected readonly percent = computed(() => GoalsService.goalPercent(this.goal()));
-  protected readonly completedAmount = computed(() => GoalsService.totalAmount(this.goal()));
+  protected readonly displayPercent = computed(() => GoalsService.displayPercent(this.goal()));
+  protected readonly completedAmount = computed(() => progressAmount(GoalsService.totalAmount(this.goal())));
   protected readonly isComplete = computed(() => GoalsService.isGoalComplete(this.goal()));
   protected readonly isUngrouped = computed(() => !this.goal().groupId);
 

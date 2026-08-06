@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
-import { GoalsService, formatAmount, isOutcomeGoal, todayISO } from '../../services/goals.service';
+import { GoalsService, formatAmount, isOutcomeGoal, progressAmount, todayISO } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { LogFormComponent } from '../../components/log-form/log-form.component';
 import { HistoryListComponent } from '../../components/history-list/history-list.component';
@@ -37,7 +37,7 @@ export class GoalDetailPageComponent {
 
   protected readonly completed = computed(() => {
     const goal = this.goal();
-    return goal ? GoalsService.totalAmount(goal) : 0;
+    return goal ? progressAmount(GoalsService.totalAmount(goal)) : 0;
   });
 
   protected readonly remaining = computed(() => {
@@ -48,6 +48,11 @@ export class GoalDetailPageComponent {
   protected readonly percent = computed(() => {
     const goal = this.goal();
     return goal ? GoalsService.goalPercent(goal) : 0;
+  });
+
+  protected readonly displayPercent = computed(() => {
+    const goal = this.goal();
+    return goal ? GoalsService.displayPercent(goal) : 0;
   });
 
   protected readonly isComplete = computed(() => {

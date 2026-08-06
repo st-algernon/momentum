@@ -48,7 +48,7 @@
           } @else {
             <span>{{ formatAmount(completedForGoal(), g.unit) }} of {{ formatAmount(g.targetAmount, g.unit) }}</span>
           }
-          <span>{{ overallPercent() | number: '1.0-0' }}%</span>
+          <span>{{ displayPercent() }}%</span>
         </div>
         @if (periodAmountForGoal() > 0) {
           <p class="linear-delta">

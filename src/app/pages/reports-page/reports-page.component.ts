@@ -7,7 +7,14 @@ import { toBlob, toPng } from 'html-to-image';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChartSimple } from '@fortawesome/free-solid-svg-icons';
 import { Goal } from '../../models/goal.model';
-import { GoalsService, dateToISO, formatAmount, isOutcomeGoal, todayISO } from '../../services/goals.service';
+import {
+  GoalsService,
+  dateToISO,
+  formatAmount,
+  isOutcomeGoal,
+  progressAmount,
+  todayISO
+} from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
 import { ScopePickerComponent, ReportScope } from '../../components/scope-picker/scope-picker.component';
 import { ProgressRingComponent } from '../../components/progress-ring/progress-ring.component';
@@ -94,9 +101,14 @@ export class ReportsPageComponent {
 
   protected readonly overallPercent = computed(() => GoalsService.groupPercent(this.scopedGoals()));
 
+  protected readonly displayPercent = computed(() => {
+    const goal = this.singleGoal();
+    return goal ? GoalsService.displayPercent(goal) : Math.round(this.overallPercent());
+  });
+
   protected readonly completedForGoal = computed(() => {
     const goal = this.singleGoal();
-    return goal ? GoalsService.totalAmount(goal) : 0;
+    return goal ? progressAmount(GoalsService.totalAmount(goal)) : 0;
   });
 
   protected readonly remainingForGoal = computed(() => {

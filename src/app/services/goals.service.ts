@@ -24,6 +24,10 @@ export function formatAmount(value: number, unit: string): string {
   return unit === 'hours' ? `${rounded}h` : `${rounded} ${unit}`;
 }
 
+export function progressAmount(value: number): number {
+  return Math.floor((Number(value) || 0) * 10) / 10;
+}
+
 /** Units a goal can be measured in. Pick-only in the UI — no custom values. */
 export const UNIT_OPTIONS = ['hours', 'minutes', 'days', 'times', 'km'] as const;
 
@@ -41,6 +45,11 @@ const DECIMAL_UNITS = new Set(['hours', 'km']);
 
 export function amountStepFor(unit: string): number {
   return DECIMAL_UNITS.has(unit) ? 0.1 : 1;
+}
+
+export function quantizeAmount(unit: string, amount: number): number {
+  const value = Number(amount) || 0;
+  return amountStepFor(unit) < 1 ? Math.round(value * 10) / 10 : Math.round(value);
 }
 
 export function isValidLogAmount(goal: Goal, amount: number): boolean {
@@ -162,7 +171,11 @@ function normalizeState(state: AppState): AppState {
       archivedAt: goal.archivedAt ?? null,
       updatedAt: goal.updatedAt ?? goal.createdAt,
       deletedAt: goal.deletedAt ?? null,
-      logs: goal.logs.map(log => ({ ...log, deletedAt: log.deletedAt ?? null }))
+      logs: goal.logs.map(log => ({
+        ...log,
+        amount: quantizeAmount(goal.unit, log.amount),
+        deletedAt: log.deletedAt ?? null
+      }))
     }))
   };
 }
@@ -382,11 +395,19 @@ export class GoalsService {
    *  so the caller can celebrate exactly once, right when it's earned. */
   addLog(goalId: string, date: string, amount: number, note: string): { justCompleted: boolean } {
     const before = this.goalById(goalId);
-    const wasComplete = before ? GoalsService.isGoalComplete(before) : false;
+    if (!before) return { justCompleted: false };
+    const wasComplete = GoalsService.isGoalComplete(before);
 
     // No updatedAt bump: logs merge independently of the goal's fields, so touching it here
     // would let an unrelated log entry win a field edit made on another device.
-    const entry: LogEntry = { id: uid(), date, amount, note: note.trim(), createdAt: Date.now(), deletedAt: null };
+    const entry: LogEntry = {
+      id: uid(),
+      date,
+      amount: quantizeAmount(before.unit, amount),
+      note: note.trim(),
+      createdAt: Date.now(),
+      deletedAt: null
+    };
     this.rawGoals.update(goals =>
       goals.map(goal => (goal.id === goalId ? { ...goal, logs: [...goal.logs, entry] } : goal))
     );
@@ -539,6 +560,11 @@ export class GoalsService {
   static goalPercent(goal: Goal): number {
     if (!goal.targetAmount) return 0;
     return Math.min(100, (GoalsService.totalAmount(goal) / goal.targetAmount) * 100);
+  }
+
+  static displayPercent(goal: Goal): number {
+    if (GoalsService.isGoalComplete(goal)) return 100;
+    return Math.min(99, Math.floor(GoalsService.goalPercent(goal)));
   }
 
   static groupPercent(goals: Goal[]): number {
