@@ -19,13 +19,21 @@ export function todayISO(): string {
   return dateToISO(new Date());
 }
 
+/** Decimal places kept for units that accept fractions. Display, storage and the amount
+ *  input's step all derive from this, so a logged amount can never differ from the figure
+ *  printed back — see quantizeAmount. */
+const DECIMAL_SCALE = 100;
+
 export function formatAmount(value: number, unit: string): string {
-  const rounded = Math.round((Number(value) || 0) * 10) / 10;
+  const rounded = Math.round((Number(value) || 0) * DECIMAL_SCALE) / DECIMAL_SCALE;
   return unit === 'hours' ? `${rounded}h` : `${rounded} ${unit}`;
 }
 
 export function progressAmount(value: number): number {
-  return Math.floor((Number(value) || 0) * 10) / 10;
+  // toFixed before flooring: 0.29 * 100 is 28.999999999999996 in binary, which would floor
+  // a whole step down to 0.28.
+  const scaled = Number(((Number(value) || 0) * DECIMAL_SCALE).toFixed(6));
+  return Math.floor(scaled) / DECIMAL_SCALE;
 }
 
 /** Units a goal can be measured in. Pick-only in the UI — no custom values. */
@@ -44,12 +52,12 @@ export function isOutcomeGoal(goal: Goal): boolean {
 const DECIMAL_UNITS = new Set(['hours', 'km']);
 
 export function amountStepFor(unit: string): number {
-  return DECIMAL_UNITS.has(unit) ? 0.1 : 1;
+  return DECIMAL_UNITS.has(unit) ? 1 / DECIMAL_SCALE : 1;
 }
 
 export function quantizeAmount(unit: string, amount: number): number {
   const value = Number(amount) || 0;
-  return amountStepFor(unit) < 1 ? Math.round(value * 10) / 10 : Math.round(value);
+  return DECIMAL_UNITS.has(unit) ? Math.round(value * DECIMAL_SCALE) / DECIMAL_SCALE : Math.round(value);
 }
 
 export function isValidLogAmount(goal: Goal, amount: number): boolean {
