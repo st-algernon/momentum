@@ -17,6 +17,7 @@ import {
   formatAmount
 } from '../../services/goals.service';
 import { ToastService } from '../../services/toast.service';
+import { NoScrollInputDirective } from '../../shared/no-scroll-input.directive';
 
 export interface GoalModalData {
   mode: 'create' | 'edit';
@@ -34,7 +35,7 @@ type GoalMode = 'cumulative' | 'best' | 'outcome';
 @Component({
   selector: 'app-goal-modal',
   standalone: true,
-  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule, MatTooltipModule, FaIconComponent],
+  imports: [FormsModule, MatDatepickerModule, MatAutocompleteModule, MatTooltipModule, FaIconComponent, NoScrollInputDirective],
   templateUrl: './goal-modal.component.html',
   styleUrl: './goal-modal.component.css'
 })

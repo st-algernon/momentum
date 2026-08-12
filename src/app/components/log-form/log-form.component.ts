@@ -10,11 +10,12 @@ import { GoalsService, amountStepFor, dateToISO, isOutcomeGoal, isValidLogAmount
 import { ToastService } from '../../services/toast.service';
 import { GoalCompleteDialogComponent } from '../goal-complete-dialog/goal-complete-dialog.component';
 import { DIALOG_WIDTH } from '../../shared/dialog';
+import { NoScrollInputDirective } from '../../shared/no-scroll-input.directive';
 
 @Component({
   selector: 'app-log-form',
   standalone: true,
-  imports: [DatePipe, FormsModule, MatDatepickerModule, FaIconComponent],
+  imports: [DatePipe, FormsModule, MatDatepickerModule, FaIconComponent, NoScrollInputDirective],
   templateUrl: './log-form.component.html',
   styleUrl: './log-form.component.css'
 })
