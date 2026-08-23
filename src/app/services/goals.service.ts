@@ -49,7 +49,7 @@ export function isOutcomeGoal(goal: Goal): boolean {
 }
 
 /** Units that accept fractional amounts; everything else logs whole numbers. */
-const DECIMAL_UNITS = new Set(['hours', 'km']);
+const DECIMAL_UNITS = new Set(['hours', 'minutes', 'km']);
 
 export function amountStepFor(unit: string): number {
   return DECIMAL_UNITS.has(unit) ? 1 / DECIMAL_SCALE : 1;
